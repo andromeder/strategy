@@ -1,0 +1,796 @@
+<title>IT Risk Strategy 2026–2029</title>
+<link rel="stylesheet" href="design-system.css">
+<style>
+:root {
+  --paper: #f2f3f0;
+  --paper-raised: #fbfbf9;
+  --ink: #1a2130;
+  --muted: #5b6460;
+  --line: #d3d6cf;
+  --line-strong: #b7bbb1;
+  --global: #00838d;
+  --global-soft: #dcf0f1;
+  --regional: #a85a26;
+  --regional-soft: #f4e4d5;
+  --status-good: #1b7a3d;
+  --status-good-soft: #dcefe0;
+  --status-warn: #a9790a;
+  --status-warn-soft: #f5e9cf;
+  --status-bad: #b23a3a;
+  --status-bad-soft: #f6dede;
+  --tag-people: #74537f;
+  --tag-people-soft: #ece2ee;
+  --tag-tech: #8a6a2f;
+  --tag-tech-soft: #f0e6d2;
+  --shadow: 0 1px 2px rgba(26, 33, 48, 0.06);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14171a; --paper-raised: #1b1f22; --ink: #e8e7e1; --muted: #9ba39c;
+    --line: #2b3430; --line-strong: #3a443e;
+    --global: #2fa7b0; --global-soft: #17302f;
+    --regional: #c77b3a; --regional-soft: #2f2318;
+    --status-good: #4fbe7c; --status-good-soft: #17301f;
+    --status-warn: #e0b04c; --status-warn-soft: #332a12;
+    --status-bad: #e0685f; --status-bad-soft: #331d1a;
+    --tag-people: #b393bd; --tag-people-soft: #2a2130;
+    --tag-tech: #cfa855; --tag-tech-soft: #302914;
+    --shadow: none; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #14171a; --paper-raised: #1b1f22; --ink: #e8e7e1; --muted: #9ba39c;
+  --line: #2b3430; --line-strong: #3a443e;
+  --global: #2fa7b0; --global-soft: #17302f;
+  --regional: #c77b3a; --regional-soft: #2f2318;
+  --status-good: #4fbe7c; --status-good-soft: #17301f;
+  --status-warn: #e0b04c; --status-warn-soft: #332a12;
+  --status-bad: #e0685f; --status-bad-soft: #331d1a;
+  --tag-people: #b393bd; --tag-people-soft: #2a2130;
+  --tag-tech: #cfa855; --tag-tech-soft: #302914;
+  --shadow: none; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--paper); color: var(--ink); }
+body {
+  font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--global-soft); }
+a { color: var(--global); }
+a:focus-visible, summary:focus-visible, label:focus-visible { outline: 2px solid var(--global); outline-offset: 2px; }
+
+h1, h2, h3 {
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+  font-weight: 400; color: var(--ink); text-wrap: balance; margin: 0;
+}
+h4 { font-family: Georgia, serif; font-weight: 400; font-size: 17px; margin: 0 0 6px; color: var(--ink); }
+p { margin: 0 0 .9em; max-width: 64ch; }
+.mono { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace; }
+
+/* ---- shell ---- */
+.shell { display: grid; grid-template-columns: 240px minmax(0,1fr); min-height: 100vh; }
+@media (max-width: 900px) { .shell { grid-template-columns: 1fr; } .nav { position: static; height: auto; } }
+.nav {
+  position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
+  background: var(--paper-raised); border-right: 1px solid var(--line); padding: 26px 18px 40px;
+}
+.nav .brand { font-family: Georgia, serif; font-size: 16px; color: var(--ink); }
+.nav .brand-sub { display: block; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 2px 0 22px; }
+.nav-group { margin-bottom: 16px; }
+.nav-group-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 5px; padding: 0 6px; }
+.nav a { display: block; padding: 5px 6px; border-radius: 4px; color: var(--muted); text-decoration: none; font-size: 13.5px; }
+.nav a:hover { background: var(--paper); color: var(--ink); }
+.nav a.pending::after { content: "draft"; float: right; font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--status-warn); }
+
+main { padding: 0 clamp(20px,5vw,64px) 100px; min-width: 0; }
+.page { max-width: 900px; margin: 0 auto; padding: 52px 0 0; }
+.wide { max-width: 980px; }
+
+header .eyebrow, .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.title { font-size: 34px; line-height: 1.2; max-width: 26ch; margin-top: 6px; }
+.dek { margin-top: 14px; max-width: 62ch; font-size: 17px; color: var(--muted); }
+.meta-row { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.meta-row strong { color: var(--ink); font-weight: 600; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: 1px solid var(--line-strong); border-radius: 100px; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; font-family: ui-monospace, monospace; }
+
+section { margin-top: 60px; scroll-margin-top: 20px; }
+.section-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.section-title { font-size: 25px; margin-bottom: 8px; }
+section > .dek { margin-top: 0; margin-bottom: 22px; }
+h3 { font-size: 19px; margin: 32px 0 10px; }
+h3 .mono-suffix { font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 8px; }
+ul, ol { padding-left: 1.25em; max-width: 62ch; }
+li { margin-bottom: .35em; }
+
+/* ---- cards / callouts ---- */
+.card, .panel-card, .callout { background: var(--paper-raised); border: 1px solid var(--line); border-radius: 6px; box-shadow: var(--shadow); }
+.panel-card { padding: 18px 20px; }
+.card { padding: 18px 20px; margin: 14px 0; }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 4px; }
+.callout { margin-top: 18px; padding: 14px 18px; font-size: 13.5px; color: var(--muted); }
+.callout strong { color: var(--ink); }
+
+.evidence { border-left: 3px solid var(--global); background: var(--global-soft); border-radius: 0 5px 5px 0; padding: 11px 16px; margin: 12px 0; font-size: 14px; color: var(--ink); }
+.evidence .lbl { font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--global); display: block; margin-bottom: 4px; }
+.flag { border-left: 3px solid var(--status-warn); background: var(--status-warn-soft); border-radius: 0 5px 5px 0; padding: 10px 16px; margin: 14px 0; font-size: 13.5px; color: var(--ink); }
+.flag .lbl { font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--status-warn); display: block; margin-bottom: 3px; }
+.proof { border: 1px solid var(--status-good); background: var(--status-good-soft); border-radius: 6px; padding: 16px 20px; margin: 18px 0; font-size: 14px; }
+.proof .lbl { font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--status-good); display: block; margin-bottom: 5px; }
+
+/* ---- tags & chips ---- */
+.tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 2px; }
+.tag { font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: .03em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; }
+.tag-people { background: var(--tag-people-soft); color: var(--tag-people); }
+.tag-process { background: var(--global-soft); color: var(--global); }
+.tag-tech { background: var(--tag-tech-soft); color: var(--tag-tech); }
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 2px 9px; border-radius: 100px; font-family: ui-monospace, monospace; letter-spacing: .02em; }
+.chip-reg { background: var(--status-bad-soft); color: var(--status-bad); }
+.chip-flight { background: var(--global-soft); color: var(--global); }
+.chip-watch { background: var(--status-warn-soft); color: var(--status-warn); }
+.chip-good { background: var(--status-good-soft); color: var(--status-good); }
+
+/* ---- stat row ---- */
+.stat-row { display: flex; flex-wrap: wrap; gap: 28px; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+.stat { display: flex; flex-direction: column; gap: 3px; min-width: 88px; }
+.stat-num { font-family: Georgia, serif; font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
+.stat-label { font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+
+/* ---- org chart (function / subteam) ---- */
+.org-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 20px; }
+@media (max-width: 760px) { .org-columns { grid-template-columns: 1fr; } }
+.zone-label { display: flex; align-items: center; gap: 7px; font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.zone-dot { width: 8px; height: 8px; border-radius: 50%; }
+.zone-dot.g { background: var(--global); }
+.zone-dot.r { background: var(--regional); }
+.fn-block { border: 1px solid var(--line); border-radius: 6px; background: var(--paper-raised); margin-bottom: 8px; overflow: hidden; }
+.fn-card { list-style: none; display: flex; align-items: center; gap: 10px; padding: 11px 14px; cursor: pointer; }
+.fn-card::-webkit-details-marker { display: none; }
+.fn-code { font-family: ui-monospace, monospace; font-size: 11px; color: var(--global); border: 1px solid var(--global); border-radius: 4px; padding: 1px 6px; flex-shrink: 0; }
+.regional .fn-code { color: var(--regional); border-color: var(--regional); }
+.fn-body { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+.fn-name { font-size: 14.5px; color: var(--ink); }
+.fn-scope { font-size: 12px; color: var(--muted); }
+.chevron { color: var(--muted); transition: transform .15s; }
+.fn-block[open] .chevron { transform: rotate(90deg); }
+.sub-list { border-top: 1px solid var(--line); padding: 6px 14px 10px 44px; }
+.sub-row { display: flex; gap: 10px; align-items: baseline; padding: 4px 0; font-size: 13.5px; }
+.sub-code { font-family: ui-monospace, monospace; font-size: 10.5px; color: var(--muted); min-width: 34px; }
+.matrix-note { font-size: 12px; color: var(--muted); margin-top: 10px; padding: 10px 12px; background: var(--paper); border-radius: 5px; border: 1px dashed var(--line-strong); }
+
+/* ---- template markers ---- */
+.mission-block { border: 1px solid var(--line-strong); border-radius: 8px; padding: 22px 26px; background: var(--paper-raised); margin: 18px 0 26px; }
+.mission-block .lbl { font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--global); margin-bottom: 8px; }
+.mission-block p { font-family: Georgia, serif; font-size: 19px; line-height: 1.4; color: var(--ink); margin: 0; max-width: 56ch; }
+
+.template-tag { display: inline-flex; align-items: center; gap: 6px; font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--paper-raised); background: var(--ink); padding: 3px 10px; border-radius: 4px; margin-bottom: 10px; }
+
+/* ---- timeline ---- */
+.timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 20px 0; }
+@media (max-width: 760px) { .timeline { grid-template-columns: 1fr; } }
+.timeline-year { border: 1px solid var(--line); border-radius: 8px; background: var(--paper-raised); overflow: hidden; }
+.timeline-year-head { font-family: Georgia, serif; font-size: 20px; padding: 12px 16px 10px; border-bottom: 2px solid var(--line-strong); display: flex; justify-content: space-between; align-items: baseline; }
+.timeline-year-head .yr-tag { font-family: ui-monospace, monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; }
+.timeline-body { padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+.milestone { display: flex; gap: 9px; align-items: flex-start; }
+.milestone .dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; background: var(--global); }
+.milestone.draft .dot { background: var(--line-strong); border: 1px dashed var(--muted); background: transparent; }
+.milestone .txt { font-size: 13px; line-height: 1.4; }
+.milestone .txt .when { font-family: ui-monospace, monospace; font-size: 10px; color: var(--muted); display: block; text-transform: uppercase; letter-spacing: .03em; }
+.milestone.draft .txt { color: var(--muted); font-style: italic; }
+
+/* ---- table ---- */
+.tbl-wrap { overflow-x: auto; margin: 18px 0; border: 1px solid var(--line); border-radius: 6px; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 560px; }
+th, td { border-bottom: 1px solid var(--line); padding: 9px 13px; text-align: left; vertical-align: top; }
+thead th { font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--line-strong); background: var(--paper-raised); }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--paper-raised); }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 18px 0; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin: 18px 0; }
+@media (max-width: 700px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+.recon-table td:first-child { color: var(--muted); font-size: 13px; }
+hr.rule { border: none; border-top: 1px solid var(--line); margin: 44px 0; }
+
+.oi-list { list-style: none; padding: 0; margin: 0; }
+.oi-item { display: grid; grid-template-columns: 26px 1fr; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.oi-item:last-child { border-bottom: none; }
+.oi-num { font-family: ui-monospace, monospace; color: var(--status-warn); font-size: 13px; }
+.oi-item p { margin: 0 0 3px; max-width: none; }
+.oi-src { font-size: 11.5px; color: var(--muted); font-family: ui-monospace, monospace; }
+.oi-item.resolved { opacity: .6; }
+.oi-item.resolved .oi-num { color: var(--status-good); }
+
+footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
+</style>
+
+<div class="shell">
+  <nav class="nav" aria-label="Document sections">
+    <div class="brand">IT Risk Strategy</div>
+    <span class="brand-sub">2026&ndash;2029 &middot; Working Draft</span>
+
+    <div class="nav-group">
+      <p class="nav-group-label">Foundations</p>
+      <a href="#org-structure">Org structure &amp; taxonomy</a>
+      <a href="#themes">Cross-cutting themes</a>
+    </div>
+    <div class="nav-group">
+      <p class="nav-group-label">By discipline</p>
+      <a href="#people">People</a>
+      <a href="#process">Process</a>
+      <a href="#technology">Technology &mdash; Walrus</a>
+    </div>
+    <div class="nav-group">
+      <p class="nav-group-label">Regional</p>
+      <a href="#region-us">United States</a>
+      <a href="#region-eu">Europe</a>
+      <a href="#region-apac">APAC</a>
+    </div>
+    <div class="nav-group">
+      <p class="nav-group-label">Central pillars</p>
+      <a href="#pillar-governance">Governance &mdash; template</a>
+      <a href="#pillar-oprisk" class="pending">Op Risk &amp; Issues Mgmt</a>
+      <a href="#pillar-assessments" class="pending">Assessments</a>
+      <a href="#pillar-reporting" class="pending">Reporting &amp; Analytics</a>
+      <a href="#pillar-thirdparty" class="pending">Third Party Risk</a>
+      <a href="#pillar-controltesting" class="pending">Control Testing</a>
+    </div>
+    <div class="nav-group">
+      <p class="nav-group-label">Reference</p>
+      <a href="#summary">Pain point summary</a>
+      <a href="#open-items">Open items</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="page">
+      <header>
+        <div class="eyebrow">Global IT Risk</div>
+        <h1 class="title">2026&ndash;2029 Strategy</h1>
+        <p class="dek">A working synthesis of where the department stands today &mdash; people, process, and technology &mdash; across the center, the US, and Europe, as the foundation for the forward three-year strategy.</p>
+        <div class="meta-row">
+          <span class="pill">Draft</span>
+          <span>Current-state capture complete</span>
+          <span>Governance section piloting the section template</span>
+        </div>
+      </header>
+
+      <!-- ============ ORG STRUCTURE ============ -->
+      <section id="org-structure" class="wide">
+        <div class="section-label">Foundations &middot; 00</div>
+        <h2 class="section-title">Organizational structure, as it stands today</h2>
+        <p class="dek">One Head, eight functions, matrixed across two axes &mdash; function (what work is done) and region (where it's done). Six functions are global, setting a standard or running a program that applies everywhere; two are regional, executing those programs in-market.</p>
+
+        <div class="stat-row">
+          <div class="stat"><span class="stat-num">1</span><span class="stat-label">Head</span></div>
+          <div class="stat"><span class="stat-num">6</span><span class="stat-label">Global functions</span></div>
+          <div class="stat"><span class="stat-num">2</span><span class="stat-label">Regional functions</span></div>
+          <div class="stat"><span class="stat-num">30</span><span class="stat-label">Subteams</span></div>
+          <div class="stat"><span class="stat-num">2</span><span class="stat-label">Regions covered</span></div>
+        </div>
+
+        <div class="org-columns">
+          <div class="global">
+            <div class="zone-label"><span class="zone-dot g"></span>Global functions &mdash; horizontal</div>
+
+            <details class="fn-block">
+              <summary class="fn-card"><span class="fn-code">F1</span><div class="fn-body"><span class="fn-name">Governance</span><span class="fn-scope">Policy, standards, risk governance framework</span></div><span class="chevron">&rsaquo;</span></summary>
+              <div class="sub-list">
+                <div class="sub-row"><span class="sub-code">F1.1</span>Policy and Procedure Management</div>
+                <div class="sub-row"><span class="sub-code">F1.2</span>Domain Governance</div>
+                <div class="sub-row"><span class="sub-code">F1.3</span>Service Management</div>
+              </div>
+            </details>
+
+            <details class="fn-block">
+              <summary class="fn-card"><span class="fn-code">F2</span><div class="fn-body"><span class="fn-name">Operational Risk</span><span class="fn-scope">Identifies &amp; manages IT operational risk globally</span></div><span class="chevron">&rsaquo;</span></summary>
+              <div class="sub-list">
+                <div class="sub-row"><span class="sub-code">F2.1</span>Operational Risk Reporting</div>
+                <div class="sub-row"><span class="sub-code">F2.2</span>Operational Risk Events</div>
+                <div class="sub-row"><span class="sub-code">F2.3</span>Environmental Scanning</div>
+                <div class="sub-row"><span class="sub-code">F2.4</span>Risk and Control Self-Assessments</div>
+              </div>
+            </details>
+
+            <details class="fn-block">
+              <summary class="fn-card"><span class="fn-code">F3</span><div class="fn-body"><span class="fn-name">Shared Services</span><span class="fn-scope">Common tooling/capabilities used across functions</span></div><span class="chevron">&rsaquo;</span></summary>
+              <div class="sub-list">
+                <div class="sub-row"><span class="sub-code">F3.1</span>Control Testing</div>
+                <div class="sub-row"><span class="sub-code">F3.2</span>Reporting</div>
+                <div class="sub-row"><span class="sub-code">F3.3</span>Data &amp; Automation</div>
+                <div class="sub-row"><span class="sub-code">F3.4</span>Metrics Management</div>
+                <div class="sub-row"><span class="sub-code">F3.5</span>Risk and Control Advisory</div>
+              </div>
+            </details>
+
+            <details class="fn-block">
+              <summary class="fn-card"><span class="fn-code">F4</span><div class="fn-body"><span class="fn-name">Third Party Risk</span><span class="fn-scope">Risk management over vendors &amp; third parties</span></div><span class="chevron">&rsaquo;</span></summary>
+              <div class="sub-list">
+                <div class="sub-row"><span class="sub-code">F4.1</span>Supplier Control Assessments</div>
+                <div class="sub-row"><span class="sub-code">F4.2</span>Continuous Monitoring</div>
+                <div class="sub-row"><span class="sub-code">F4.3</span>Advisory Services</div>
+                <div class="sub-row"><span class="sub-code">F4.4</span>Shared Services Responsibility Assessment</div>
+              </div>
+            </details>
+
+            <details class="fn-block">
+              <summary class="fn-card"><span class="fn-code">F5</span><div class="fn-body"><span class="fn-name">Regulatory, Audit &amp; Issues Mgmt</span><span class="fn-scope">Exams, audit engagement, issue remediation</span></div><span class="chevron">&rsaquo;</span></summary>
+              <div class="sub-list">
+                <div class="sub-row"><span class="sub-code">F5.1</span>Request Intake</div>
+                <div class="sub-row"><span class="sub-code">F5.2</span>Audit &amp; Reg Prep</div>
+                <div class="sub-row"><span class="sub-code">F5.3</span>Reg Response</div>
+                <div class="sub-row"><span class="sub-code">F5.4</span>Client Due Diligence</div>
+              </div>
+            </details>
+
+            <details class="fn-block">
+              <summary class="fn-card"><span class="fn-code">F8</span><div class="fn-body"><span class="fn-name">Compliance Assessments</span><span class="fn-scope">Assesses adherence to policy &amp; regulatory requirements</span></div><span class="chevron">&rsaquo;</span></summary>
+              <div class="sub-list">
+                <div class="sub-row"><span class="sub-code">F8.1</span>Payments Assessments</div>
+                <div class="sub-row"><span class="sub-code">F8.2</span>Cloud Scorecard</div>
+                <div class="sub-row"><span class="sub-code">F8.3</span>Application Control Assessments</div>
+                <div class="sub-row"><span class="sub-code">F8.4</span>Infrastructure Control Assessments</div>
+              </div>
+            </details>
+          </div>
+
+          <div class="regional">
+            <div class="zone-label"><span class="zone-dot r"></span>Regional functions &mdash; vertical</div>
+
+            <details class="fn-block">
+              <summary class="fn-card"><span class="fn-code">F6</span><div class="fn-body"><span class="fn-name">US IT Risk</span><span class="fn-scope">Executes &amp; oversees the global program in the US</span></div><span class="chevron">&rsaquo;</span></summary>
+              <div class="sub-list">
+                <div class="sub-row"><span class="sub-code">F6.1</span>Local Assessments</div>
+                <div class="sub-row"><span class="sub-code">F6.2</span>Regional Governance</div>
+                <div class="sub-row"><span class="sub-code">F6.3</span>Regional Issues Management</div>
+              </div>
+            </details>
+
+            <details class="fn-block">
+              <summary class="fn-card"><span class="fn-code">F7</span><div class="fn-body"><span class="fn-name">EMEA IT Risk</span><span class="fn-scope">Executes &amp; oversees the global program in EMEA</span></div><span class="chevron">&rsaquo;</span></summary>
+              <div class="sub-list">
+                <div class="sub-row"><span class="sub-code">F7.1</span>Local Assessments</div>
+                <div class="sub-row"><span class="sub-code">F7.2</span>Regional Governance</div>
+                <div class="sub-row"><span class="sub-code">F7.3</span>Regional Issues Management</div>
+              </div>
+            </details>
+
+            <div class="matrix-note">APAC has no named function yet in this structure &mdash; see Open Items. The department also sits as one pillar within the bank's broader Global Security organization, one level above F1&ndash;F8.</div>
+          </div>
+        </div>
+
+        <h3>How this maps to the pillars discussed in working sessions</h3>
+        <p class="dek" style="margin-bottom:14px;">The rest of this document was captured pillar-by-pillar in conversation, using working names. Here's how those map onto the formal structure above.</p>
+        <div class="tbl-wrap">
+          <table class="recon-table">
+            <thead><tr><th>Working-session pillar</th><th>Formal function(s)</th></tr></thead>
+            <tbody>
+              <tr><td>Governance</td><td class="mono">F1 Governance</td></tr>
+              <tr><td>Operational Risk / Issues Management / Response Management / Maturity Assessments</td><td class="mono">F2 Operational Risk + F5 Regulatory, Audit &amp; Issues Mgmt</td></tr>
+              <tr><td>Assessments (Compliance &amp; Control + RCSA)</td><td class="mono">F8 Compliance Assessments + F2.4 RCSA</td></tr>
+              <tr><td>Reporting &amp; Analytics</td><td class="mono">F3.2 Reporting + F3.4 Metrics Management</td></tr>
+              <tr><td>Third Party Risk Management</td><td class="mono">F4 Third Party Risk</td></tr>
+              <tr><td>Control Testing</td><td class="mono">F3.1 Control Testing</td></tr>
+              <tr><td>Program Walrus / Transformation &amp; Automation</td><td class="mono">F3.3 Data &amp; Automation</td></tr>
+              <tr><td>United States</td><td class="mono">F6 US IT Risk</td></tr>
+              <tr><td>Europe</td><td class="mono">F7 EMEA IT Risk</td></tr>
+              <tr><td>APAC</td><td class="mono">Not yet named &mdash; open item</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="flag"><span class="lbl">Discrepancy to reconcile</span>RCSA sits under F2 Operational Risk in the formal structure, but was discussed as part of the "Assessments" pillar alongside Compliance &amp; Control Assessments (F8). Confirm which is accurate before the pillar sections below are finalized against this structure.</div>
+
+        <h3>Risk taxonomy</h3>
+        <p>Separately from the org structure above, risk itself is classified in a taxonomy the department also operates within:</p>
+        <div class="grid-2">
+          <div class="panel-card"><strong>Level 1</strong> &mdash; Operational Risk, the enterprise root.<br><strong>Level 2</strong> &mdash; 16 domains; Technology is one, alongside Business Resiliency, Model Risk, Fraud, Tax, Legal, and others still to confirm.</div>
+          <div class="panel-card"><strong>Within Technology</strong> &mdash; 12 domains (IT Operations, Cybersecurity, Architecture &amp; Innovation, IT Risk Management, SDLC, Strategy &amp; Planning, six more to confirm), with 45 Level&nbsp;3 sub-categories in aggregate.</div>
+        </div>
+        <p>Third-Party Risk, Cloud Computing, and Artificial Intelligence sit outside this hierarchy as <strong>transversal categories</strong> &mdash; asset/risk types that cut across every domain.</p>
+      </section>
+
+      <!-- ============ CROSS-CUTTING THEMES ============ -->
+      <section id="themes" class="wide">
+        <div class="section-label">Foundations &middot; 01</div>
+        <h2 class="section-title">Three themes that recur everywhere</h2>
+        <p class="dek">These surfaced independently across nearly every region and pillar. They belong at the macro level of the strategy &mdash; the pillar and regional detail later in this document are largely instances of one of the three.</p>
+
+        <div class="card">
+          <div class="card-head"><h4>A &mdash; Federated fragmentation &amp; non-standardization</h4><span class="chip chip-watch">Internal to IT Risk Management</span></div>
+          <div class="tags"><span class="tag tag-process">Process</span><span class="tag tag-people">People</span></div>
+          <p>A large number of federated teams &mdash; across regions and the center &mdash; overlap in remit, occasionally reach conflicting risk conclusions, and operate without standardized activities or methodology. Root cause is historical accretion, not deliberate design. This undermines the department's core deliverable: a single, consistent operational risk profile.</p>
+          <div class="evidence"><span class="lbl">Evidence</span>Second Line of Defense has raised concerns on the quality of self-identified issues &mdash; completeness, accuracy, and comprehensiveness.</div>
+          <p style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px;">Known instances</p>
+          <ul>
+            <li>US local Issues Management team duplicating the central Issues Management function (F6.3 vs. F5)</li>
+            <li>Operational Risk's internal reporting duplicating the central Reporting &amp; Analytics team (F2.1 vs. F3.2)</li>
+            <li>Third Party Risk producing its own reporting, only partially integrated with the center</li>
+            <li>Risk-control lineage inconsistency: teams locally recreate a centralized change-management control rather than referencing it</li>
+          </ul>
+          <p>Target direction is explicitly <strong>not</strong> full centralization &mdash; a hybrid, semi-federated model: standardize methodology and required activities centrally, keep execution federated.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h4>B &mdash; Legal-entity-aligned reporting</h4><span class="chip chip-reg">Regulatory driver</span></div>
+          <div class="tags"><span class="tag tag-people">People</span><span class="tag tag-process">Process</span><span class="tag tag-tech">Technology</span></div>
+          <p>The department's default operating model is platform-aligned. US regulatory requirements mandate legal-entity-level governance and reporting instead &mdash; a structural constraint, not a choice. The mismatch produces increased reporting variants, longer cycle times, and operational risk from inconsistent sub-entity-to-parent rollups.</p>
+          <p><strong>Live today in the US (F6).</strong> <strong>Emerging in Europe (F7)</strong> &mdash; business expansion brings direct ECB supervisory engagement in roughly 12&ndash;18 months, extending legal-entity reporting from the UK alone to Germany, France, and potentially others.</p>
+          <p>Strategic intent: solve once, as a reusable pattern, rather than re-solving per region as the requirement spreads.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h4>C &mdash; Data foundation &amp; reporting narrative capability</h4><span class="chip chip-flight">Remediation in flight</span></div>
+          <div class="tags"><span class="tag tag-tech">Technology</span><span class="tag tag-people">People</span></div>
+          <p>The same two weaknesses &mdash; inconsistent/poorly structured underlying data, and a reporting capability too junior or too narrow to turn data into a clear narrative &mdash; recur independently in Operational Risk, Assessments/RCSA, Reporting &amp; Analytics, and Third Party Risk. Worth treating as one department-wide capability gap rather than four unrelated ones.</p>
+        </div>
+      </section>
+
+      <!-- ============ PEOPLE ============ -->
+      <section id="people">
+        <div class="section-label">02</div>
+        <h2 class="section-title">People</h2>
+        <p class="dek">Skills in the team today, the centralization posture, and where people sit geographically.</p>
+
+        <h3>Skills</h3>
+        <div class="card"><h4>Turnover in Compliance &amp; Control Assessments (F8)</h4><p>Root cause confirmed as a lack of clear career paths &mdash; not compensation or burnout. Partially offset by in-flight automation of the assessments themselves.</p></div>
+        <div class="card"><h4>Reporting arm too junior (F3.2)</h4><p>The weekly risk report requires explaining metric breaches; the team lacks the technology domain understanding to write adequate explanations or assess true impact.</p></div>
+        <div class="card"><h4>Design arm lacks advisory capability (F3.4/F3.5)</h4><p>Can help teams measure correctly but can't yet act as a trusted adviser on whether a proposed KRI is the right thing to measure.</p></div>
+        <div class="card"><h4>Senior, domain-savvy capacity for domain-aligned reporting</h4><p>Target model: one person covering multiple domains, scaling toward full coverage of all twelve &mdash; not a dedicated resource per domain.</p></div>
+        <div class="card"><h4>Operational Risk: understaffed and underskilled (F2)</h4><span class="chip chip-watch">Open item</span><p>Confirmed as both a headcount and a skills gap; which is the larger driver is not yet resolved.</p></div>
+
+        <h3>Centralization posture</h3>
+        <p>The recurring answer across every fragmentation instance is the same: not full centralization, but a hybrid model &mdash; standardize the required activity and methodology centrally, keep delivery federated where genuinely necessary. Where duplication has no such justification (US Issues Management, a legacy of the regulatory-remediation era), the direction is straightforward consolidation.</p>
+        <div class="proof"><span class="lbl">Proof point</span>Control Testing (F3.1) is already run as one genuinely centralized, consistent team for all IT-related control testing bank-wide &mdash; a working example of the target model.</div>
+
+        <h3>Location strategy</h3>
+        <div class="grid-2">
+          <div class="panel-card"><span class="stat-num" style="font-size:22px;">60/40</span><div class="stat-label" style="margin-top:6px;">Control Testing's target offshore/onshore split via a third-party managed service. Offshore staff report into local delivery leads in Vancouver, Calgary, and Toronto. Growing pains, trending smoother.</div></div>
+          <div class="panel-card"><span class="stat-num" style="font-size:22px;">1&nbsp;&rarr;&nbsp;5</span><div class="stat-label" style="margin-top:6px;">Headcount plan for the new Emerging &amp; Environmental Risk team over the next 6&ndash;8 months (roughly Q1&ndash;Q2 2027).</div></div>
+        </div>
+        <p>Europe (F7) currently runs a deliberately thin model &mdash; a small UK team consuming and tailoring central output, running local governance forums and risk assessments. That's close to the department's own target operating model elsewhere; the open question is whether it can absorb the coming ECB-driven scale-up without becoming the next capacity failure point.</p>
+      </section>
+
+      <!-- ============ PROCESS ============ -->
+      <section id="process">
+        <div class="section-label">03</div>
+        <h2 class="section-title">Process</h2>
+        <p class="dek">What the center actually delivers today, and where the process itself &mdash; not the people or the tooling &mdash; is the constraint.</p>
+
+        <h3>Capabilities &amp; services catalog</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Function</th><th>Core services</th></tr></thead>
+            <tbody>
+              <tr><td><strong>F1 Governance</strong></td><td>1LoD IT risk governance; domain governance; procedures management (all of Tech &amp; Ops); service management; audit subcommittee (standing up)</td></tr>
+              <tr><td><strong>F2 Operational Risk</strong></td><td>Op-risk event review &amp; root cause; environmental scanning; risk profile production; RCSA</td></tr>
+              <tr><td><strong>F3 Shared Services</strong></td><td>Control testing; reporting; data &amp; automation (Walrus); metrics management; risk &amp; control advisory</td></tr>
+              <tr><td><strong>F4 Third Party Risk</strong></td><td>Supplier control assessments (SCA/SSRA); continuous monitoring; advisory; roadmap management</td></tr>
+              <tr><td><strong>F5 Regulatory, Audit &amp; Issues Mgmt</strong></td><td>Request intake; audit &amp; reg prep; reg response; client due diligence; issue closure governance</td></tr>
+              <tr><td><strong>F8 Compliance Assessments</strong></td><td>Payments (SWIFT/Fedline); cloud scorecard; application &amp; infrastructure control assessments</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Where process itself is the constraint</h3>
+        <div class="grid-2">
+          <div class="card"><h4>Governance granularity</h4><p>One committee today, delivering only high-level executive updates &mdash; not enough to discuss root cause or track remediation. A US maturity gap spanning every operational risk domain, not just IT.</p></div>
+          <div class="card"><h4>RCSA immaturity</h4><p>~8 risk registers across Tech &amp; Ops; comparable functions show 10&ndash;50 risks for essentially the same work. Teams recreate controls locally instead of referencing the centralized version.</p></div>
+          <div class="card"><h4>Maturity assessment findings go nowhere</h4><p>The annual cyber maturity benchmark identifies gaps but has no enforcement mechanism &mdash; findings never flow into the Issues Management pipeline this same pillar already owns.</p></div>
+          <div class="card"><h4>No root-cause aggregation across issues</h4><p>Both a process and technology gap. Would directly support the standardized-control-plane objective and more efficient remediation.</p></div>
+        </div>
+      </section>
+
+      <!-- ============ TECHNOLOGY ============ -->
+      <section id="technology" class="wide">
+        <div class="section-label">04</div>
+        <h2 class="section-title">Technology &mdash; Program Walrus</h2>
+        <p class="dek">The platform meant to take the department to near-real-time visibility of its overall risk profile (F3.3 Data &amp; Automation), and the capability gaps it's being built to close.</p>
+
+        <p>Data is being centralized from across Global Security &mdash; key controls and operations data into Snowflake, alongside Azure Data Lake and other sources &mdash; feeding a calculation engine that drives the platform's outputs.</p>
+
+        <div class="grid-3">
+          <div class="panel-card"><span class="stat-num" style="font-size:24px;">3</span><div class="stat-label" style="margin-top:4px;">Live components: control assessment automation, the metrics/reporting module, and control testing digitization.</div></div>
+          <div class="panel-card"><span class="stat-num" style="font-size:24px;">7</span><div class="stat-label" style="margin-top:4px;">Platforms live on digitized control testing, thousands of controls, with a first AI model in production.</div></div>
+          <div class="panel-card"><span class="stat-num" style="font-size:24px;">Daily</span><div class="stat-label" style="margin-top:4px;">Target publication frequency for the reporting module.</div></div>
+        </div>
+
+        <h4>Control assessment automation</h4>
+        <p>Live for application control assessments &mdash; previously a fully manual validation across hundreds of applications. Expanding to infrastructure control assessments and cloud scorecards.</p>
+
+        <h4>Metrics &amp; reporting module</h4>
+        <p>Migrating off Tableau/DataIQ onto Snowflake for calculation, with a Postgres/MongoDB application layer. Carries a proper hierarchy &mdash; legal entity, business, or individual manager &mdash; making it <strong>the actual technology fix for Theme B</strong>. Already carries all KRIs; expanding to absorb KPIs.</p>
+
+        <div class="proof"><span class="lbl">Strategic initiative &mdash; KPI consolidation</span>Production of KPIs for IT Risk Management, Cybersecurity, Data Protection, and Logical Access Management is being brought through one common process, run centrally. Driver: accountability under the domain governance model, trust in governance-channel data, and segregation of duties. Pitching October 2026, onboarding through 2027.</div>
+        <div class="flag"><span class="lbl">Open item</span>Whether this expansion is funded with new capacity, given the Reporting arm is already understaffed.</div>
+
+        <h4>Control testing digitization</h4>
+        <p>Live across seven platforms and thousands of controls, with an AI model handling transcription and parsing of control walkthroughs. Expanding toward automated quality analysis &mdash; a copilot working alongside the tester.</p>
+
+        <h3>Next phase &mdash; automated risk profile &amp; Control Strength</h3>
+        <p>Generate a risk profile at any level of the hierarchy &mdash; legal entity, business unit, platform, function &mdash; automatically, scored 1&ndash;6 at every level.</p>
+
+        <h4>Control Strength</h4>
+        <p>Calculated per control, from weighted factors: design (Test of Design), effectiveness (Test of Effectiveness), whether the corresponding KRI/KCI is within appetite, open issues against it (negative factor), and whether the control is automated (bonus weighting).</p>
+
+        <h4>Decomposing the risk statement</h4>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Clause</th><th>Taxonomy level</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">&ldquo;the risk of&nbsp;[X]&rdquo;</td><td>Domain level</td><td><span class="chip chip-good">Defined</span></td></tr>
+              <tr><td class="mono">&ldquo;due to&nbsp;[Y]&rdquo;</td><td>Level 3 subdomain &mdash; the scenario taxonomy</td><td><span class="chip chip-watch">Needs the most work &mdash; no inventory exists today</span></td></tr>
+              <tr><td class="mono">&ldquo;resulting in&nbsp;[Z]&rdquo;</td><td>Impact/consequence</td><td><span class="chip chip-watch">Open &mdash; mapping unconfirmed</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>A due-to with no mapped control is a systematically surfaced, concrete control gap &mdash; the strategic value of this work goes beyond the score itself.</p>
+
+        <h3>Missing capabilities <span style="font-size:13px;color:var(--muted);font-family:ui-monospace,monospace;text-transform:none;letter-spacing:0;">(self-identified, not externally flagged)</span></h3>
+        <div class="grid-2">
+          <div class="card"><h4>Proactive regulatory monitoring</h4><p>No ability today to reconcile regulation against the control environment or gap-analyze compliance across operating regions &mdash; directly relevant to closing Europe's ECB-readiness gap.</p></div>
+          <div class="card"><h4>Shadow IT management</h4><p>No practices in place, despite an FFIEC requirement to have them.</p></div>
+          <div class="card"><h4>Departmental delivery speed</h4><p>A general velocity problem; not yet clear whether it's distinct or the sum of gaps already captured elsewhere.</p></div>
+          <div class="card"><h4>AI risk integration</h4><p>Owned by the new Emerging &amp; Environmental Risk team &mdash; one leader today, scaling to five over 6&ndash;8 months. Scope: model risk, AI-enabled SDLC, tokenized finance, quantum.</p></div>
+        </div>
+      </section>
+
+      <hr class="rule">
+
+      <!-- ============ REGIONAL ============ -->
+      <section id="region-us" class="wide">
+        <div class="section-label">Regional &middot; 05 &middot; F6</div>
+        <h2 class="section-title">United States</h2>
+
+        <div class="card">
+          <div class="card-head"><h4>US &middot; 01 &mdash; Legal-entity reporting misalignment</h4><span class="chip chip-reg">Regulatory, not a choice</span></div>
+          <div class="tbl-wrap"><table>
+            <thead><tr><th>People</th><th>Process</th><th>Technology</th></tr></thead>
+            <tbody><tr>
+              <td>Already dedicated &amp; entity-aligned; realigning for efficiency</td>
+              <td>Redesign within the current framework to add entity as a delivery dimension</td>
+              <td>In flight, partially funded &mdash; Walrus's entity hierarchy is the fix</td>
+            </tr></tbody>
+          </table></div>
+        </div>
+        <div class="card"><div class="card-head"><h4>US &middot; 02 &mdash; Governance granularity</h4><span class="chip chip-watch">Maturity gap</span></div><p>A single operating committee delivers only high-level updates. Target: tiered governance feeding the existing US Technology Operating Committee.</p></div>
+        <div class="card"><div class="card-head"><h4>US &middot; 03 &mdash; Issues Management duplication</h4><span class="chip chip-watch">Historical inertia</span></div><p>A local team (F6.3) duplicates the central Issues Management function (F5). Origin: regulatory-remediation-era capacity, now outlived.</p></div>
+      </section>
+
+      <section id="region-eu" class="wide">
+        <div class="section-label">Regional &middot; 06 &middot; F7</div>
+        <h2 class="section-title">Europe</h2>
+        <p class="dek">Today a deliberately thin model &mdash; a small UK team consuming and tailoring central output. Close to the department's own target operating model, worth citing as a proof point.</p>
+        <div class="card"><div class="card-head"><h4>EU &middot; 01 &mdash; Capacity &amp; regulatory-capability gap</h4><span class="chip chip-reg">~12&ndash;18 months out</span></div><p>Already stretched; business expansion brings direct ECB engagement, raising both volume and required capability.</p><div class="flag"><span class="lbl">Open item</span>Whether the build-out is funded, and whether Germany/France entity onboarding staggers with the ECB timeline.</div></div>
+        <div class="card"><div class="card-head"><h4>EU &middot; 02 &mdash; Multi-entity legal-entity reporting expansion</h4><span class="chip chip-reg">Same pattern as US &middot; 01</span></div><p>UK-only today; expanding to Germany, France, and potentially others.</p></div>
+      </section>
+
+      <section id="region-apac" class="wide">
+        <div class="section-label">Regional &middot; 07</div>
+        <h2 class="section-title">APAC</h2>
+        <div class="flag"><span class="lbl">Deferred &mdash; not yet detailed</span>Working assumption is that APAC echoes the European pattern &mdash; capacity/regulatory driver, multi-entity expansion, internal fragmentation. No formal function code exists yet for APAC in the org structure above; needs its own pain-point pass and formal naming.</div>
+      </section>
+
+      <hr class="rule">
+
+      <!-- ============ GOVERNANCE — TEMPLATE PILOT ============ -->
+      <section id="pillar-governance" class="wide">
+        <div class="section-label">Center &middot; 08 &middot; F1</div>
+        <span class="template-tag">Section template &middot; pilot</span>
+        <h2 class="section-title">Governance</h2>
+        <p class="dek">This section pilots the standard template every pillar will use: mission, current capabilities &amp; achievements, gaps &amp; three-year deliverables by subgroup, and a visual milestone timeline.</p>
+
+        <div class="mission-block">
+          <div class="lbl">Mission</div>
+          <p>To have best-in-class governance processes resulting in cross-domain risk reduction.</p>
+        </div>
+
+        <h3>Current capabilities &amp; achievements <span class="mono-suffix">past 2 years</span></h3>
+        <p>Governance today runs three subgroups: policy and procedure management (F1.1), domain governance (F1.2), and service management (F1.3). F1.1 already carries a broad mandate &mdash; oversight of all IT-related procedures across the whole of Technology and Operations, not just the department's own scope. F1.2 has a domain governance program in flight, building deeper accountability and structure within each IT risk domain. F1.3's current scope, as it maps to the PI Planning/agile enablement work and the audit subcommittee discussed in working sessions, is a working assumption &mdash; not yet confirmed.</p>
+        <div class="flag"><span class="lbl">Data not yet gathered</span>Specific, dated achievements over the past two years haven't been captured in working sessions to date. This subsection is a placeholder &mdash; populate with real milestones (program launches, forums stood up, standards published) as they're confirmed.</div>
+
+        <h3>Gaps &amp; three-year deliverables, by subgroup</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Subgroup</th><th>Current gap</th><th>3-year deliverable <span style="text-transform:none;">(draft)</span></th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="mono">F1.1<br>Policy &amp; Procedure Mgmt</td>
+                <td>Scope spans all of Technology &amp; Operations, not just IT risk; resourcing adequacy against that scope is unconfirmed.</td>
+                <td>Formally resource and scope procedure ownership across Tech &amp; Ops. <em>&mdash; detail TBD</em></td>
+              </tr>
+              <tr>
+                <td class="mono">F1.2<br>Domain Governance</td>
+                <td>Single committee model still delivers only high-level updates &mdash; insufficient for root-cause or remediation tracking. Spans all operational risk domains; driven by US maturity, not regulation.</td>
+                <td>Mature to tiered, domain-specific governance forums feeding existing operating committees, piloted in the US and extended to EU/APAC.</td>
+              </tr>
+              <tr>
+                <td class="mono">F1.3<br>Service Management</td>
+                <td>Content mapped here (agile/PI planning enablement; audit subcommittee) is a working assumption pending confirmation.</td>
+                <td>Audit subcommittee designed and operating (Year 1, executive-mandated). Agile/PI planning maturity target &mdash; <em>TBD</em>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="flag"><span class="lbl">Mapping assumption</span>F1.3 Service Management's content is inferred from working-session material (PI Planning, audit subcommittee), not confirmed against the formal subteam definition. Confirm before treating this row as settled.</div>
+
+        <h3>Milestones <span class="mono-suffix">2026&ndash;2029</span></h3>
+        <div class="timeline">
+          <div class="timeline-year">
+            <div class="timeline-year-head">2026<span class="yr-tag">Year 1</span></div>
+            <div class="timeline-body">
+              <div class="milestone"><span class="dot"></span><div class="txt"><span class="when">Sept 2026 &middot; confirmed</span>Audit subcommittee designed &amp; stood up &mdash; CIO/CTO mandate</div></div>
+              <div class="milestone draft"><span class="dot"></span><div class="txt"><span class="when">draft</span>Domain governance tiering scoped for US pilot</div></div>
+            </div>
+          </div>
+          <div class="timeline-year">
+            <div class="timeline-year-head">2027<span class="yr-tag">Year 2</span></div>
+            <div class="timeline-body">
+              <div class="milestone draft"><span class="dot"></span><div class="txt"><span class="when">draft</span>Tiered domain governance piloted in the US</div></div>
+              <div class="milestone draft"><span class="dot"></span><div class="txt"><span class="when">draft</span>Procedures management scope/resourcing formally confirmed</div></div>
+            </div>
+          </div>
+          <div class="timeline-year">
+            <div class="timeline-year-head">2028<span class="yr-tag">Year 3</span></div>
+            <div class="timeline-body">
+              <div class="milestone draft"><span class="dot"></span><div class="txt"><span class="when">draft</span>Domain governance model extended to EU</div></div>
+            </div>
+          </div>
+          <div class="timeline-year">
+            <div class="timeline-year-head">2029<span class="yr-tag">Year 4</span></div>
+            <div class="timeline-body">
+              <div class="milestone draft"><span class="dot"></span><div class="txt"><span class="when">draft</span>Domain governance model extended to APAC; full 12-domain coverage</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="callout"><strong>Solid marker</strong> = confirmed date. <strong>Hollow marker, italic</strong> = draft/placeholder pending confirmation &mdash; per the working agreement, these populate as real data arrives rather than blocking the section.</div>
+      </section>
+
+      <!-- ============ REMAINING PILLARS — CONTENT PRESERVED, TEMPLATE PENDING ============ -->
+      <section id="pillar-oprisk" class="wide">
+        <div class="section-label">Center &middot; 09 &middot; F2 / F5</div>
+        <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
+        <h2 class="section-title">Operational Risk, Issues Management &amp; Response Management</h2>
+        <p class="dek">Four teams under one leader &mdash; a notable span of control worth weighing as strength or strain. Carries content from working sessions; mission, achievements, and the gap/deliverable table are pending, same as the Governance template above.</p>
+
+        <h3>Operational Risk <span class="mono-suffix">F2.1&ndash;F2.4</span></h3>
+        <p>Mandate across all operational risk categories for all of Technology and Operations: op-risk event review and root cause assessment, environmental scanning, and building/articulating the overall risk profile.</p>
+        <div class="evidence"><span class="lbl">Core mandate gap</span>Cannot yet produce a comprehensive risk profile across all operational risk categories for Technology and Operations. Root cause: a deliberate three-year focus on technology risk specifically.</div>
+        <div class="tags"><span class="tag tag-people">People &mdash; understaffed &amp; underskilled</span><span class="tag tag-tech">Technology &mdash; disparate systems, remediation in flight</span><span class="tag tag-process">Process &mdash; reporting duplicates the central team</span></div>
+
+        <h3>Issues Management <span class="mono-suffix">F5</span></h3>
+        <p>Measures and monitors every issue type across Technology and Operations, all regions. Owns closure effectiveness, closure/submission quality, and aging governance reporting &mdash; the function shadowed by the local US team (US&nbsp;02/03).</p>
+
+        <h3>Response Management <span class="mono-suffix">F5.2/F5.3</span></h3>
+        <p>Today: regulatory response coordination. Scaling to cover audit and regulatory coordination within five months.</p>
+        <div class="tags"><span class="chip chip-watch">Aspirational, hard deadline</span><span class="chip chip-good">Funded via Global Security team centralization</span></div>
+
+        <h3>Maturity Assessments</h3>
+        <p>Annual NIST Cybersecurity Framework benchmark against peers. Broadening this year to NIST, COBIT, and other standards for coverage across all twelve domains.</p>
+        <div class="evidence"><span class="lbl">Fixable connectivity gap</span>Findings never flow into the Issues Management process this same pillar already owns.</div>
+      </section>
+
+      <section id="pillar-assessments" class="wide">
+        <div class="section-label">Center &middot; 10 &middot; F8 / F2.4</div>
+        <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
+        <h2 class="section-title">Assessments</h2>
+        <h3>Compliance &amp; Control Assessments <span class="mono-suffix">F8</span></h3>
+        <p>Application, infrastructure, and cloud scorecard control assessments, plus SWIFT/Fedline payments compliance (F8.1, in-house, no pain points). High turnover, root cause: lack of clear career paths.</p>
+        <h3>Risk &amp; Control Assessments <span class="mono-suffix">F2.4</span></h3>
+        <p>An RCSA team and a separate process-RCSA team covering process-level assessments across all twelve IT risk domains.</p>
+        <div class="evidence"><span class="lbl">Concrete evidence of immaturity</span>~8 risk registers across Technology and Operations; comparable functions hold 10&ndash;50 risks for essentially the same work. Teams have been found locally declaring a change-management control instead of referencing the existing centralized one.</div>
+      </section>
+
+      <section id="pillar-reporting" class="wide">
+        <div class="section-label">Center &middot; 11 &middot; F3.2 / F3.4</div>
+        <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
+        <h2 class="section-title">Reporting &amp; Analytics</h2>
+        <div class="grid-2">
+          <div class="card"><h4>Reporting arm</h4><p>Understaffed by departures, too junior/lacking the technology understanding to write adequate breach explanations.</p></div>
+          <div class="card"><h4>Design arm</h4><p>Has the technical data skills but not the trusted-adviser capability to help teams design the right KRI.</p></div>
+        </div>
+        <div class="evidence"><span class="lbl">Speed of domain-aligned transition</span>Weekly reporting stood up well. The shift to domain-aligned reporting is lagging on capacity and comfort with the current format.</div>
+      </section>
+
+      <section id="pillar-thirdparty" class="wide">
+        <div class="section-label">Center &middot; 12 &middot; F4</div>
+        <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
+        <h2 class="section-title">Third Party Risk Management</h2>
+        <p class="dek">A transversal category, like Cloud and AI &mdash; not one of the twelve domains. Runs centralized functions for all Supplier Management Offices bank-wide.</p>
+        <div class="grid-3">
+          <div class="card"><h4>Assessments <span class="mono-suffix">F4.1</span></h4><p>Security Control Assessment for any third-party engagement; SSRA as a SaaS-specific addendum.</p></div>
+          <div class="card"><h4>Continuous monitoring <span class="mono-suffix">F4.2</span></h4><p>External tools (Black Kite, SecurityScorecard) tracking vendor risk posture.</p></div>
+          <div class="card"><h4>Advisory <span class="mono-suffix">F4.3</span></h4><p>Helps Supplier Management Offices interpret and report SCA data; owns the roadmap.</p></div>
+        </div>
+        <div class="flag"><span class="lbl">Pain point</span>No articulated strategic vision for the pillar &mdash; the operational machinery runs, but its target state is undefined.</div>
+      </section>
+
+      <section id="pillar-controltesting" class="wide">
+        <div class="section-label">Center &middot; 13 &middot; F3.1</div>
+        <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
+        <h2 class="section-title">Control Testing</h2>
+        <p class="dek">The largest team, and the one genuine proof point that centralized, consistent delivery already works here.</p>
+        <div class="grid-3">
+          <div class="panel-card"><span class="stat-num" style="font-size:22px;">~600</span><div class="stat-label" style="margin-top:4px;">Controls tested per year, bank-wide.</div></div>
+          <div class="panel-card"><span class="stat-num" style="font-size:22px;">3 yrs</span><div class="stat-label" style="margin-top:4px;">Test of Design cycle; Test of Effectiveness runs annually.</div></div>
+          <div class="panel-card"><span class="stat-num" style="font-size:22px;">60/40</span><div class="stat-label" style="margin-top:4px;">Target offshore/onshore split, transitioning now.</div></div>
+        </div>
+        <div class="evidence"><span class="lbl">Concrete impact &mdash; audit &amp; 2LoD rejection</span>Internal Audit and Second Line rejected controls, citing inability to demonstrate controls couldn't be circumvented, inability to verify appropriate inputs, and failure to identify upstream control failures.</div>
+        <p>Root cause: a lack of operational rigor &mdash; no effective test planning, no book-of-work management, no firm grasp on required financials. Described as a significant risk at both a personal/career and departmental level.</p>
+        <div class="proof"><span class="lbl">2027 direction</span>Stratify and consolidate the control environment bank-wide; move toward continuous control monitoring; heavy ongoing investment in AI-driven test automation.</div>
+      </section>
+
+      <hr class="rule">
+
+      <!-- ============ SUMMARY ============ -->
+      <section id="summary" class="wide">
+        <div class="section-label">Reference &middot; 14</div>
+        <h2 class="section-title">Pain point summary</h2>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Where</th><th>Pain point</th><th>Tags</th><th>Driver</th></tr></thead>
+            <tbody>
+              <tr><td>US &middot; F6</td><td>Legal-entity reporting misalignment</td><td><span class="tag tag-people">P</span> <span class="tag tag-process">Pr</span> <span class="tag tag-tech">T</span></td><td>Regulatory</td></tr>
+              <tr><td>US &middot; F6</td><td>Governance granularity</td><td><span class="tag tag-people">P</span> <span class="tag tag-process">Pr</span></td><td>Maturity</td></tr>
+              <tr><td>US &middot; F6</td><td>Issues Management duplication</td><td><span class="tag tag-people">P</span> <span class="tag tag-process">Pr</span></td><td>Historical inertia</td></tr>
+              <tr><td>EU &middot; F7</td><td>Capacity &amp; ECB capability gap</td><td><span class="tag tag-people">P</span> <span class="tag tag-process">Pr</span></td><td>Regulatory / expansion</td></tr>
+              <tr><td>EU &middot; F7</td><td>Multi-entity reporting expansion</td><td><span class="tag tag-people">P</span> <span class="tag tag-process">Pr</span> <span class="tag tag-tech">T</span></td><td>Regulatory / expansion</td></tr>
+              <tr><td>Macro</td><td>Federated fragmentation &amp; non-standardization</td><td><span class="tag tag-people">P</span> <span class="tag tag-process">Pr</span></td><td>Historical accretion</td></tr>
+              <tr><td>Governance &middot; F1</td><td>Audit subcommittee not yet built</td><td><span class="tag tag-people">P</span> <span class="tag tag-process">Pr</span></td><td>CIO/CTO mandate</td></tr>
+              <tr><td>Op Risk &middot; F2</td><td>Cannot produce comprehensive risk profile</td><td><span class="tag tag-people">P</span> <span class="tag tag-process">Pr</span> <span class="tag tag-tech">T</span></td><td>Maturity / historical focus</td></tr>
+              <tr><td>Op Risk &middot; F2</td><td>Reporting duplicates central team</td><td><span class="tag tag-process">Pr</span></td><td>Historical accretion</td></tr>
+              <tr><td>Response Mgmt &middot; F5</td><td>Regulatory&rarr;audit+regulatory scale-up</td><td><span class="tag tag-people">P</span></td><td>Market challenges / funded</td></tr>
+              <tr><td>Maturity Assess.</td><td>Findings don't reach Issues Management</td><td><span class="tag tag-process">Pr</span></td><td>Missing connectivity</td></tr>
+              <tr><td>Assessments &middot; F8</td><td>High turnover, control assessments</td><td><span class="tag tag-people">P</span></td><td>Lack of career path</td></tr>
+              <tr><td>Assessments &middot; F2.4</td><td>RCSA immaturity &amp; control lineage</td><td><span class="tag tag-process">Pr</span> <span class="tag tag-tech">T</span></td><td>Historical / no standard</td></tr>
+              <tr><td>Reporting &middot; F3.2</td><td>Too junior, lacks tech understanding</td><td><span class="tag tag-people">P</span></td><td>Skills gap</td></tr>
+              <tr><td>Reporting &middot; F3.4</td><td>Design arm lacks advisory capability</td><td><span class="tag tag-people">P</span></td><td>Skills gap</td></tr>
+              <tr><td>Reporting</td><td>Speed of domain-aligned transition</td><td><span class="tag tag-people">P</span></td><td>Capacity / status quo</td></tr>
+              <tr><td>Third Party &middot; F4</td><td>No strategic vision</td><td><span class="tag tag-process">Pr</span></td><td>Undefined target state</td></tr>
+              <tr><td>Third Party &middot; F4</td><td>Data inconsistency &amp; weak reporting</td><td><span class="tag tag-process">Pr</span> <span class="tag tag-tech">T</span></td><td>Historical accretion</td></tr>
+              <tr><td>Control Testing &middot; F3.1</td><td>Lacks operational rigor</td><td><span class="tag tag-process">Pr</span></td><td>Audit / 2LoD rejection</td></tr>
+              <tr><td>Control Testing &middot; F3.1</td><td>Inventory access control gap</td><td><span class="tag tag-tech">T</span></td><td>No governance on repository</td></tr>
+              <tr><td>Dept-wide</td><td>No root-cause aggregation across issues</td><td><span class="tag tag-process">Pr</span> <span class="tag tag-tech">T</span></td><td>Self-identified</td></tr>
+              <tr><td>Dept-wide</td><td>No proactive regulatory monitoring</td><td><span class="tag tag-process">Pr</span> <span class="tag tag-tech">T</span></td><td>Self-identified</td></tr>
+              <tr><td>Dept-wide</td><td>No shadow IT management practices</td><td><span class="tag tag-process">Pr</span></td><td>FFIEC requirement</td></tr>
+              <tr><td>Dept-wide</td><td>Delivery speed</td><td>&mdash;</td><td>Self-identified, unresolved</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ OPEN ITEMS ============ -->
+      <section id="open-items" class="wide">
+        <div class="section-label">Reference &middot; 15</div>
+        <h2 class="section-title">Open items</h2>
+        <ol class="oi-list">
+          <li class="oi-item resolved"><span class="oi-num">&#10003;</span><div><p>SSRA acronym &mdash; resolved via org-structure.md: <strong>Shared Services Responsibility Assessment</strong> (F4.4), not the SaaS-specific reading assumed earlier.</p><span class="oi-src">Third Party Risk</span></div></li>
+          <li class="oi-item"><span class="oi-num">01</span><div><p>Remaining six of the twelve Technology domain names, and remaining ~ten of the sixteen overall operational risk domains.</p><span class="oi-src">Org structure &amp; taxonomy</span></div></li>
+          <li class="oi-item"><span class="oi-num">02</span><div><p>Confirm the risk-profile mandate covers how the other fifteen operational risk categories manifest within Technology and Operations, not enterprise-wide ownership.</p><span class="oi-src">Org structure &amp; taxonomy</span></div></li>
+          <li class="oi-item"><span class="oi-num">03</span><div><p>RCSA is placed under F2 Operational Risk in the formal structure but was discussed as part of the "Assessments" pillar with F8. Reconcile which is accurate.</p><span class="oi-src">Org structure &amp; taxonomy</span></div></li>
+          <li class="oi-item"><span class="oi-num">04</span><div><p>APAC has no assigned function code in the formal structure (F1&ndash;F8 stop at F7/F8, with no APAC equivalent to F6/F7). Confirm whether it needs one, or is folded into an existing function.</p><span class="oi-src">Org structure &amp; taxonomy</span></div></li>
+          <li class="oi-item"><span class="oi-num">05</span><div><p>F5.4 Client Due Diligence appears in the formal structure but was never discussed in working sessions &mdash; scope and pain points unknown.</p><span class="oi-src">Org structure &amp; taxonomy</span></div></li>
+          <li class="oi-item"><span class="oi-num">06</span><div><p>F1.3 Service Management's mapping to PI Planning/agile enablement and the audit subcommittee is an assumption, not confirmed.</p><span class="oi-src">Governance</span></div></li>
+          <li class="oi-item"><span class="oi-num">07</span><div><p>Governance: specific, dated achievements over the past two years have not yet been gathered.</p><span class="oi-src">Governance</span></div></li>
+          <li class="oi-item"><span class="oi-num">08</span><div><p>US Issues Management: full centralization vs. a thin local liaison role, and whether the shadowing pattern repeats elsewhere in the remit.</p><span class="oi-src">United States</span></div></li>
+          <li class="oi-item"><span class="oi-num">09</span><div><p>Europe: does Germany/France entity onboarding stagger with the ECB engagement timeline, and is the capacity/capability build funded?</p><span class="oi-src">Europe</span></div></li>
+          <li class="oi-item"><span class="oi-num">10</span><div><p>Procedures management's resourcing adequacy, given its scope spans all of Technology and Operations.</p><span class="oi-src">Governance</span></div></li>
+          <li class="oi-item"><span class="oi-num">11</span><div><p>Operational Risk: which is the bigger driver, understaffing or underskilling?</p><span class="oi-src">Op Risk, Issues &amp; Response Mgmt</span></div></li>
+          <li class="oi-item"><span class="oi-num">12</span><div><p>Is the Maturity Assessment's expansion to full 12-domain coverage resourced?</p><span class="oi-src">Op Risk, Issues &amp; Response Mgmt</span></div></li>
+          <li class="oi-item"><span class="oi-num">13</span><div><p>Is the four-domain KPI-consolidation expansion funded with new capacity, or absorbed by an already-strained team?</p><span class="oi-src">Reporting &amp; Analytics / Technology</span></div></li>
+          <li class="oi-item"><span class="oi-num">14</span><div><p>Framing choice for Control Testing's "risk to me personally" language for the ExCo-facing draft.</p><span class="oi-src">Control Testing</span></div></li>
+          <li class="oi-item"><span class="oi-num">15</span><div><p>Where does the "resulting in [Z]" impact/consequence clause map within the Control Strength taxonomy?</p><span class="oi-src">Technology &mdash; Walrus</span></div></li>
+          <li class="oi-item"><span class="oi-num">16</span><div><p>Full APAC pain-point pass &mdash; currently assumed to echo Europe's pattern; unconfirmed.</p><span class="oi-src">APAC</span></div></li>
+          <li class="oi-item"><span class="oi-num">17</span><div><p>Is the departmental delivery-speed problem a distinct root cause, or the sum of gaps already captured elsewhere?</p><span class="oi-src">Technology &mdash; Walrus</span></div></li>
+        </ol>
+      </section>
+    </div>
+
+    <footer>
+      Working draft &middot; formatted to the Global IT Risk design system (work-automation repo). Governance pilots the section template &mdash; mission, achievements, gaps &amp; 3-year deliverables, milestone timeline &mdash; for rollout to the remaining five pillars next.
+    </footer>
+  </main>
+</div>
