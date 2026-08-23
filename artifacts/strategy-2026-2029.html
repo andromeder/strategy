@@ -22,6 +22,9 @@
   --tag-people-soft: #ece2ee;
   --tag-tech: #8a6a2f;
   --tag-tech-soft: #f0e6d2;
+  --rm-reporting: #3d5a80;
+  --rm-controltesting: #7a3b3b;
+  --rm-walrus: #4f6b4a;
   --shadow: 0 1px 2px rgba(26, 33, 48, 0.06);
   color-scheme: light;
 }
@@ -36,6 +39,7 @@
     --status-bad: #e0685f; --status-bad-soft: #331d1a;
     --tag-people: #b393bd; --tag-people-soft: #2a2130;
     --tag-tech: #cfa855; --tag-tech-soft: #302914;
+    --rm-reporting: #7fa0c4; --rm-controltesting: #c98080; --rm-walrus: #8fb386;
     --shadow: none; color-scheme: dark;
   }
 }
@@ -49,6 +53,7 @@
   --status-bad: #e0685f; --status-bad-soft: #331d1a;
   --tag-people: #b393bd; --tag-people-soft: #2a2130;
   --tag-tech: #cfa855; --tag-tech-soft: #302914;
+  --rm-reporting: #7fa0c4; --rm-controltesting: #c98080; --rm-walrus: #8fb386;
   --shadow: none; color-scheme: dark;
 }
 
@@ -84,6 +89,7 @@ p { margin: 0 0 .9em; max-width: 64ch; }
 .nav a { display: block; padding: 5px 6px; border-radius: 4px; color: var(--muted); text-decoration: none; font-size: 13.5px; }
 .nav a:hover { background: var(--paper); color: var(--ink); }
 .nav a.pending::after { content: "draft"; float: right; font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--status-warn); }
+.nav a.active { background: var(--paper); color: var(--ink); font-weight: 600; box-shadow: inset 2px 0 0 var(--global); }
 
 main { padding: 0 clamp(20px,5vw,64px) 100px; min-width: 0; }
 .page { max-width: 900px; margin: 0 auto; padding: 52px 0 0; }
@@ -91,12 +97,13 @@ main { padding: 0 clamp(20px,5vw,64px) 100px; min-width: 0; }
 
 header .eyebrow, .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .title { font-size: 34px; line-height: 1.2; max-width: 26ch; margin-top: 6px; }
-.dek { margin-top: 14px; max-width: 62ch; font-size: 17px; color: var(--muted); }
+.dek { margin-top: 14px; max-width: none; font-size: 17px; color: var(--muted); }
 .meta-row { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
 .meta-row strong { color: var(--ink); font-weight: 600; }
 .pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border: 1px solid var(--line-strong); border-radius: 100px; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; font-family: ui-monospace, monospace; }
 
-section { margin-top: 60px; scroll-margin-top: 20px; }
+.page > section { display: none; margin-top: 40px; scroll-margin-top: 20px; padding-bottom: 8px; }
+.page > section.active-section { display: block; }
 .section-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
 .section-title { font-size: 25px; margin-bottom: 8px; }
 section > .dek { margin-top: 0; margin-bottom: 22px; }
@@ -181,6 +188,35 @@ li { margin-bottom: .35em; }
 .milestone .txt .when { font-family: ui-monospace, monospace; font-size: 10px; color: var(--muted); display: block; text-transform: uppercase; letter-spacing: .03em; }
 .milestone.draft .txt { color: var(--muted); font-style: italic; }
 
+/* ---- consolidated roadmap ---- */
+.rm-scroll { overflow-x: auto; margin: 20px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--paper-raised); }
+.rm { min-width: 1180px; }
+.rm-grid { display: grid; grid-template-columns: 250px repeat(14, minmax(52px, 1fr)); }
+.rm-years, .rm-quarters { display: grid; grid-template-columns: 250px repeat(14, minmax(52px, 1fr)); }
+.rm-years { padding-top: 12px; }
+.rm-years .yr { text-align: center; font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: .05em; color: var(--muted); padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+.rm-quarters { border-bottom: 2px solid var(--line-strong); }
+.rm-quarters .rm-corner { padding: 4px 14px 10px; font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); align-self: end; }
+.rm-quarters .q { text-align: center; font-family: ui-monospace, monospace; font-size: 10px; color: var(--muted); padding: 4px 0 10px; border-left: 1px solid var(--line); }
+.rm-group-head { display: flex; align-items: center; gap: 8px; padding: 16px 14px 6px; }
+.rm-group-head .dot { width: 9px; height: 9px; border-radius: 2px; background: var(--rm-color, var(--global)); flex-shrink: 0; }
+.rm-group-head .name { font-family: ui-monospace, monospace; font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink); }
+.rm-group-head .code { font-family: ui-monospace, monospace; font-size: 10.5px; color: var(--muted); }
+.rm-row { --rm-color: var(--global); display: grid; grid-template-columns: 250px repeat(14, minmax(52px, 1fr)); align-items: center; border-top: 1px solid var(--line); min-height: 50px; }
+.rm-label { padding: 8px 14px; }
+.rm-label strong { display: block; font-size: 13px; color: var(--ink); font-weight: 600; }
+.rm-benefit { display: block; font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.35; max-width: none; }
+.rm-bar { height: 15px; border-radius: 4px; background: var(--rm-color); opacity: .88; }
+.rm-bar.draft { background: transparent; border: 1.5px dashed var(--rm-color); opacity: 1; }
+.rm-milestone { width: 9px; height: 9px; transform: rotate(45deg); justify-self: center; background: var(--rm-color); }
+.rm-milestone.draft { background: transparent; border: 1.5px dashed var(--rm-color); }
+.rm-legend { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 14px; font-size: 12.5px; color: var(--muted); align-items: center; }
+.rm-legend .lg-item { display: flex; align-items: center; gap: 6px; }
+.rm-legend .lg-bar { width: 22px; height: 10px; border-radius: 3px; background: var(--muted-2, var(--muted)); }
+.rm-legend .lg-bar.draft { background: transparent; border: 1.5px dashed var(--muted); }
+.rm-legend .lg-diamond { width: 8px; height: 8px; transform: rotate(45deg); background: var(--muted); }
+.rm-legend .lg-diamond.draft { background: transparent; border: 1.5px dashed var(--muted); }
+
 /* ---- table ---- */
 .tbl-wrap { overflow-x: auto; margin: 18px 0; border: 1px solid var(--line); border-radius: 6px; }
 table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 560px; }
@@ -241,6 +277,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
     </div>
     <div class="nav-group">
       <p class="nav-group-label">Reference</p>
+      <a href="#roadmap">Consolidated roadmap</a>
       <a href="#summary">Pain point summary</a>
       <a href="#open-items">Open items</a>
     </div>
@@ -538,7 +575,6 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
         </div>
       </section>
 
-      <hr class="rule">
 
       <!-- ============ REGIONAL ============ -->
       <section id="region-us" class="wide">
@@ -574,22 +610,27 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
         <div class="flag"><span class="lbl">Deferred &mdash; not yet detailed</span>Working assumption is that APAC echoes the European pattern &mdash; capacity/regulatory driver, multi-entity expansion, internal fragmentation. No formal function code exists yet for APAC in the org structure above; needs its own pain-point pass and formal naming.</div>
       </section>
 
-      <hr class="rule">
 
       <!-- ============ GOVERNANCE — TEMPLATE PILOT ============ -->
       <section id="pillar-governance" class="wide">
         <div class="section-label">Center &middot; 08 &middot; F1</div>
         <span class="template-tag">Section template &middot; pilot</span>
         <h2 class="section-title">Governance</h2>
-        <p class="dek">This section pilots the standard template every pillar will use: mission, current capabilities &amp; achievements, gaps &amp; three-year deliverables by subgroup, and a visual milestone timeline.</p>
 
         <div class="mission-block">
           <div class="lbl">Mission</div>
           <p>To have best-in-class governance processes resulting in cross-domain risk reduction.</p>
         </div>
 
+        <p class="dek">This section pilots the standard template every pillar will use: mission, current capabilities &amp; achievements, gaps &amp; three-year deliverables by subgroup, and a visual milestone timeline.</p>
+
         <h3>Current capabilities &amp; achievements <span class="mono-suffix">past 2 years</span></h3>
-        <p>Governance today runs three subgroups: policy and procedure management (F1.1), domain governance (F1.2), and service management (F1.3). F1.1 already carries a broad mandate &mdash; oversight of all IT-related procedures across the whole of Technology and Operations, not just the department's own scope. F1.2 has a domain governance program in flight, building deeper accountability and structure within each IT risk domain. F1.3's current scope, as it maps to the PI Planning/agile enablement work and the audit subcommittee discussed in working sessions, is a working assumption &mdash; not yet confirmed.</p>
+        <p>Governance runs three subgroups, each at a different stage of maturity:</p>
+        <ul>
+          <li><strong>F1.1 Policy &amp; Procedure Management</strong> &mdash; oversees all IT-related procedures across the whole of Technology and Operations, not just the department's own scope.</li>
+          <li><strong>F1.2 Domain Governance</strong> &mdash; program in flight, building deeper accountability and structure within each IT risk domain.</li>
+          <li><strong>F1.3 Service Management</strong> &mdash; scope as mapped to PI Planning/agile enablement and the audit subcommittee is a working assumption, not yet confirmed.</li>
+        </ul>
         <div class="flag"><span class="lbl">Data not yet gathered</span>Specific, dated achievements over the past two years haven't been captured in working sessions to date. This subsection is a placeholder &mdash; populate with real milestones (program launches, forums stood up, standards published) as they're confirmed.</div>
 
         <h3>Gaps &amp; three-year deliverables, by subgroup</h3>
@@ -723,11 +764,136 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
         <div class="proof"><span class="lbl">2027 direction</span>Stratify and consolidate the control environment bank-wide; move toward continuous control monitoring; heavy ongoing investment in AI-driven test automation.</div>
       </section>
 
-      <hr class="rule">
+      <!-- ============ CONSOLIDATED ROADMAP ============ -->
+      <section id="roadmap" class="wide">
+        <div class="section-label">Reference &middot; 14</div>
+        <h2 class="section-title">Consolidated roadmap</h2>
+        <p class="dek">Every group's deliverables on one timeline, each carrying the business benefit it exists to deliver. Solid bars and diamonds are confirmed; dashed/hollow ones are draft targets to be firmed up as the strategy is finalized.</p>
+
+        <div class="rm-scroll">
+          <div class="rm">
+            <div class="rm-years">
+              <div></div>
+              <div class="yr" style="grid-column:2/4;">2026</div>
+              <div class="yr" style="grid-column:4/8;">2027</div>
+              <div class="yr" style="grid-column:8/12;">2028</div>
+              <div class="yr" style="grid-column:12/16;">2029</div>
+            </div>
+            <div class="rm-quarters">
+              <div class="rm-corner">Group / Deliverable</div>
+              <div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div>
+            </div>
+
+            <div class="rm-group" style="--rm-color:var(--global);">
+              <div class="rm-group-head"><span class="dot"></span><span class="name">Governance</span><span class="code">F1</span></div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Audit subcommittee</strong><span class="rm-benefit">Executive-mandated audit oversight — closure tracking and a horizontal look-across for duplicate/regulatory-linked findings.</span></div>
+                <div class="rm-bar" style="grid-column:2/3;"></div><div class="rm-milestone" style="grid-column:3;"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Domain governance tiering</strong><span class="rm-benefit">Root-cause visibility and remediation tracking per domain, replacing high-level-only executive updates.</span></div>
+                <div class="rm-bar draft" style="grid-column:4/16;"></div>
+                <div class="rm-milestone draft" style="grid-column:5;"></div><div class="rm-milestone draft" style="grid-column:10;"></div><div class="rm-milestone draft" style="grid-column:14;"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Procedures mgmt. scope &amp; resourcing</strong><span class="rm-benefit">Clarifies resourcing for a mandate spanning all of Technology and Operations.</span></div>
+                <div class="rm-bar draft" style="grid-column:4/7;"></div><div class="rm-milestone draft" style="grid-column:6;"></div>
+              </div>
+            </div>
+
+            <div class="rm-group" style="--rm-color:var(--tag-people);">
+              <div class="rm-group-head"><span class="dot"></span><span class="name">Op Risk, Issues &amp; Response Mgmt</span><span class="code">F2 / F5</span></div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Response Mgmt. scale-up</strong><span class="rm-benefit">One coordinated function for audit and regulatory engagement, instead of two separate workflows.</span></div>
+                <div class="rm-bar" style="grid-column:2/5;"></div><div class="rm-milestone" style="grid-column:4;"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Maturity assessment, 12-domain</strong><span class="rm-benefit">Full technology-risk benchmarking, with findings now routed into Issues Management for enforcement.</span></div>
+                <div class="rm-bar draft" style="grid-column:2/5;"></div><div class="rm-milestone draft" style="grid-column:4;"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Comprehensive risk profile</strong><span class="rm-benefit">Restores the department's core mandate — one trustworthy profile across all operational risk categories.</span></div>
+                <div class="rm-bar draft" style="grid-column:3/10;"></div>
+              </div>
+            </div>
+
+            <div class="rm-group" style="--rm-color:var(--tag-tech);">
+              <div class="rm-group-head"><span class="dot"></span><span class="name">Assessments</span><span class="code">F8 / F2.4</span></div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Control assessment automation</strong><span class="rm-benefit">Cuts the manual burden driving turnover; improves assessment timeliness and data integrity.</span></div>
+                <div class="rm-bar" style="grid-column:2/7;"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>RCSA standardization &amp; lineage</strong><span class="rm-benefit">Consistent, defensible risk registers bank-wide — answers Second Line's quality challenge directly.</span></div>
+                <div class="rm-bar draft" style="grid-column:5/12;"></div>
+              </div>
+            </div>
+
+            <div class="rm-group" style="--rm-color:var(--rm-reporting);">
+              <div class="rm-group-head"><span class="dot"></span><span class="name">Reporting &amp; Analytics</span><span class="code">F3.2 / F3.4</span></div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>KPI consolidation, 4 domains</strong><span class="rm-benefit">Independent, trustworthy governance-channel data via segregation of duties.</span></div>
+                <div class="rm-bar" style="grid-column:3/8;"></div><div class="rm-milestone" style="grid-column:3;"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Domain-aligned deep-dive reporting</strong><span class="rm-benefit">Feeds the overall risk profile with real per-domain narrative, not just raw metrics.</span></div>
+                <div class="rm-bar draft" style="grid-column:4/16;"></div>
+              </div>
+            </div>
+
+            <div class="rm-group" style="--rm-color:var(--regional);">
+              <div class="rm-group-head"><span class="dot"></span><span class="name">Third Party Risk</span><span class="code">F4</span></div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Strategic vision &amp; target model</strong><span class="rm-benefit">Gives the pillar a target state to resource and measure against.</span></div>
+                <div class="rm-bar" style="grid-column:2/5;"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Reporting consolidation</strong><span class="rm-benefit">Removes duplicate reporting effort; one consistent vendor-risk narrative bank-wide.</span></div>
+                <div class="rm-bar draft" style="grid-column:5/11;"></div>
+              </div>
+            </div>
+
+            <div class="rm-group" style="--rm-color:var(--rm-controltesting);">
+              <div class="rm-group-head"><span class="dot"></span><span class="name">Control Testing</span><span class="code">F3.1</span></div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Operational rigor remediation</strong><span class="rm-benefit">Directly resolves the audit/2LoD rejection findings; reduces personal and departmental accountability risk.</span></div>
+                <div class="rm-bar" style="grid-column:2/6;"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Inventory access-control fix</strong><span class="rm-benefit">Unlocks Inventory Mgmt. as the authoritative repository — what Assessments' lineage fix depends on.</span></div>
+                <div class="rm-bar draft" style="grid-column:3/7;"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Continuous control monitoring</strong><span class="rm-benefit">Moves off the rigid annual testing cadence toward real-time assurance, powered by AI automation.</span></div>
+                <div class="rm-bar draft" style="grid-column:6/15;"></div>
+              </div>
+            </div>
+
+            <div class="rm-group" style="--rm-color:var(--rm-walrus);">
+              <div class="rm-group-head"><span class="dot"></span><span class="name">Program Walrus</span><span class="code">F3.3</span></div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Control Strength / automated profile</strong><span class="rm-benefit">Near-real-time automated risk scoring at any hierarchy level, surfacing control gaps systematically.</span></div>
+                <div class="rm-bar draft" style="grid-column:5/14;"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Missing capabilities buildout</strong><span class="rm-benefit">Closes self-identified gaps &mdash; including an FFIEC requirement &mdash; before they become findings.</span></div>
+                <div class="rm-bar draft" style="grid-column:2/10;"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="rm-legend">
+          <span class="lg-item"><span class="lg-bar"></span>Confirmed / funded</span>
+          <span class="lg-item"><span class="lg-bar draft"></span>Draft target</span>
+          <span class="lg-item"><span class="lg-diamond"></span>Confirmed milestone</span>
+          <span class="lg-item"><span class="lg-diamond draft"></span>Draft milestone</span>
+        </div>
+      </section>
 
       <!-- ============ SUMMARY ============ -->
       <section id="summary" class="wide">
-        <div class="section-label">Reference &middot; 14</div>
+        <div class="section-label">Reference &middot; 15</div>
         <h2 class="section-title">Pain point summary</h2>
         <div class="tbl-wrap">
           <table>
@@ -764,7 +930,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ OPEN ITEMS ============ -->
       <section id="open-items" class="wide">
-        <div class="section-label">Reference &middot; 15</div>
+        <div class="section-label">Reference &middot; 16</div>
         <h2 class="section-title">Open items</h2>
         <ol class="oi-list">
           <li class="oi-item resolved"><span class="oi-num">&#10003;</span><div><p>SSRA acronym &mdash; resolved via org-structure.md: <strong>Shared Services Responsibility Assessment</strong> (F4.4), not the SaaS-specific reading assumed earlier.</p><span class="oi-src">Third Party Risk</span></div></li>
@@ -794,3 +960,36 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
     </footer>
   </main>
 </div>
+
+<script>
+(function () {
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.page > section[id]'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav a[href^="#"]'));
+  var defaultId = sections.length ? sections[0].id : null;
+  var ids = sections.map(function (s) { return s.id; });
+
+  function activate(id, skipScroll) {
+    if (ids.indexOf(id) === -1) id = defaultId;
+    sections.forEach(function (s) { s.classList.toggle('active-section', s.id === id); });
+    navLinks.forEach(function (a) {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+    });
+    if (!skipScroll) window.scrollTo(0, 0);
+  }
+
+  navLinks.forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      var id = a.getAttribute('href').slice(1);
+      if (location.hash !== '#' + id) history.pushState(null, '', '#' + id);
+      activate(id);
+    });
+  });
+
+  window.addEventListener('hashchange', function () {
+    activate(location.hash.replace('#', ''));
+  });
+
+  activate(location.hash ? location.hash.replace('#', '') : defaultId, true);
+})();
+</script>
