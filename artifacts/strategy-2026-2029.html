@@ -117,6 +117,43 @@ button.bar-row:hover { background: var(--paper); }
 .bar-value { font-family: ui-monospace, monospace; font-size: 12.5px; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
 .geo-row .chev { color: var(--muted); transition: transform .15s; justify-self: center; }
 .geo-row[aria-expanded="true"] .chev { transform: rotate(90deg); }
+
+/* ---- relational map (Processes / Risks / Controls) ---- */
+.rel-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 18px 0 12px; flex-wrap: wrap; }
+.rel-hint { font-size: 13px; color: var(--muted); }
+.rel-clear {
+  font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--global); background: none; border: 1px solid var(--line-strong); border-radius: 100px;
+  padding: 4px 12px; cursor: pointer; display: none;
+}
+.rel-clear.show { display: inline-flex; }
+.rel-clear:hover { background: var(--paper); }
+.rel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 820px) { .rel-grid { grid-template-columns: 1fr; } }
+.rel-col-head {
+  display: flex; align-items: center; gap: 7px; font-family: ui-monospace, monospace; font-size: 11px;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+}
+.rel-col-head .dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+.rel-col-processes .dot { background: var(--global); }
+.rel-col-risks .dot { background: var(--status-bad); }
+.rel-col-controls .dot { background: var(--status-good); }
+.rel-col-body { display: flex; flex-direction: column; gap: 7px; }
+.rel-chip {
+  border: 1px solid var(--line); border-left: 3px solid var(--line-strong); border-radius: 6px;
+  background: var(--paper-raised); padding: 8px 11px; font-size: 12.5px; line-height: 1.35; cursor: pointer;
+  transition: opacity .15s, background-color .15s, box-shadow .15s; text-align: left; width: 100%; color: var(--ink); font: inherit;
+}
+.rel-chip .code { display: block; font-family: ui-monospace, monospace; font-size: 10px; color: var(--muted); margin-top: 3px; }
+.rel-col-processes .rel-chip { border-left-color: var(--global); }
+.rel-col-risks .rel-chip { border-left-color: var(--status-bad); }
+.rel-col-controls .rel-chip { border-left-color: var(--status-good); }
+.rel-chip.rel-dim { opacity: .25; }
+.rel-chip.rel-active { box-shadow: var(--shadow); }
+.rel-col-processes .rel-chip.rel-active { background: var(--global-soft); }
+.rel-col-risks .rel-chip.rel-active { background: var(--status-bad-soft); }
+.rel-col-controls .rel-chip.rel-active { background: var(--status-good-soft); }
+.rel-chip.rel-selected { font-weight: 600; box-shadow: inset 0 0 0 1.5px var(--ink); }
 .section-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
 .section-title { font-size: 25px; margin-bottom: 8px; }
 section > .dek { margin-top: 0; margin-bottom: 22px; }
@@ -211,10 +248,18 @@ li { margin-bottom: .35em; }
 .rm-quarters { border-bottom: 2px solid var(--line-strong); }
 .rm-quarters .rm-corner { padding: 4px 14px 10px; font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); align-self: end; }
 .rm-quarters .q { text-align: center; font-family: ui-monospace, monospace; font-size: 10px; color: var(--muted); padding: 4px 0 10px; border-left: 1px solid var(--line); }
-.rm-group-head { display: flex; align-items: center; gap: 8px; padding: 16px 14px 6px; }
+.rm-group-head {
+  display: flex; align-items: center; gap: 8px; padding: 16px 14px; width: 100%;
+  background: none; border: none; cursor: pointer; text-align: left; font: inherit; margin: 0;
+}
+.rm-group-head:hover { background: var(--paper); }
 .rm-group-head .dot { width: 9px; height: 9px; border-radius: 2px; background: var(--rm-color, var(--global)); flex-shrink: 0; }
 .rm-group-head .name { font-family: ui-monospace, monospace; font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink); }
 .rm-group-head .code { font-family: ui-monospace, monospace; font-size: 10.5px; color: var(--muted); }
+.rm-chevron { margin-left: auto; color: var(--muted); transition: transform .15s; }
+.rm-group-head[aria-expanded="false"] .rm-chevron { transform: rotate(0deg); }
+.rm-group-head[aria-expanded="true"] .rm-chevron { transform: rotate(90deg); }
+.rm-group-rows.collapsed { display: none; }
 .rm-row { --rm-color: var(--global); display: grid; grid-template-columns: 250px repeat(14, minmax(52px, 1fr)); align-items: center; border-top: 1px solid var(--line); min-height: 50px; }
 .rm-label { padding: 8px 14px; }
 .rm-label strong { display: block; font-size: 13px; color: var(--ink); font-weight: 600; }
@@ -587,6 +632,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
           <a href="#prc/processes" class="pivot-tab" data-subpage="processes">Processes</a>
           <a href="#prc/risks" class="pivot-tab" data-subpage="risks">Risks</a>
           <a href="#prc/controls" class="pivot-tab" data-subpage="controls">Controls</a>
+          <a href="#prc/relational" class="pivot-tab" data-subpage="relational">Relational View</a>
         </div>
 
         <div class="pivot-panels">
@@ -623,6 +669,40 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
         <div class="subpage" data-subpage="controls">
         <h3>Controls</h3>
         <div class="flag"><span class="lbl">Placeholder</span>Content pending &mdash; to be populated with the department's control inventory and coverage view.</div>
+        </div>
+
+        <div class="subpage" data-subpage="relational">
+        <h3>Relational view</h3>
+        <p class="dek">An inventory of processes anchored to the functions in Org Structure, mapped one-to-many to the risks each process exists to manage, mapped many-to-many to the controls that mitigate those risks. Click any process, risk, or control to trace its relationships across the other two columns; click it again to clear.</p>
+
+        <div class="flag"><span class="lbl">Grounding, not certification</span>This inventory is informed by NIST Cybersecurity Framework functions (Govern / Identify / Protect / Detect / Respond / Recover), OSFI Guideline&nbsp;B-13 (Technology and Cyber Risk Management) and Guideline&nbsp;B-10 (Third-Party Risk Management), and the FFIEC IT Examination Handbook. The framework references below are indicative starting points for validation against the real control taxonomy &mdash; not certified compliance mappings.</div>
+
+        <div class="rel-toolbar">
+          <span class="rel-hint">Click a chip to trace its relationships.</span>
+          <button type="button" class="rel-clear" id="relClear">Clear selection &times;</button>
+        </div>
+        <div id="relMap" class="rel-map" role="group" aria-label="Process, risk, and control relationships"></div>
+
+        <h4>Framework alignment, by process</h4>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Process</th><th>Function</th><th>Framework alignment</th></tr></thead>
+            <tbody>
+              <tr><td>Policy &amp; Procedure Lifecycle Mgmt</td><td class="mono">F1.1</td><td>NIST CSF &mdash; Govern; OSFI B-13 &mdash; Governance and Risk Management domain</td></tr>
+              <tr><td>Domain Governance &amp; Escalation</td><td class="mono">F1.2</td><td>OSFI B-13 &mdash; Governance and Risk Management domain; NIST CSF &mdash; Govern</td></tr>
+              <tr><td>IT Risk Event &amp; Root-Cause Mgmt</td><td class="mono">F2.1 / F2.2</td><td>NIST CSF &mdash; Respond / Recover; FFIEC &mdash; Business Continuity Management</td></tr>
+              <tr><td>Environmental / Horizon Scanning</td><td class="mono">F2.3</td><td>NIST CSF &mdash; Identify; FFIEC &mdash; Information Security (threat intelligence)</td></tr>
+              <tr><td>Risk &amp; Control Self-Assessment</td><td class="mono">F2.4</td><td>NIST CSF &mdash; Identify; OSFI B-13 &mdash; Governance and Risk Management domain</td></tr>
+              <tr><td>Third-Party / Supplier Risk Assessment</td><td class="mono">F4.1 / F4.4</td><td>OSFI B-10 &mdash; Third-Party Risk Management; FFIEC &mdash; Outsourcing Technology Services</td></tr>
+              <tr><td>Continuous Vendor Monitoring</td><td class="mono">F4.2</td><td>OSFI B-10; NIST CSF &mdash; Identify (supply chain)</td></tr>
+              <tr><td>Regulatory &amp; Audit Response Coordination</td><td class="mono">F5.2 / F5.3</td><td>FFIEC &mdash; Audit; OSFI supervisory reporting expectations</td></tr>
+              <tr><td>Issues Management &amp; Closure Governance</td><td class="mono">F5.1 / F5.4</td><td>FFIEC &mdash; Audit; NIST CSF &mdash; Govern</td></tr>
+              <tr><td>Control Testing (ToD / ToE)</td><td class="mono">F3.1</td><td>NIST CSF &mdash; Protect; FFIEC &mdash; Audit / Information Security</td></tr>
+              <tr><td>Compliance &amp; Control Assessments</td><td class="mono">F8</td><td>NIST CSF &mdash; Protect; FFIEC &mdash; Information Security</td></tr>
+              <tr><td>Metrics &amp; KPI Production</td><td class="mono">F3.2 / F3.4</td><td>NIST CSF &mdash; Govern; OSFI B-13 &mdash; Governance and Risk Management domain (independent reporting)</td></tr>
+            </tbody>
+          </table>
+        </div>
         </div>
         </div>
       </section>
@@ -982,7 +1062,8 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
             </div>
 
             <div class="rm-group" style="--rm-color:var(--global);">
-              <div class="rm-group-head"><span class="dot"></span><span class="name">Governance</span><span class="code">F1</span></div>
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Governance</span><span class="code">F1</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>Audit subcommittee</strong><span class="rm-benefit">Executive-mandated audit oversight — closure tracking and a horizontal look-across for duplicate/regulatory-linked findings.</span></div>
                 <div class="rm-bar" style="grid-column:2/3;"></div><div class="rm-milestone" style="grid-column:3;"></div>
@@ -996,10 +1077,12 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
                 <div class="rm-label"><strong>Procedures mgmt. scope &amp; resourcing</strong><span class="rm-benefit">Clarifies resourcing for a mandate spanning all of Technology and Operations.</span></div>
                 <div class="rm-bar draft" style="grid-column:4/7;"></div><div class="rm-milestone draft" style="grid-column:6;"></div>
               </div>
+              </div>
             </div>
 
             <div class="rm-group" style="--rm-color:var(--tag-people);">
-              <div class="rm-group-head"><span class="dot"></span><span class="name">Op Risk, Issues &amp; Response Mgmt</span><span class="code">F2 / F5</span></div>
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Op Risk, Issues &amp; Response Mgmt</span><span class="code">F2 / F5</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>Response Mgmt. scale-up</strong><span class="rm-benefit">One coordinated function for audit and regulatory engagement, instead of two separate workflows.</span></div>
                 <div class="rm-bar" style="grid-column:2/5;"></div><div class="rm-milestone" style="grid-column:4;"></div>
@@ -1012,10 +1095,12 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
                 <div class="rm-label"><strong>Comprehensive risk profile</strong><span class="rm-benefit">Restores the department's core mandate — one trustworthy profile across all operational risk categories.</span></div>
                 <div class="rm-bar draft" style="grid-column:3/10;"></div>
               </div>
+              </div>
             </div>
 
             <div class="rm-group" style="--rm-color:var(--tag-tech);">
-              <div class="rm-group-head"><span class="dot"></span><span class="name">Assessments</span><span class="code">F8 / F2.4</span></div>
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Assessments</span><span class="code">F8 / F2.4</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>Control assessment automation</strong><span class="rm-benefit">Cuts the manual burden driving turnover; improves assessment timeliness and data integrity.</span></div>
                 <div class="rm-bar" style="grid-column:2/7;"></div>
@@ -1024,10 +1109,12 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
                 <div class="rm-label"><strong>RCSA standardization &amp; lineage</strong><span class="rm-benefit">Consistent, defensible risk registers bank-wide — answers Second Line's quality challenge directly.</span></div>
                 <div class="rm-bar draft" style="grid-column:5/12;"></div>
               </div>
+              </div>
             </div>
 
             <div class="rm-group" style="--rm-color:var(--rm-reporting);">
-              <div class="rm-group-head"><span class="dot"></span><span class="name">Reporting &amp; Analytics</span><span class="code">F3.2 / F3.4</span></div>
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Reporting &amp; Analytics</span><span class="code">F3.2 / F3.4</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>KPI consolidation, 4 domains</strong><span class="rm-benefit">Independent, trustworthy governance-channel data via segregation of duties.</span></div>
                 <div class="rm-bar" style="grid-column:3/8;"></div><div class="rm-milestone" style="grid-column:3;"></div>
@@ -1036,10 +1123,12 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
                 <div class="rm-label"><strong>Domain-aligned deep-dive reporting</strong><span class="rm-benefit">Feeds the overall risk profile with real per-domain narrative, not just raw metrics.</span></div>
                 <div class="rm-bar draft" style="grid-column:4/16;"></div>
               </div>
+              </div>
             </div>
 
             <div class="rm-group" style="--rm-color:var(--regional);">
-              <div class="rm-group-head"><span class="dot"></span><span class="name">Third Party Risk</span><span class="code">F4</span></div>
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Third Party Risk</span><span class="code">F4</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>Strategic vision &amp; target model</strong><span class="rm-benefit">Gives the pillar a target state to resource and measure against.</span></div>
                 <div class="rm-bar" style="grid-column:2/5;"></div>
@@ -1048,10 +1137,12 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
                 <div class="rm-label"><strong>Reporting consolidation</strong><span class="rm-benefit">Removes duplicate reporting effort; one consistent vendor-risk narrative bank-wide.</span></div>
                 <div class="rm-bar draft" style="grid-column:5/11;"></div>
               </div>
+              </div>
             </div>
 
             <div class="rm-group" style="--rm-color:var(--rm-controltesting);">
-              <div class="rm-group-head"><span class="dot"></span><span class="name">Control Testing</span><span class="code">F3.1</span></div>
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Control Testing</span><span class="code">F3.1</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>Operational rigor remediation</strong><span class="rm-benefit">Directly resolves the audit/2LoD rejection findings; reduces personal and departmental accountability risk.</span></div>
                 <div class="rm-bar" style="grid-column:2/6;"></div>
@@ -1064,10 +1155,12 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
                 <div class="rm-label"><strong>Continuous control monitoring</strong><span class="rm-benefit">Moves off the rigid annual testing cadence toward real-time assurance, powered by AI automation.</span></div>
                 <div class="rm-bar draft" style="grid-column:6/15;"></div>
               </div>
+              </div>
             </div>
 
             <div class="rm-group" style="--rm-color:var(--rm-walrus);">
-              <div class="rm-group-head"><span class="dot"></span><span class="name">Program Walrus</span><span class="code">F3.3</span></div>
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Program Walrus</span><span class="code">F3.3</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>Control Strength / automated profile</strong><span class="rm-benefit">Near-real-time automated risk scoring at any hierarchy level, surfacing control gaps systematically.</span></div>
                 <div class="rm-bar draft" style="grid-column:5/14;"></div>
@@ -1075,6 +1168,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
               <div class="rm-row">
                 <div class="rm-label"><strong>Missing capabilities buildout</strong><span class="rm-benefit">Closes self-identified gaps &mdash; including an FFIEC requirement &mdash; before they become findings.</span></div>
                 <div class="rm-bar draft" style="grid-column:2/10;"></div>
+              </div>
               </div>
             </div>
 
@@ -1226,7 +1320,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 })();
 
 (function () {
-  var groupLabels = Array.prototype.slice.call(document.querySelectorAll('.nav-group-label'));
+  var groupLabels = Array.prototype.slice.call(document.querySelectorAll('.nav-group-label, .rm-group-head'));
   groupLabels.forEach(function (btn) {
     btn.addEventListener('click', function () {
       var expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -1235,5 +1329,149 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       if (links) links.classList.toggle('collapsed', expanded);
     });
   });
+})();
+
+(function () {
+  var mapEl = document.getElementById('relMap');
+  if (!mapEl) return;
+
+  var D = {
+    processes: [
+      { id: 'p1', code: 'F1.1', name: 'Policy & Procedure Lifecycle Mgmt' },
+      { id: 'p2', code: 'F1.2', name: 'Domain Governance & Escalation' },
+      { id: 'p3', code: 'F2.1 / F2.2', name: 'IT Risk Event & Root-Cause Mgmt' },
+      { id: 'p4', code: 'F2.3', name: 'Environmental / Horizon Scanning' },
+      { id: 'p5', code: 'F2.4', name: 'Risk & Control Self-Assessment' },
+      { id: 'p6', code: 'F4.1 / F4.4', name: 'Third-Party / Supplier Risk Assessment' },
+      { id: 'p7', code: 'F4.2', name: 'Continuous Vendor Monitoring' },
+      { id: 'p8', code: 'F5.2 / F5.3', name: 'Regulatory & Audit Response Coordination' },
+      { id: 'p9', code: 'F5.1 / F5.4', name: 'Issues Management & Closure Governance' },
+      { id: 'p10', code: 'F3.1', name: 'Control Testing (ToD / ToE)' },
+      { id: 'p11', code: 'F8', name: 'Compliance & Control Assessments' },
+      { id: 'p12', code: 'F3.2 / F3.4', name: 'Metrics & KPI Production' }
+    ],
+    risks: [
+      { id: 'r1', process: 'p1', name: 'Procedures drift from actual practice, inconsistent across Tech & Ops', controls: ['c1', 'c2'] },
+      { id: 'r2', process: 'p2', name: 'Root cause and remediation invisible above high-level exec summary', controls: ['c3', 'c4'] },
+      { id: 'r3', process: 'p3', name: 'Risk events inconsistently captured or root-caused', controls: ['c5', 'c6', 'c4'] },
+      { id: 'r4', process: 'p4', name: 'Emerging external threats missed before internal impact', controls: ['c8', 'c9'] },
+      { id: 'r5', process: 'p5', name: 'Risk registers inconsistent, controls not properly mapped', controls: ['c10', 'c11'] },
+      { id: 'r6', process: 'p6', name: 'Vendor control gaps undetected before onboarding', controls: ['c15', 'c11'] },
+      { id: 'r7', process: 'p6', name: 'Shared-service control ownership unclear', controls: ['c11', 'c17'] },
+      { id: 'r8', process: 'p7', name: 'Vendor risk posture degrades between assessments', controls: ['c16', 'c8'] },
+      { id: 'r9', process: 'p8', name: 'Findings duplicated or inconsistent across engagements', controls: ['c19', 'c4'] },
+      { id: 'r10', process: 'p8', name: 'Regulatory change not identified or prepared for proactively', controls: ['c18', 'c9'] },
+      { id: 'r11', process: 'p9', name: 'Issues closed without adequate evidence, or overdue unnoticed', controls: ['c4', 'c19'] },
+      { id: 'r12', process: 'p10', name: 'Controls assumed effective without independent verification', controls: ['c12', 'c20'] },
+      { id: 'r13', process: 'p10', name: 'Test planning/coverage gaps go undetected', controls: ['c12', 'c4'] },
+      { id: 'r14', process: 'p11', name: "Manual assessment can't keep pace with application/infra change", controls: ['c14', 'c12'] },
+      { id: 'r15', process: 'p12', name: 'Domains self-report their own metrics, no segregation of duties', controls: ['c13', 'c17'] }
+    ],
+    controls: [
+      { id: 'c1', name: 'Scheduled procedure review cadence' },
+      { id: 'c2', name: 'Procedure version control & sign-off' },
+      { id: 'c3', name: 'Tiered domain governance forums' },
+      { id: 'c4', name: 'Root-cause tracking & remediation log' },
+      { id: 'c5', name: 'Issue intake & triage workflow' },
+      { id: 'c6', name: 'Root cause analysis methodology' },
+      { id: 'c8', name: 'Threat intelligence monitoring' },
+      { id: 'c9', name: 'Scenario-based impact assessment' },
+      { id: 'c10', name: 'Standardized RCSA methodology' },
+      { id: 'c11', name: 'Centralized control inventory' },
+      { id: 'c12', name: 'Independent control testing (ToD / ToE)' },
+      { id: 'c13', name: 'Segregation of duties in KPI production' },
+      { id: 'c14', name: 'Automated control assessment tooling' },
+      { id: 'c15', name: 'Vendor security control assessment (SCA)' },
+      { id: 'c16', name: 'Continuous third-party monitoring' },
+      { id: 'c17', name: 'Access control & audit logging on repositories' },
+      { id: 'c18', name: 'Regulatory change monitoring & gap analysis' },
+      { id: 'c19', name: 'Horizontal audit look-across' },
+      { id: 'c20', name: 'Continuous control monitoring (automated)' }
+    ]
+  };
+
+  var riskById = {};
+  D.risks.forEach(function (r) { riskById[r.id] = r; });
+
+  var procRisks = {};
+  D.processes.forEach(function (p) { procRisks[p.id] = []; });
+  D.risks.forEach(function (r) { procRisks[r.process].push(r.id); });
+
+  var ctrlRisks = {};
+  D.risks.forEach(function (r) {
+    r.controls.forEach(function (c) { (ctrlRisks[c] = ctrlRisks[c] || []).push(r.id); });
+  });
+
+  function chip(kind, id, label, code) {
+    return '<button type="button" class="rel-chip" data-kind="' + kind + '" data-id="' + id + '">' +
+      label + (code ? '<span class="code">' + code + '</span>' : '') + '</button>';
+  }
+
+  mapEl.innerHTML =
+    '<div class="rel-grid">' +
+      '<div class="rel-col rel-col-processes"><div class="rel-col-head"><span class="dot"></span><span>Processes &middot; ' + D.processes.length + '</span></div>' +
+        '<div class="rel-col-body">' + D.processes.map(function (p) { return chip('process', p.id, p.name, p.code); }).join('') + '</div></div>' +
+      '<div class="rel-col rel-col-risks"><div class="rel-col-head"><span class="dot"></span><span>Risks &middot; ' + D.risks.length + '</span></div>' +
+        '<div class="rel-col-body">' + D.risks.map(function (r) { return chip('risk', r.id, r.name); }).join('') + '</div></div>' +
+      '<div class="rel-col rel-col-controls"><div class="rel-col-head"><span class="dot"></span><span>Controls &middot; ' + D.controls.length + '</span></div>' +
+        '<div class="rel-col-body">' + D.controls.map(function (c) { return chip('control', c.id, c.name); }).join('') + '</div></div>' +
+    '</div>';
+
+  var chips = Array.prototype.slice.call(mapEl.querySelectorAll('.rel-chip'));
+  var clearBtn = document.getElementById('relClear');
+  var selected = null;
+
+  function clearSelection() {
+    selected = null;
+    chips.forEach(function (ch) { ch.classList.remove('rel-active', 'rel-dim', 'rel-selected'); });
+    if (clearBtn) clearBtn.classList.remove('show');
+  }
+
+  function applyHighlight(kind, id) {
+    var procs = {}, risks = {}, controls = {};
+    if (kind === 'process') {
+      procs[id] = true;
+      (procRisks[id] || []).forEach(function (rid) {
+        risks[rid] = true;
+        (riskById[rid].controls || []).forEach(function (cid) { controls[cid] = true; });
+      });
+    } else if (kind === 'risk') {
+      risks[id] = true;
+      var r = riskById[id];
+      if (r) {
+        procs[r.process] = true;
+        (r.controls || []).forEach(function (cid) { controls[cid] = true; });
+      }
+    } else if (kind === 'control') {
+      controls[id] = true;
+      (ctrlRisks[id] || []).forEach(function (rid) {
+        risks[rid] = true;
+        var rr = riskById[rid];
+        if (rr) procs[rr.process] = true;
+      });
+    }
+    chips.forEach(function (ch) {
+      var k = ch.dataset.kind, cid = ch.dataset.id;
+      var inSet = (k === 'process' && procs[cid]) || (k === 'risk' && risks[cid]) || (k === 'control' && controls[cid]);
+      ch.classList.toggle('rel-selected', k === kind && cid === id);
+      ch.classList.toggle('rel-active', !!inSet);
+      ch.classList.toggle('rel-dim', !inSet);
+    });
+    if (clearBtn) clearBtn.classList.add('show');
+  }
+
+  chips.forEach(function (ch) {
+    ch.addEventListener('click', function () {
+      var k = ch.dataset.kind, id = ch.dataset.id;
+      if (selected && selected.kind === k && selected.id === id) {
+        clearSelection();
+      } else {
+        selected = { kind: k, id: id };
+        applyHighlight(k, id);
+      }
+    });
+  });
+
+  if (clearBtn) clearBtn.addEventListener('click', clearSelection);
 })();
 </script>
