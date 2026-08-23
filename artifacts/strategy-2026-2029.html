@@ -90,6 +90,8 @@ p { margin: 0 0 .9em; max-width: 64ch; }
 .nav a:hover { background: var(--paper); color: var(--ink); }
 .nav a.pending::after { content: "draft"; float: right; font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--status-warn); }
 .nav a.active { background: var(--paper); color: var(--ink); font-weight: 600; box-shadow: inset 2px 0 0 var(--global); }
+.nav a.nav-parent { font-weight: 600; color: var(--ink); }
+.nav a.nav-sub { padding-left: 20px; font-size: 12.5px; }
 
 main { padding: 0 clamp(20px,5vw,64px) 100px; min-width: 0; }
 .page { max-width: 900px; margin: 0 auto; padding: 52px 0 0; }
@@ -104,6 +106,37 @@ header .eyebrow, .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, monospa
 
 .page > section { display: none; margin-top: 40px; scroll-margin-top: 20px; padding-bottom: 8px; }
 .page > section.active-section { display: block; }
+
+/* ---- pivot (in-section subpages) ---- */
+.pivot { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 18px 0 0; flex-wrap: wrap; }
+.pivot-tab { font-family: ui-monospace, monospace; font-size: 12px; letter-spacing: .03em; text-transform: uppercase; color: var(--muted); text-decoration: none; padding: 9px 14px; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.pivot-tab:hover { color: var(--ink); }
+.pivot-tab.active { color: var(--ink); border-bottom-color: var(--global); font-weight: 600; }
+.pivot-panels > .subpage { display: none; padding-top: 22px; }
+.pivot-panels > .subpage.active-subpage { display: block; }
+
+/* ---- bar charts (People) ---- */
+.bar-chart { border: 1px solid var(--line); border-radius: 8px; background: var(--paper-raised); margin: 14px 0; overflow: hidden; }
+.bar-chart > * + * { border-top: 1px solid var(--line); }
+.bar-row {
+  display: grid; grid-template-columns: 140px 1fr 46px; align-items: center; gap: 12px;
+  padding: 9px 16px; width: 100%; font: inherit; color: inherit; text-align: left; margin: 0;
+  background: none; border-left: none; border-right: none; border-bottom: none; box-sizing: border-box;
+}
+button.bar-row { cursor: pointer; grid-template-columns: 140px 1fr 46px 16px; }
+button.bar-row:hover { background: var(--paper); }
+.bar-row.small { grid-template-columns: 126px 1fr 46px; padding: 6px 16px 6px 40px; }
+.geo-detail { display: none; }
+.geo-detail.expanded { display: block; }
+.geo-detail > * + * { border-top: 1px solid var(--line); }
+.bar-label { font-size: 13px; color: var(--ink); display: flex; align-items: baseline; gap: 6px; }
+.bar-sub { font-family: ui-monospace, monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+.bar-track { height: 14px; background: var(--paper); border-radius: 4px; overflow: hidden; border: 1px solid var(--line); }
+.bar-fill { height: 100%; background: var(--global); border-radius: 3px 0 0 3px; }
+.bar-row.small .bar-fill { background: var(--regional); opacity: .85; }
+.bar-value { font-family: ui-monospace, monospace; font-size: 12.5px; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+.geo-row .chev { color: var(--muted); transition: transform .15s; justify-self: center; }
+.geo-row[aria-expanded="true"] .chev { transform: rotate(90deg); }
 .section-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
 .section-title { font-size: 25px; margin-bottom: 8px; }
 section > .dek { margin-top: 0; margin-bottom: 22px; }
@@ -251,14 +284,18 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
     <div class="nav-group">
       <p class="nav-group-label">Foundations</p>
-      <a href="#org-structure">Org structure &amp; taxonomy</a>
+      <a href="#org-structure" class="nav-parent">Org structure, people &amp; taxonomy</a>
+      <a href="#org-structure/structure" class="nav-sub">Structure</a>
+      <a href="#org-structure/risk-taxonomy" class="nav-sub">Risk taxonomy</a>
+      <a href="#org-structure/people" class="nav-sub">People</a>
       <a href="#themes">Cross-cutting themes</a>
-    </div>
-    <div class="nav-group">
-      <p class="nav-group-label">By discipline</p>
-      <a href="#people">People</a>
-      <a href="#process">Process</a>
-      <a href="#technology">Technology &mdash; Walrus</a>
+      <a href="#prc" class="nav-parent">Processes, Risks &amp; Controls</a>
+      <a href="#prc/processes" class="nav-sub">Processes</a>
+      <a href="#prc/risks" class="nav-sub">Risks</a>
+      <a href="#prc/controls" class="nav-sub">Controls</a>
+      <a href="#technology" class="nav-parent">Technology</a>
+      <a href="#technology/walrus" class="nav-sub">Program Walrus</a>
+      <a href="#technology/reference-architecture" class="nav-sub">Reference architecture</a>
     </div>
     <div class="nav-group">
       <p class="nav-group-label">Regional</p>
@@ -299,8 +336,17 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       <!-- ============ ORG STRUCTURE ============ -->
       <section id="org-structure" class="wide">
         <div class="section-label">Foundations &middot; 00</div>
-        <h2 class="section-title">Organizational structure, as it stands today</h2>
-        <p class="dek">One Head, eight functions, matrixed across two axes &mdash; function (what work is done) and region (where it's done). Six functions are global, setting a standard or running a program that applies everywhere; two are regional, executing those programs in-market.</p>
+        <h2 class="section-title">Organizational structure, people &amp; taxonomy</h2>
+        <p class="dek">One Head, eight functions, matrixed across two axes &mdash; function (what work is done) and region (where it's done) &mdash; plus who staffs it and the risk taxonomy it all operates within.</p>
+
+        <div class="pivot">
+          <a href="#org-structure/structure" class="pivot-tab" data-subpage="structure">Structure</a>
+          <a href="#org-structure/risk-taxonomy" class="pivot-tab" data-subpage="risk-taxonomy">Risk Taxonomy</a>
+          <a href="#org-structure/people" class="pivot-tab" data-subpage="people">People</a>
+        </div>
+
+        <div class="pivot-panels">
+        <div class="subpage" data-subpage="structure">
 
         <div class="stat-row">
           <div class="stat"><span class="stat-num">1</span><span class="stat-label">Head</span></div>
@@ -421,6 +467,9 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
         </div>
         <div class="flag"><span class="lbl">Discrepancy to reconcile</span>RCSA sits under F2 Operational Risk in the formal structure, but was discussed as part of the "Assessments" pillar alongside Compliance &amp; Control Assessments (F8). Confirm which is accurate before the pillar sections below are finalized against this structure.</div>
 
+        </div>
+
+        <div class="subpage" data-subpage="risk-taxonomy">
         <h3>Risk taxonomy</h3>
         <p>Separately from the org structure above, risk itself is classified in a taxonomy the department also operates within:</p>
         <div class="grid-2">
@@ -428,6 +477,76 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
           <div class="panel-card"><strong>Within Technology</strong> &mdash; 12 domains (IT Operations, Cybersecurity, Architecture &amp; Innovation, IT Risk Management, SDLC, Strategy &amp; Planning, six more to confirm), with 45 Level&nbsp;3 sub-categories in aggregate.</div>
         </div>
         <p>Third-Party Risk, Cloud Computing, and Artificial Intelligence sit outside this hierarchy as <strong>transversal categories</strong> &mdash; asset/risk types that cut across every domain.</p>
+        <div class="flag"><span class="lbl">Placeholder</span>This subpage is a starting stub. Fuller risk taxonomy content is expected and will be dropped in here.</div>
+        </div>
+
+        <div class="subpage" data-subpage="people">
+        <h3>People</h3>
+        <p class="dek">Who staffs the department today, the centralization posture, and where people sit geographically.</p>
+
+        <div class="stat-row">
+          <div class="stat"><span class="stat-num">200</span><span class="stat-label">People total</span></div>
+          <div class="stat"><span class="stat-num">17</span><span class="stat-label">CUSO</span></div>
+          <div class="stat"><span class="stat-num">45</span><span class="stat-label">CNB</span></div>
+          <div class="stat"><span class="stat-num">5</span><span class="stat-label">UK</span></div>
+        </div>
+
+        <h4>Distribution by paygrade</h4>
+        <p class="dek" style="font-size:13px;margin-bottom:8px;">Illustrative figures &mdash; placeholders pending real HR data.</p>
+        <div class="bar-chart">
+          <div class="bar-row"><div class="bar-label">GG04<span class="bar-sub">Most senior</span></div><div class="bar-track"><div class="bar-fill" style="width:10.5%;"></div></div><div class="bar-value">8</div></div>
+          <div class="bar-row"><div class="bar-label">GG05</div><div class="bar-track"><div class="bar-fill" style="width:28.9%;"></div></div><div class="bar-value">22</div></div>
+          <div class="bar-row"><div class="bar-label">GG06</div><div class="bar-track"><div class="bar-fill" style="width:76.3%;"></div></div><div class="bar-value">58</div></div>
+          <div class="bar-row"><div class="bar-label">GG07</div><div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div><div class="bar-value">76</div></div>
+          <div class="bar-row"><div class="bar-label">GG08<span class="bar-sub">Most junior</span></div><div class="bar-track"><div class="bar-fill" style="width:47.4%;"></div></div><div class="bar-value">36</div></div>
+        </div>
+
+        <h4>Distribution by location</h4>
+        <p class="dek" style="font-size:13px;margin-bottom:8px;">Illustrative figures, reconciled to 200 total. Click Canada or the US to see the city-level breakdown.</p>
+        <div class="bar-chart geo-chart">
+          <button type="button" class="bar-row geo-row" data-geo="canada" aria-expanded="false">
+            <div class="bar-label">Canada</div><div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div><div class="bar-value">108</div><span class="chev">&rsaquo;</span>
+          </button>
+          <div class="geo-detail" data-geo-detail="canada">
+            <div class="bar-row small"><div class="bar-label">Toronto</div><div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div><div class="bar-value">40</div></div>
+            <div class="bar-row small"><div class="bar-label">Calgary</div><div class="bar-track"><div class="bar-fill" style="width:87.5%;"></div></div><div class="bar-value">35</div></div>
+            <div class="bar-row small"><div class="bar-label">Vancouver</div><div class="bar-track"><div class="bar-fill" style="width:62.5%;"></div></div><div class="bar-value">25</div></div>
+            <div class="bar-row small"><div class="bar-label">Other</div><div class="bar-track"><div class="bar-fill" style="width:20%;"></div></div><div class="bar-value">8</div></div>
+          </div>
+
+          <button type="button" class="bar-row geo-row" data-geo="us" aria-expanded="false">
+            <div class="bar-label">United States</div><div class="bar-track"><div class="bar-fill" style="width:57.4%;"></div></div><div class="bar-value">62</div><span class="chev">&rsaquo;</span>
+          </button>
+          <div class="geo-detail" data-geo-detail="us">
+            <div class="bar-row small"><div class="bar-label">New Jersey</div><div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div><div class="bar-value">22</div></div>
+            <div class="bar-row small"><div class="bar-label">North Carolina</div><div class="bar-track"><div class="bar-fill" style="width:81.8%;"></div></div><div class="bar-value">18</div></div>
+            <div class="bar-row small"><div class="bar-label">Los Angeles</div><div class="bar-track"><div class="bar-fill" style="width:63.6%;"></div></div><div class="bar-value">14</div></div>
+            <div class="bar-row small"><div class="bar-label">Other</div><div class="bar-track"><div class="bar-fill" style="width:36.4%;"></div></div><div class="bar-value">8</div></div>
+          </div>
+
+          <div class="bar-row"><div class="bar-label">EU<span class="bar-sub">London</span></div><div class="bar-track"><div class="bar-fill" style="width:20.4%;"></div></div><div class="bar-value">22</div></div>
+          <div class="bar-row"><div class="bar-label">APAC<span class="bar-sub">Sydney</span></div><div class="bar-track"><div class="bar-fill" style="width:7.4%;"></div></div><div class="bar-value">8</div></div>
+        </div>
+
+        <h4>Skills</h4>
+        <div class="card"><h4>Turnover in Compliance &amp; Control Assessments (F8)</h4><p>Root cause confirmed as a lack of clear career paths &mdash; not compensation or burnout. Partially offset by in-flight automation of the assessments themselves.</p></div>
+        <div class="card"><h4>Reporting arm too junior (F3.2)</h4><p>The weekly risk report requires explaining metric breaches; the team lacks the technology domain understanding to write adequate explanations or assess true impact.</p></div>
+        <div class="card"><h4>Design arm lacks advisory capability (F3.4/F3.5)</h4><p>Can help teams measure correctly but can't yet act as a trusted adviser on whether a proposed KRI is the right thing to measure.</p></div>
+        <div class="card"><h4>Senior, domain-savvy capacity for domain-aligned reporting</h4><p>Target model: one person covering multiple domains, scaling toward full coverage of all twelve &mdash; not a dedicated resource per domain.</p></div>
+        <div class="card"><h4>Operational Risk: understaffed and underskilled (F2)</h4><span class="chip chip-watch">Open item</span><p>Confirmed as both a headcount and a skills gap; which is the larger driver is not yet resolved.</p></div>
+
+        <h4>Centralization posture</h4>
+        <p>The recurring answer across every fragmentation instance is the same: not full centralization, but a hybrid model &mdash; standardize the required activity and methodology centrally, keep delivery federated where genuinely necessary. Where duplication has no such justification (US Issues Management, a legacy of the regulatory-remediation era), the direction is straightforward consolidation.</p>
+        <div class="proof"><span class="lbl">Proof point</span>Control Testing (F3.1) is already run as one genuinely centralized, consistent team for all IT-related control testing bank-wide &mdash; a working example of the target model.</div>
+
+        <h4>Location strategy</h4>
+        <div class="grid-2">
+          <div class="panel-card"><span class="stat-num" style="font-size:22px;">60/40</span><div class="stat-label" style="margin-top:6px;">Control Testing's target offshore/onshore split via a third-party managed service. Offshore staff report into local delivery leads in Vancouver, Calgary, and Toronto. Growing pains, trending smoother.</div></div>
+          <div class="panel-card"><span class="stat-num" style="font-size:22px;">1&nbsp;&rarr;&nbsp;5</span><div class="stat-label" style="margin-top:6px;">Headcount plan for the new Emerging &amp; Environmental Risk team over the next 6&ndash;8 months (roughly Q1&ndash;Q2 2027).</div></div>
+        </div>
+        <p>Europe (F7) currently runs a deliberately thin model &mdash; a small UK team consuming and tailoring central output, running local governance forums and risk assessments. That's close to the department's own target operating model elsewhere; the open question is whether it can absorb the coming ECB-driven scale-up without becoming the next capacity failure point.</p>
+        </div>
+        </div>
       </section>
 
       <!-- ============ CROSS-CUTTING THEMES ============ -->
@@ -466,37 +585,20 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
         </div>
       </section>
 
-      <!-- ============ PEOPLE ============ -->
-      <section id="people">
-        <div class="section-label">02</div>
-        <h2 class="section-title">People</h2>
-        <p class="dek">Skills in the team today, the centralization posture, and where people sit geographically.</p>
+      <!-- ============ PROCESSES, RISKS & CONTROLS ============ -->
+      <section id="prc" class="wide">
+        <div class="section-label">Foundations &middot; 02</div>
+        <h2 class="section-title">Processes, Risks &amp; Controls</h2>
+        <p class="dek">What the center actually delivers today, the risks it manages, and the controls that manage them.</p>
 
-        <h3>Skills</h3>
-        <div class="card"><h4>Turnover in Compliance &amp; Control Assessments (F8)</h4><p>Root cause confirmed as a lack of clear career paths &mdash; not compensation or burnout. Partially offset by in-flight automation of the assessments themselves.</p></div>
-        <div class="card"><h4>Reporting arm too junior (F3.2)</h4><p>The weekly risk report requires explaining metric breaches; the team lacks the technology domain understanding to write adequate explanations or assess true impact.</p></div>
-        <div class="card"><h4>Design arm lacks advisory capability (F3.4/F3.5)</h4><p>Can help teams measure correctly but can't yet act as a trusted adviser on whether a proposed KRI is the right thing to measure.</p></div>
-        <div class="card"><h4>Senior, domain-savvy capacity for domain-aligned reporting</h4><p>Target model: one person covering multiple domains, scaling toward full coverage of all twelve &mdash; not a dedicated resource per domain.</p></div>
-        <div class="card"><h4>Operational Risk: understaffed and underskilled (F2)</h4><span class="chip chip-watch">Open item</span><p>Confirmed as both a headcount and a skills gap; which is the larger driver is not yet resolved.</p></div>
-
-        <h3>Centralization posture</h3>
-        <p>The recurring answer across every fragmentation instance is the same: not full centralization, but a hybrid model &mdash; standardize the required activity and methodology centrally, keep delivery federated where genuinely necessary. Where duplication has no such justification (US Issues Management, a legacy of the regulatory-remediation era), the direction is straightforward consolidation.</p>
-        <div class="proof"><span class="lbl">Proof point</span>Control Testing (F3.1) is already run as one genuinely centralized, consistent team for all IT-related control testing bank-wide &mdash; a working example of the target model.</div>
-
-        <h3>Location strategy</h3>
-        <div class="grid-2">
-          <div class="panel-card"><span class="stat-num" style="font-size:22px;">60/40</span><div class="stat-label" style="margin-top:6px;">Control Testing's target offshore/onshore split via a third-party managed service. Offshore staff report into local delivery leads in Vancouver, Calgary, and Toronto. Growing pains, trending smoother.</div></div>
-          <div class="panel-card"><span class="stat-num" style="font-size:22px;">1&nbsp;&rarr;&nbsp;5</span><div class="stat-label" style="margin-top:6px;">Headcount plan for the new Emerging &amp; Environmental Risk team over the next 6&ndash;8 months (roughly Q1&ndash;Q2 2027).</div></div>
+        <div class="pivot">
+          <a href="#prc/processes" class="pivot-tab" data-subpage="processes">Processes</a>
+          <a href="#prc/risks" class="pivot-tab" data-subpage="risks">Risks</a>
+          <a href="#prc/controls" class="pivot-tab" data-subpage="controls">Controls</a>
         </div>
-        <p>Europe (F7) currently runs a deliberately thin model &mdash; a small UK team consuming and tailoring central output, running local governance forums and risk assessments. That's close to the department's own target operating model elsewhere; the open question is whether it can absorb the coming ECB-driven scale-up without becoming the next capacity failure point.</p>
-      </section>
 
-      <!-- ============ PROCESS ============ -->
-      <section id="process">
-        <div class="section-label">03</div>
-        <h2 class="section-title">Process</h2>
-        <p class="dek">What the center actually delivers today, and where the process itself &mdash; not the people or the tooling &mdash; is the constraint.</p>
-
+        <div class="pivot-panels">
+        <div class="subpage" data-subpage="processes">
         <h3>Capabilities &amp; services catalog</h3>
         <div class="tbl-wrap">
           <table>
@@ -519,13 +621,34 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
           <div class="card"><h4>Maturity assessment findings go nowhere</h4><p>The annual cyber maturity benchmark identifies gaps but has no enforcement mechanism &mdash; findings never flow into the Issues Management pipeline this same pillar already owns.</p></div>
           <div class="card"><h4>No root-cause aggregation across issues</h4><p>Both a process and technology gap. Would directly support the standardized-control-plane objective and more efficient remediation.</p></div>
         </div>
+        </div>
+
+        <div class="subpage" data-subpage="risks">
+        <h3>Risks</h3>
+        <div class="flag"><span class="lbl">Placeholder</span>Content pending &mdash; to be populated with the department's risk inventory and treatment view.</div>
+        </div>
+
+        <div class="subpage" data-subpage="controls">
+        <h3>Controls</h3>
+        <div class="flag"><span class="lbl">Placeholder</span>Content pending &mdash; to be populated with the department's control inventory and coverage view.</div>
+        </div>
+        </div>
       </section>
 
       <!-- ============ TECHNOLOGY ============ -->
       <section id="technology" class="wide">
-        <div class="section-label">04</div>
-        <h2 class="section-title">Technology &mdash; Program Walrus</h2>
-        <p class="dek">The platform meant to take the department to near-real-time visibility of its overall risk profile (F3.3 Data &amp; Automation), and the capability gaps it's being built to close.</p>
+        <div class="section-label">Foundations &middot; 03</div>
+        <h2 class="section-title">Technology</h2>
+        <p class="dek">The platform meant to take the department to near-real-time visibility of its overall risk profile, and the reference architecture behind it.</p>
+
+        <div class="pivot">
+          <a href="#technology/walrus" class="pivot-tab" data-subpage="walrus">Program Walrus</a>
+          <a href="#technology/reference-architecture" class="pivot-tab" data-subpage="reference-architecture">Reference Architecture</a>
+        </div>
+
+        <div class="pivot-panels">
+        <div class="subpage" data-subpage="walrus">
+        <p class="dek">F3.3 Data &amp; Automation, and the capability gaps it's being built to close.</p>
 
         <p>Data is being centralized from across Global Security &mdash; key controls and operations data into Snowflake, alongside Azure Data Lake and other sources &mdash; feeding a calculation engine that drives the platform's outputs.</p>
 
@@ -573,12 +696,19 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
           <div class="card"><h4>Departmental delivery speed</h4><p>A general velocity problem; not yet clear whether it's distinct or the sum of gaps already captured elsewhere.</p></div>
           <div class="card"><h4>AI risk integration</h4><p>Owned by the new Emerging &amp; Environmental Risk team &mdash; one leader today, scaling to five over 6&ndash;8 months. Scope: model risk, AI-enabled SDLC, tokenized finance, quantum.</p></div>
         </div>
+        </div>
+
+        <div class="subpage" data-subpage="reference-architecture">
+        <h3>Reference architecture</h3>
+        <div class="flag"><span class="lbl">Placeholder</span>Content pending &mdash; to be populated with the technical reference architecture underpinning Program Walrus and the wider platform.</div>
+        </div>
+        </div>
       </section>
 
 
       <!-- ============ REGIONAL ============ -->
       <section id="region-us" class="wide">
-        <div class="section-label">Regional &middot; 05 &middot; F6</div>
+        <div class="section-label">Regional &middot; 04 &middot; F6</div>
         <h2 class="section-title">United States</h2>
 
         <div class="card">
@@ -597,7 +727,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       </section>
 
       <section id="region-eu" class="wide">
-        <div class="section-label">Regional &middot; 06 &middot; F7</div>
+        <div class="section-label">Regional &middot; 05 &middot; F7</div>
         <h2 class="section-title">Europe</h2>
         <p class="dek">Today a deliberately thin model &mdash; a small UK team consuming and tailoring central output. Close to the department's own target operating model, worth citing as a proof point.</p>
         <div class="card"><div class="card-head"><h4>EU &middot; 01 &mdash; Capacity &amp; regulatory-capability gap</h4><span class="chip chip-reg">~12&ndash;18 months out</span></div><p>Already stretched; business expansion brings direct ECB engagement, raising both volume and required capability.</p><div class="flag"><span class="lbl">Open item</span>Whether the build-out is funded, and whether Germany/France entity onboarding staggers with the ECB timeline.</div></div>
@@ -605,7 +735,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       </section>
 
       <section id="region-apac" class="wide">
-        <div class="section-label">Regional &middot; 07</div>
+        <div class="section-label">Regional &middot; 06</div>
         <h2 class="section-title">APAC</h2>
         <div class="flag"><span class="lbl">Deferred &mdash; not yet detailed</span>Working assumption is that APAC echoes the European pattern &mdash; capacity/regulatory driver, multi-entity expansion, internal fragmentation. No formal function code exists yet for APAC in the org structure above; needs its own pain-point pass and formal naming.</div>
       </section>
@@ -613,7 +743,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ GOVERNANCE — TEMPLATE PILOT ============ -->
       <section id="pillar-governance" class="wide">
-        <div class="section-label">Center &middot; 08 &middot; F1</div>
+        <div class="section-label">Center &middot; 07 &middot; F1</div>
         <span class="template-tag">Section template &middot; pilot</span>
         <h2 class="section-title">Governance</h2>
 
@@ -692,7 +822,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ REMAINING PILLARS — CONTENT PRESERVED, TEMPLATE PENDING ============ -->
       <section id="pillar-oprisk" class="wide">
-        <div class="section-label">Center &middot; 09 &middot; F2 / F5</div>
+        <div class="section-label">Center &middot; 08 &middot; F2 / F5</div>
         <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
         <h2 class="section-title">Operational Risk, Issues Management &amp; Response Management</h2>
         <p class="dek">Four teams under one leader &mdash; a notable span of control worth weighing as strength or strain. Carries content from working sessions; mission, achievements, and the gap/deliverable table are pending, same as the Governance template above.</p>
@@ -715,7 +845,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       </section>
 
       <section id="pillar-assessments" class="wide">
-        <div class="section-label">Center &middot; 10 &middot; F8 / F2.4</div>
+        <div class="section-label">Center &middot; 09 &middot; F8 / F2.4</div>
         <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
         <h2 class="section-title">Assessments</h2>
         <h3>Compliance &amp; Control Assessments <span class="mono-suffix">F8</span></h3>
@@ -726,7 +856,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       </section>
 
       <section id="pillar-reporting" class="wide">
-        <div class="section-label">Center &middot; 11 &middot; F3.2 / F3.4</div>
+        <div class="section-label">Center &middot; 10 &middot; F3.2 / F3.4</div>
         <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
         <h2 class="section-title">Reporting &amp; Analytics</h2>
         <div class="grid-2">
@@ -737,7 +867,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       </section>
 
       <section id="pillar-thirdparty" class="wide">
-        <div class="section-label">Center &middot; 12 &middot; F4</div>
+        <div class="section-label">Center &middot; 11 &middot; F4</div>
         <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
         <h2 class="section-title">Third Party Risk Management</h2>
         <p class="dek">A transversal category, like Cloud and AI &mdash; not one of the twelve domains. Runs centralized functions for all Supplier Management Offices bank-wide.</p>
@@ -750,7 +880,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       </section>
 
       <section id="pillar-controltesting" class="wide">
-        <div class="section-label">Center &middot; 13 &middot; F3.1</div>
+        <div class="section-label">Center &middot; 12 &middot; F3.1</div>
         <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
         <h2 class="section-title">Control Testing</h2>
         <p class="dek">The largest team, and the one genuine proof point that centralized, consistent delivery already works here.</p>
@@ -766,7 +896,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ CONSOLIDATED ROADMAP ============ -->
       <section id="roadmap" class="wide">
-        <div class="section-label">Reference &middot; 14</div>
+        <div class="section-label">Reference &middot; 13</div>
         <h2 class="section-title">Consolidated roadmap</h2>
         <p class="dek">Every group's deliverables on one timeline, each carrying the business benefit it exists to deliver. Solid bars and diamonds are confirmed; dashed/hollow ones are draft targets to be firmed up as the strategy is finalized.</p>
 
@@ -893,7 +1023,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ SUMMARY ============ -->
       <section id="summary" class="wide">
-        <div class="section-label">Reference &middot; 15</div>
+        <div class="section-label">Reference &middot; 14</div>
         <h2 class="section-title">Pain point summary</h2>
         <div class="tbl-wrap">
           <table>
@@ -930,7 +1060,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ OPEN ITEMS ============ -->
       <section id="open-items" class="wide">
-        <div class="section-label">Reference &middot; 16</div>
+        <div class="section-label">Reference &middot; 15</div>
         <h2 class="section-title">Open items</h2>
         <ol class="oi-list">
           <li class="oi-item resolved"><span class="oi-num">&#10003;</span><div><p>SSRA acronym &mdash; resolved via org-structure.md: <strong>Shared Services Responsibility Assessment</strong> (F4.4), not the SaaS-specific reading assumed earlier.</p><span class="oi-src">Third Party Risk</span></div></li>
@@ -964,32 +1094,67 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 <script>
 (function () {
   var sections = Array.prototype.slice.call(document.querySelectorAll('.page > section[id]'));
-  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav a[href^="#"]'));
-  var defaultId = sections.length ? sections[0].id : null;
-  var ids = sections.map(function (s) { return s.id; });
+  var sectionIds = sections.map(function (s) { return s.id; });
+  var defaultSectionId = sectionIds.length ? sectionIds[0] : null;
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav a[href^="#"], .pivot a[href^="#"]'));
 
-  function activate(id, skipScroll) {
-    if (ids.indexOf(id) === -1) id = defaultId;
-    sections.forEach(function (s) { s.classList.toggle('active-section', s.id === id); });
-    navLinks.forEach(function (a) {
-      a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+  function parseHash(h) {
+    h = (h || '').replace(/^#/, '');
+    var parts = h.split('/');
+    return { sectionId: parts[0] || defaultSectionId, subpageId: parts[1] || null };
+  }
+
+  function render(hash, skipScroll) {
+    var p = parseHash(hash);
+    var sectionId = sectionIds.indexOf(p.sectionId) !== -1 ? p.sectionId : defaultSectionId;
+    var activeSection = document.getElementById(sectionId);
+
+    sections.forEach(function (s) { s.classList.toggle('active-section', s === activeSection); });
+
+    var subpages = activeSection ? Array.prototype.slice.call(activeSection.querySelectorAll(':scope > .pivot-panels > .subpage')) : [];
+    var subpageId = null;
+    if (subpages.length) {
+      var subIds = subpages.map(function (sp) { return sp.dataset.subpage; });
+      subpageId = subIds.indexOf(p.subpageId) !== -1 ? p.subpageId : subIds[0];
+      subpages.forEach(function (sp) { sp.classList.toggle('active-subpage', sp.dataset.subpage === subpageId); });
+      var tabs = activeSection.querySelectorAll(':scope > .pivot > .pivot-tab');
+      tabs.forEach(function (t) { t.classList.toggle('active', t.dataset.subpage === subpageId); });
+    }
+
+    links.forEach(function (a) {
+      var lp = parseHash(a.getAttribute('href'));
+      var isTop = !lp.subpageId;
+      var match = isTop ? (lp.sectionId === sectionId) : (lp.sectionId === sectionId && lp.subpageId === subpageId);
+      a.classList.toggle('active', match);
     });
+
     if (!skipScroll) window.scrollTo(0, 0);
   }
 
-  navLinks.forEach(function (a) {
+  links.forEach(function (a) {
     a.addEventListener('click', function (e) {
       e.preventDefault();
-      var id = a.getAttribute('href').slice(1);
-      if (location.hash !== '#' + id) history.pushState(null, '', '#' + id);
-      activate(id);
+      var hash = a.getAttribute('href');
+      if (location.hash !== hash) history.pushState(null, '', hash);
+      render(hash, !!a.closest('.pivot'));
     });
   });
 
-  window.addEventListener('hashchange', function () {
-    activate(location.hash.replace('#', ''));
-  });
+  window.addEventListener('hashchange', function () { render(location.hash); });
 
-  activate(location.hash ? location.hash.replace('#', '') : defaultId, true);
+  render(location.hash, true);
+})();
+
+(function () {
+  var geoButtons = Array.prototype.slice.call(document.querySelectorAll('.geo-row'));
+  geoButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var key = btn.dataset.geo;
+      var detail = document.querySelector('.geo-detail[data-geo-detail="' + key + '"]');
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      if (detail) detail.classList.toggle('expanded', !expanded);
+    });
+  });
 })();
 </script>
