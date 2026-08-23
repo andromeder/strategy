@@ -154,6 +154,23 @@ button.bar-row:hover { background: var(--paper); }
 .rel-col-risks .rel-chip.rel-active { background: var(--status-bad-soft); }
 .rel-col-controls .rel-chip.rel-active { background: var(--status-good-soft); }
 .rel-chip.rel-selected { font-weight: 600; box-shadow: inset 0 0 0 1.5px var(--ink); }
+
+/* ---- framework alignment table (expandable) ---- */
+.fw-row { cursor: pointer; }
+.fw-row:hover { background: var(--paper); }
+.fw-row td:last-child { color: var(--muted); font-size: 12px; }
+.fw-chev { color: var(--muted); transition: transform .15s; display: inline-block; }
+.fw-row[aria-expanded="true"] .fw-chev { transform: rotate(90deg); }
+.fw-detail td { background: var(--paper); padding: 4px 13px 14px; }
+.fw-cite { display: flex; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+.fw-cite:first-child { border-top: none; }
+.fw-badge {
+  flex-shrink: 0; font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: .03em; text-transform: uppercase;
+  color: var(--global); background: var(--global-soft); border-radius: 4px; padding: 3px 8px; height: fit-content; white-space: nowrap;
+}
+.fw-cite-body strong { display: block; font-size: 12.5px; color: var(--ink); }
+.fw-cite-body .fw-date { display: block; font-family: ui-monospace, monospace; font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+.fw-cite-body p { margin: 4px 0 0; font-size: 12.5px; color: var(--muted); max-width: 62ch; }
 .section-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
 .section-title { font-size: 25px; margin-bottom: 8px; }
 section > .dek { margin-top: 0; margin-bottom: 22px; }
@@ -223,6 +240,15 @@ li { margin-bottom: .35em; }
 .mission-block p { font-family: Georgia, serif; font-size: 19px; line-height: 1.4; color: var(--ink); margin: 0; max-width: 56ch; }
 
 .template-tag { display: inline-flex; align-items: center; gap: 6px; font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--paper-raised); background: var(--ink); padding: 3px 10px; border-radius: 4px; margin-bottom: 10px; }
+
+/* ---- subgroup color-coding (Governance template) ---- */
+.subgroup-card { --sg-color: var(--global); border: 1px solid var(--line); border-left: 4px solid var(--sg-color); border-radius: 6px; background: var(--paper-raised); padding: 12px 16px; margin: 10px 0; }
+.subgroup-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.subgroup-card-head .sg-dot { width: 8px; height: 8px; border-radius: 2px; background: var(--sg-color); flex-shrink: 0; }
+.subgroup-card-head .sg-code { font-family: ui-monospace, monospace; font-size: 10.5px; color: var(--muted); }
+.subgroup-card-head .sg-name { font-weight: 600; font-size: 13.5px; color: var(--ink); }
+.subgroup-card p { margin: 0; font-size: 13.5px; }
+.sg-dot-inline { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 7px; vertical-align: middle; }
 
 /* ---- timeline ---- */
 .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 20px 0; }
@@ -484,27 +510,6 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
           </div>
         </div>
 
-        <h3>How this maps to the pillars discussed in working sessions</h3>
-        <p class="dek" style="margin-bottom:14px;">The rest of this document was captured pillar-by-pillar in conversation, using working names. Here's how those map onto the formal structure above.</p>
-        <div class="tbl-wrap">
-          <table class="recon-table">
-            <thead><tr><th>Working-session pillar</th><th>Formal function(s)</th></tr></thead>
-            <tbody>
-              <tr><td>Governance</td><td class="mono">F1 Governance</td></tr>
-              <tr><td>Operational Risk / Issues Management / Response Management / Maturity Assessments</td><td class="mono">F2 Operational Risk + F5 Regulatory, Audit &amp; Issues Mgmt</td></tr>
-              <tr><td>Assessments (Compliance &amp; Control + RCSA)</td><td class="mono">F8 Compliance Assessments + F2.4 RCSA</td></tr>
-              <tr><td>Reporting &amp; Analytics</td><td class="mono">F3.2 Reporting + F3.4 Metrics Management</td></tr>
-              <tr><td>Third Party Risk Management</td><td class="mono">F4 Third Party Risk</td></tr>
-              <tr><td>Control Testing</td><td class="mono">F3.1 Control Testing</td></tr>
-              <tr><td>Program Walrus / Transformation &amp; Automation</td><td class="mono">F3.3 Data &amp; Automation</td></tr>
-              <tr><td>United States</td><td class="mono">F6 US IT Risk</td></tr>
-              <tr><td>Europe</td><td class="mono">F7 EMEA IT Risk</td></tr>
-              <tr><td>APAC</td><td class="mono">Not yet named &mdash; open item</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="flag"><span class="lbl">Discrepancy to reconcile</span>RCSA sits under F2 Operational Risk in the formal structure, but was discussed as part of the "Assessments" pillar alongside Compliance &amp; Control Assessments (F8). Confirm which is accurate before the pillar sections below are finalized against this structure.</div>
-
         </div>
 
         <div class="subpage" data-subpage="risk-taxonomy">
@@ -675,7 +680,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
         <h3>Relational view</h3>
         <p class="dek">An inventory of processes anchored to the functions in Org Structure, mapped one-to-many to the risks each process exists to manage, mapped many-to-many to the controls that mitigate those risks. Click any process, risk, or control to trace its relationships across the other two columns; click it again to clear.</p>
 
-        <div class="flag"><span class="lbl">Grounding, not certification</span>This inventory is informed by NIST Cybersecurity Framework functions (Govern / Identify / Protect / Detect / Respond / Recover), OSFI Guideline&nbsp;B-13 (Technology and Cyber Risk Management) and Guideline&nbsp;B-10 (Third-Party Risk Management), and the FFIEC IT Examination Handbook. The framework references below are indicative starting points for validation against the real control taxonomy &mdash; not certified compliance mappings.</div>
+        <div class="flag"><span class="lbl">Grounding, not certification</span>This inventory is informed by NIST Cybersecurity Framework functions (Govern / Identify / Protect / Detect / Respond / Recover), OSFI Guideline&nbsp;B-13 (Technology and Cyber Risk Management) and Guideline&nbsp;B-10 (Third-Party Risk Management), the FFIEC IT Examination Handbook, and &mdash; specifically for the EU/ECB readiness gap flagged elsewhere in this document &mdash; the EU's Digital Operational Resilience Act (DORA), which falls within the ECB's direct supervisory remit for significant institutions. Dates, section references, and requirement wording below are indicative starting points for validation against counsel/compliance-confirmed text &mdash; not certified compliance mappings.</div>
 
         <div class="rel-toolbar">
           <span class="rel-hint">Click a chip to trace its relationships.</span>
@@ -683,24 +688,12 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
         </div>
         <div id="relMap" class="rel-map" role="group" aria-label="Process, risk, and control relationships"></div>
 
-        <h4>Framework alignment, by process</h4>
+        <h4>Framework alignment, by process <span class="mono-suffix" id="fwTableScope">all 12</span></h4>
+        <p class="dek" style="font-size:13px;margin-bottom:8px;">Filters to match your selection above. Click a row to see the specific section, date in effect, and requirement detail for each reference.</p>
         <div class="tbl-wrap">
           <table>
-            <thead><tr><th>Process</th><th>Function</th><th>Framework alignment</th></tr></thead>
-            <tbody>
-              <tr><td>Policy &amp; Procedure Lifecycle Mgmt</td><td class="mono">F1.1</td><td>NIST CSF &mdash; Govern; OSFI B-13 &mdash; Governance and Risk Management domain</td></tr>
-              <tr><td>Domain Governance &amp; Escalation</td><td class="mono">F1.2</td><td>OSFI B-13 &mdash; Governance and Risk Management domain; NIST CSF &mdash; Govern</td></tr>
-              <tr><td>IT Risk Event &amp; Root-Cause Mgmt</td><td class="mono">F2.1 / F2.2</td><td>NIST CSF &mdash; Respond / Recover; FFIEC &mdash; Business Continuity Management</td></tr>
-              <tr><td>Environmental / Horizon Scanning</td><td class="mono">F2.3</td><td>NIST CSF &mdash; Identify; FFIEC &mdash; Information Security (threat intelligence)</td></tr>
-              <tr><td>Risk &amp; Control Self-Assessment</td><td class="mono">F2.4</td><td>NIST CSF &mdash; Identify; OSFI B-13 &mdash; Governance and Risk Management domain</td></tr>
-              <tr><td>Third-Party / Supplier Risk Assessment</td><td class="mono">F4.1 / F4.4</td><td>OSFI B-10 &mdash; Third-Party Risk Management; FFIEC &mdash; Outsourcing Technology Services</td></tr>
-              <tr><td>Continuous Vendor Monitoring</td><td class="mono">F4.2</td><td>OSFI B-10; NIST CSF &mdash; Identify (supply chain)</td></tr>
-              <tr><td>Regulatory &amp; Audit Response Coordination</td><td class="mono">F5.2 / F5.3</td><td>FFIEC &mdash; Audit; OSFI supervisory reporting expectations</td></tr>
-              <tr><td>Issues Management &amp; Closure Governance</td><td class="mono">F5.1 / F5.4</td><td>FFIEC &mdash; Audit; NIST CSF &mdash; Govern</td></tr>
-              <tr><td>Control Testing (ToD / ToE)</td><td class="mono">F3.1</td><td>NIST CSF &mdash; Protect; FFIEC &mdash; Audit / Information Security</td></tr>
-              <tr><td>Compliance &amp; Control Assessments</td><td class="mono">F8</td><td>NIST CSF &mdash; Protect; FFIEC &mdash; Information Security</td></tr>
-              <tr><td>Metrics &amp; KPI Production</td><td class="mono">F3.2 / F3.4</td><td>NIST CSF &mdash; Govern; OSFI B-13 &mdash; Governance and Risk Management domain (independent reporting)</td></tr>
-            </tbody>
+            <thead><tr><th>Process</th><th class="mono">Function</th><th>References</th></tr></thead>
+            <tbody id="fwTableBody"></tbody>
           </table>
         </div>
         </div>
@@ -827,12 +820,20 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
         <p class="dek">This section pilots the standard template every pillar will use: mission, current capabilities &amp; achievements, gaps &amp; three-year deliverables by subgroup, and a visual milestone timeline.</p>
 
         <h3>Current capabilities &amp; achievements <span class="mono-suffix">past 2 years</span></h3>
-        <p>Governance runs three subgroups, each at a different stage of maturity:</p>
-        <ul>
-          <li><strong>F1.1 Policy &amp; Procedure Management</strong> &mdash; oversees all IT-related procedures across the whole of Technology and Operations, not just the department's own scope.</li>
-          <li><strong>F1.2 Domain Governance</strong> &mdash; program in flight, building deeper accountability and structure within each IT risk domain.</li>
-          <li><strong>F1.3 Service Management</strong> &mdash; scope as mapped to PI Planning/agile enablement and the audit subcommittee is a working assumption, not yet confirmed.</li>
-        </ul>
+        <p>Governance runs three subgroups, each at a different stage of maturity &mdash; colored consistently below and in the deliverables table and timeline so each subgroup can be traced across all three:</p>
+
+        <div class="subgroup-card" style="--sg-color:var(--global);">
+          <div class="subgroup-card-head"><span class="sg-dot"></span><span class="sg-code">F1.1</span><span class="sg-name">Policy &amp; Procedure Management</span></div>
+          <p>Oversees all IT-related procedures across the whole of Technology and Operations, not just the department's own scope.</p>
+        </div>
+        <div class="subgroup-card" style="--sg-color:var(--regional);">
+          <div class="subgroup-card-head"><span class="sg-dot"></span><span class="sg-code">F1.2</span><span class="sg-name">Domain Governance</span></div>
+          <p>Program in flight, building deeper accountability and structure within each IT risk domain.</p>
+        </div>
+        <div class="subgroup-card" style="--sg-color:var(--tag-people);">
+          <div class="subgroup-card-head"><span class="sg-dot"></span><span class="sg-code">F1.3</span><span class="sg-name">Service Management</span></div>
+          <p>Scope as mapped to PI Planning/agile enablement and the audit subcommittee is a working assumption, not yet confirmed.</p>
+        </div>
         <div class="flag"><span class="lbl">Data not yet gathered</span>Specific, dated achievements over the past two years haven't been captured in working sessions to date. This subsection is a placeholder &mdash; populate with real milestones (program launches, forums stood up, standards published) as they're confirmed.</div>
 
         <h3>Gaps &amp; three-year deliverables, by subgroup</h3>
@@ -841,17 +842,17 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
             <thead><tr><th>Subgroup</th><th>Current gap</th><th>3-year deliverable <span style="text-transform:none;">(draft)</span></th></tr></thead>
             <tbody>
               <tr>
-                <td class="mono">F1.1<br>Policy &amp; Procedure Mgmt</td>
+                <td class="mono"><span class="sg-dot-inline" style="background:var(--global);"></span>F1.1<br>Policy &amp; Procedure Mgmt</td>
                 <td>Scope spans all of Technology &amp; Operations, not just IT risk; resourcing adequacy against that scope is unconfirmed.</td>
                 <td>Formally resource and scope procedure ownership across Tech &amp; Ops. <em>&mdash; detail TBD</em></td>
               </tr>
               <tr>
-                <td class="mono">F1.2<br>Domain Governance</td>
+                <td class="mono"><span class="sg-dot-inline" style="background:var(--regional);"></span>F1.2<br>Domain Governance</td>
                 <td>Single committee model still delivers only high-level updates &mdash; insufficient for root-cause or remediation tracking. Spans all operational risk domains; driven by US maturity, not regulation.</td>
                 <td>Mature to tiered, domain-specific governance forums feeding existing operating committees, piloted in the US and extended to EU/APAC.</td>
               </tr>
               <tr>
-                <td class="mono">F1.3<br>Service Management</td>
+                <td class="mono"><span class="sg-dot-inline" style="background:var(--tag-people);"></span>F1.3<br>Service Management</td>
                 <td>Content mapped here (agile/PI planning enablement; audit subcommittee) is a working assumption pending confirmation.</td>
                 <td>Audit subcommittee designed and operating (Year 1, executive-mandated). Agile/PI planning maturity target &mdash; <em>TBD</em>.</td>
               </tr>
@@ -865,27 +866,27 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
           <div class="timeline-year">
             <div class="timeline-year-head">2026<span class="yr-tag">Year 1</span></div>
             <div class="timeline-body">
-              <div class="milestone"><span class="dot"></span><div class="txt"><span class="when">Sept 2026 &middot; confirmed</span>Audit subcommittee designed &amp; stood up &mdash; CIO/CTO mandate</div></div>
-              <div class="milestone draft"><span class="dot"></span><div class="txt"><span class="when">draft</span>Domain governance tiering scoped for US pilot</div></div>
+              <div class="milestone"><span class="dot" style="background:var(--tag-people);"></span><div class="txt"><span class="when">Sept 2026 &middot; confirmed</span>Audit subcommittee designed &amp; stood up &mdash; CIO/CTO mandate <span class="mono" style="color:var(--tag-people);">F1.3</span></div></div>
+              <div class="milestone draft"><span class="dot" style="border-color:var(--regional);"></span><div class="txt"><span class="when">draft</span>Domain governance tiering scoped for US pilot <span class="mono" style="color:var(--regional);">F1.2</span></div></div>
             </div>
           </div>
           <div class="timeline-year">
             <div class="timeline-year-head">2027<span class="yr-tag">Year 2</span></div>
             <div class="timeline-body">
-              <div class="milestone draft"><span class="dot"></span><div class="txt"><span class="when">draft</span>Tiered domain governance piloted in the US</div></div>
-              <div class="milestone draft"><span class="dot"></span><div class="txt"><span class="when">draft</span>Procedures management scope/resourcing formally confirmed</div></div>
+              <div class="milestone draft"><span class="dot" style="border-color:var(--regional);"></span><div class="txt"><span class="when">draft</span>Tiered domain governance piloted in the US <span class="mono" style="color:var(--regional);">F1.2</span></div></div>
+              <div class="milestone draft"><span class="dot" style="border-color:var(--global);"></span><div class="txt"><span class="when">draft</span>Procedures management scope/resourcing formally confirmed <span class="mono" style="color:var(--global);">F1.1</span></div></div>
             </div>
           </div>
           <div class="timeline-year">
             <div class="timeline-year-head">2028<span class="yr-tag">Year 3</span></div>
             <div class="timeline-body">
-              <div class="milestone draft"><span class="dot"></span><div class="txt"><span class="when">draft</span>Domain governance model extended to EU</div></div>
+              <div class="milestone draft"><span class="dot" style="border-color:var(--regional);"></span><div class="txt"><span class="when">draft</span>Domain governance model extended to EU <span class="mono" style="color:var(--regional);">F1.2</span></div></div>
             </div>
           </div>
           <div class="timeline-year">
             <div class="timeline-year-head">2029<span class="yr-tag">Year 4</span></div>
             <div class="timeline-body">
-              <div class="milestone draft"><span class="dot"></span><div class="txt"><span class="when">draft</span>Domain governance model extended to APAC; full 12-domain coverage</div></div>
+              <div class="milestone draft"><span class="dot" style="border-color:var(--regional);"></span><div class="txt"><span class="when">draft</span>Domain governance model extended to APAC; full 12-domain coverage <span class="mono" style="color:var(--regional);">F1.2</span></div></div>
             </div>
           </div>
         </div>
@@ -1337,18 +1338,61 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
   var D = {
     processes: [
-      { id: 'p1', code: 'F1.1', name: 'Policy & Procedure Lifecycle Mgmt' },
-      { id: 'p2', code: 'F1.2', name: 'Domain Governance & Escalation' },
-      { id: 'p3', code: 'F2.1 / F2.2', name: 'IT Risk Event & Root-Cause Mgmt' },
-      { id: 'p4', code: 'F2.3', name: 'Environmental / Horizon Scanning' },
-      { id: 'p5', code: 'F2.4', name: 'Risk & Control Self-Assessment' },
-      { id: 'p6', code: 'F4.1 / F4.4', name: 'Third-Party / Supplier Risk Assessment' },
-      { id: 'p7', code: 'F4.2', name: 'Continuous Vendor Monitoring' },
-      { id: 'p8', code: 'F5.2 / F5.3', name: 'Regulatory & Audit Response Coordination' },
-      { id: 'p9', code: 'F5.1 / F5.4', name: 'Issues Management & Closure Governance' },
-      { id: 'p10', code: 'F3.1', name: 'Control Testing (ToD / ToE)' },
-      { id: 'p11', code: 'F8', name: 'Compliance & Control Assessments' },
-      { id: 'p12', code: 'F3.2 / F3.4', name: 'Metrics & KPI Production' }
+      { id: 'p1', code: 'F1.1', name: 'Policy & Procedure Lifecycle Mgmt', citations: [
+        { fw: 'NIST CSF', ref: 'GOVERN — Policy (GV.PO)', date: 'Published Feb 2024', detail: 'Cybersecurity policy is established, communicated, and periodically reviewed against risk.' },
+        { fw: 'OSFI B-13', ref: 'Governance and Risk Management domain', date: 'Effective 1 Jan 2024', detail: 'Requires a documented, board-approved technology and cyber risk framework kept current through a defined review cycle.' }
+      ] },
+      { id: 'p2', code: 'F1.2', name: 'Domain Governance & Escalation', citations: [
+        { fw: 'OSFI B-13', ref: 'Governance and Risk Management domain (accountability)', date: 'Effective 1 Jan 2024', detail: 'Requires clear accountability for technology risk at the appropriate level of seniority, with escalation paths for material issues.' },
+        { fw: 'NIST CSF', ref: 'GOVERN — Oversight (GV.OV)', date: 'Published Feb 2024', detail: 'Results of organization-wide cybersecurity risk management activities are used to inform, improve, and adjust strategy.' },
+        { fw: 'ECB / EU — DORA', ref: 'Ch. II — ICT risk management framework governance', date: 'Effective 17 Jan 2025', detail: 'The management body must approve and periodically review the ICT risk management framework and bears ultimate accountability for it.' }
+      ] },
+      { id: 'p3', code: 'F2.1 / F2.2', name: 'IT Risk Event & Root-Cause Mgmt', citations: [
+        { fw: 'NIST CSF', ref: 'RESPOND / RECOVER', date: 'Published Feb 2024', detail: 'Incident response activities are executed and communicated; root cause and lessons learned inform future response.' },
+        { fw: 'FFIEC', ref: 'IT Handbook — Business Continuity Management booklet', date: 'Booklet rev. 2019', detail: 'Expects a documented incident management process including root-cause analysis and corrective action tracking.' },
+        { fw: 'ECB / EU — DORA', ref: 'Ch. III — ICT incident classification & reporting', date: 'Effective 17 Jan 2025', detail: 'Major ICT-related incidents must be classified against defined criteria and reported to the competent authority within prescribed timelines.' }
+      ] },
+      { id: 'p4', code: 'F2.3', name: 'Environmental / Horizon Scanning', citations: [
+        { fw: 'NIST CSF', ref: 'IDENTIFY — Risk Assessment (ID.RA)', date: 'Published Feb 2024', detail: 'Internal and external threat and vulnerability information is received and used to inform risk analysis.' },
+        { fw: 'FFIEC', ref: 'IT Handbook — Information Security booklet', date: 'Booklet rev. 2016', detail: 'Institutions are expected to maintain threat intelligence capabilities appropriate to their risk profile.' },
+        { fw: 'ECB / EU — DORA', ref: 'Art. 45 — threat intelligence & information sharing', date: 'Effective 17 Jan 2025', detail: 'Financial entities are encouraged/expected to participate in threat intelligence and information-sharing arrangements.' }
+      ] },
+      { id: 'p5', code: 'F2.4', name: 'Risk & Control Self-Assessment', citations: [
+        { fw: 'NIST CSF', ref: 'IDENTIFY — Risk Assessment / Improvement (ID.RA, ID.IM)', date: 'Published Feb 2024', detail: 'Risks to assets, and the controls that address them, are identified, documented, and prioritized.' },
+        { fw: 'OSFI B-13', ref: 'Governance and Risk Management domain', date: 'Effective 1 Jan 2024', detail: 'Expects a structured, repeatable process for identifying and assessing technology risk against a defined risk appetite.' }
+      ] },
+      { id: 'p6', code: 'F4.1 / F4.4', name: 'Third-Party / Supplier Risk Assessment', citations: [
+        { fw: 'OSFI B-10', ref: 'Due Diligence & Risk Assessment domain', date: 'Effective 1 May 2024', detail: 'Requires risk-based due diligence proportionate to the criticality of the arrangement, before and during onboarding.' },
+        { fw: 'FFIEC', ref: 'IT Handbook — Outsourcing Technology Services booklet', date: 'Booklet rev. 2004, suppl. 2021', detail: 'Expects a documented risk assessment of technology service providers before contracting.' },
+        { fw: 'ECB / EU — DORA', ref: 'Ch. V — ICT third-party register of information', date: 'Effective 17 Jan 2025', detail: 'Financial entities must maintain a register of all ICT third-party arrangements and assess concentration risk.' }
+      ] },
+      { id: 'p7', code: 'F4.2', name: 'Continuous Vendor Monitoring', citations: [
+        { fw: 'OSFI B-10', ref: 'Ongoing Monitoring domain', date: 'Effective 1 May 2024', detail: 'Requires ongoing monitoring of third-party performance and risk over the life of the arrangement, not just at onboarding.' },
+        { fw: 'NIST CSF', ref: 'IDENTIFY — Supply Chain Risk Mgmt (ID.SC)', date: 'Published Feb 2024', detail: 'Suppliers are monitored to confirm they continue to meet contractual and risk obligations.' },
+        { fw: 'ECB / EU — DORA', ref: 'Ch. V — critical ICT third-party provider oversight', date: 'Effective 17 Jan 2025', detail: 'Critical ICT third-party providers may be designated for direct oversight by the European Supervisory Authorities.' }
+      ] },
+      { id: 'p8', code: 'F5.2 / F5.3', name: 'Regulatory & Audit Response Coordination', citations: [
+        { fw: 'FFIEC', ref: 'IT Handbook — Audit booklet', date: 'Booklet rev. 2019', detail: 'Expects a coordinated process for responding to examination and audit requests, with tracked commitments.' },
+        { fw: 'ECB / EU — SSM', ref: 'Direct supervisory engagement model', date: 'Ongoing — significant institutions', detail: 'Significant institutions engage directly with ECB Joint Supervisory Teams; expects timely, well-evidenced responses to information requests — directly relevant to the EU readiness gap flagged under Europe.' },
+        { fw: 'OSFI', ref: 'Supervisory reporting expectations', date: 'Ongoing', detail: 'Expects timely, accurate reporting to the supervisor on material technology risk matters.' }
+      ] },
+      { id: 'p9', code: 'F5.1 / F5.4', name: 'Issues Management & Closure Governance', citations: [
+        { fw: 'FFIEC', ref: 'IT Handbook — Audit booklet', date: 'Booklet rev. 2019', detail: 'Expects tracked, evidenced remediation of identified deficiencies through to independent validation of closure.' },
+        { fw: 'NIST CSF', ref: 'GOVERN — Risk Management Strategy (GV.RM)', date: 'Published Feb 2024', detail: 'Risk management outcomes are used to support organizational performance and inform closure of identified gaps.' }
+      ] },
+      { id: 'p10', code: 'F3.1', name: 'Control Testing (ToD / ToE)', citations: [
+        { fw: 'NIST CSF', ref: 'PROTECT', date: 'Published Feb 2024', detail: 'Safeguards are implemented and their effectiveness is verified on an ongoing basis.' },
+        { fw: 'FFIEC', ref: 'IT Handbook — Audit / Information Security booklets', date: 'Booklet rev. 2019 / 2016', detail: 'Expects independent testing of control design and operating effectiveness on a defined cycle.' },
+        { fw: 'ECB / EU — DORA', ref: 'Ch. IV — digital operational resilience testing', date: 'Effective 17 Jan 2025', detail: 'Requires a testing programme covering vulnerability assessments and, for significant entities, advanced threat-led penetration testing.' }
+      ] },
+      { id: 'p11', code: 'F8', name: 'Compliance & Control Assessments', citations: [
+        { fw: 'NIST CSF', ref: 'PROTECT — Platform Security (PR.PS)', date: 'Published Feb 2024', detail: 'Hardware, software, and services are managed consistent with the organization’s risk strategy.' },
+        { fw: 'FFIEC', ref: 'IT Handbook — Information Security booklet', date: 'Booklet rev. 2016', detail: 'Expects periodic assessment of application and infrastructure controls against a defined baseline.' }
+      ] },
+      { id: 'p12', code: 'F3.2 / F3.4', name: 'Metrics & KPI Production', citations: [
+        { fw: 'NIST CSF', ref: 'GOVERN — Oversight (GV.OV)', date: 'Published Feb 2024', detail: 'Risk management performance is measured and reviewed, with independence between measurement and the activity measured.' },
+        { fw: 'OSFI B-13', ref: 'Governance and Risk Management domain (independent reporting)', date: 'Effective 1 Jan 2024', detail: 'Expects independent reporting of technology risk metrics to senior management and the board.' }
+      ] }
     ],
     risks: [
       { id: 'r1', process: 'p1', name: 'Procedures drift from actual practice, inconsistent across Tech & Ops', controls: ['c1', 'c2'] },
@@ -1419,12 +1463,48 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
   var chips = Array.prototype.slice.call(mapEl.querySelectorAll('.rel-chip'));
   var clearBtn = document.getElementById('relClear');
+  var fwBody = document.getElementById('fwTableBody');
+  var fwScope = document.getElementById('fwTableScope');
   var selected = null;
+  var openFwRows = {};
+
+  function toggleFwRow(id) {
+    openFwRows[id] = !openFwRows[id];
+    var row = fwBody.querySelector('.fw-row[data-fw-id="' + id + '"]');
+    var detail = fwBody.querySelector('.fw-detail[data-fw-detail="' + id + '"]');
+    if (row) row.setAttribute('aria-expanded', openFwRows[id] ? 'true' : 'false');
+    if (detail) detail.hidden = !openFwRows[id];
+  }
+
+  function renderFrameworkTable(activeIds) {
+    if (!fwBody) return;
+    var list = (activeIds && activeIds.length) ? D.processes.filter(function (p) { return activeIds.indexOf(p.id) !== -1; }) : D.processes;
+    if (fwScope) fwScope.textContent = (activeIds && activeIds.length) ? (list.length + ' of 12, matching selection') : 'all 12';
+    fwBody.innerHTML = list.map(function (p) {
+      var n = p.citations.length;
+      var expanded = !!openFwRows[p.id];
+      return '<tr class="fw-row" data-fw-id="' + p.id + '" tabindex="0" role="button" aria-expanded="' + expanded + '">' +
+          '<td>' + p.name + '</td><td class="mono">' + p.code + '</td>' +
+          '<td>' + n + ' reference' + (n === 1 ? '' : 's') + ' <span class="fw-chev">&rsaquo;</span></td>' +
+        '</tr>' +
+        '<tr class="fw-detail" data-fw-detail="' + p.id + '"' + (expanded ? '' : ' hidden') + '><td colspan="3">' +
+          p.citations.map(function (c) {
+            return '<div class="fw-cite"><span class="fw-badge">' + c.fw + '</span>' +
+              '<div class="fw-cite-body"><strong>' + c.ref + '</strong><span class="fw-date">' + c.date + '</span><p>' + c.detail + '</p></div></div>';
+          }).join('') +
+        '</td></tr>';
+    }).join('');
+    Array.prototype.slice.call(fwBody.querySelectorAll('.fw-row')).forEach(function (row) {
+      row.addEventListener('click', function () { toggleFwRow(row.dataset.fwId); });
+      row.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleFwRow(row.dataset.fwId); } });
+    });
+  }
 
   function clearSelection() {
     selected = null;
     chips.forEach(function (ch) { ch.classList.remove('rel-active', 'rel-dim', 'rel-selected'); });
     if (clearBtn) clearBtn.classList.remove('show');
+    renderFrameworkTable();
   }
 
   function applyHighlight(kind, id) {
@@ -1458,6 +1538,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       ch.classList.toggle('rel-dim', !inSet);
     });
     if (clearBtn) clearBtn.classList.add('show');
+    renderFrameworkTable(Object.keys(procs));
   }
 
   chips.forEach(function (ch) {
@@ -1473,5 +1554,6 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
   });
 
   if (clearBtn) clearBtn.addEventListener('click', clearSelection);
+  renderFrameworkTable();
 })();
 </script>
