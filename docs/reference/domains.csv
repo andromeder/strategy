@@ -1,0 +1,25 @@
+Domain,Subdomain,Domain_Owner
+Access Management,Identity & Authentication,D. Whitfield
+Access Management,Privileged Access Management,D. Whitfield
+Access Management,Access Recertification,D. Whitfield
+Data Protection,Data Classification & Handling,S. Okafor
+Data Protection,Encryption & Key Management,S. Okafor
+Data Protection,Data Loss Prevention,S. Okafor
+Network Security,Perimeter & Firewall Controls,L. Bertrand
+Network Security,Network Segmentation,L. Bertrand
+Network Security,Intrusion Detection/Prevention,L. Bertrand
+Third Party Risk,Vendor Onboarding & Due Diligence,M. Devereux
+Third Party Risk,Contract & SLA Management,M. Devereux
+Third Party Risk,Ongoing Vendor Monitoring,M. Devereux
+Patch Management,Vulnerability Scanning,J. Alvarez
+Patch Management,Patch Deployment & Compliance,J. Alvarez
+Patch Management,Emergency Patching,J. Alvarez
+Application Security,Secure SDLC,P. Sundaram
+Application Security,Application Penetration Testing,P. Sundaram
+Application Security,Code & Dependency Scanning,P. Sundaram
+Cloud Security,Cloud Configuration Management,A. Novak
+Cloud Security,Cloud Identity & Entitlements,A. Novak
+Cloud Security,Cloud Workload Protection,A. Novak
+Governance & Documentation,Policy & Standards Management,T. Okonjo
+Governance & Documentation,Control Documentation,T. Okonjo
+Governance & Documentation,Exception Management,T. Okonjo

@@ -1,0 +1,1299 @@
+<title>IT Risk Issues Management — Overview</title>
+<link rel="stylesheet" href="design-system.css">
+<style>
+  :root {
+    --paper: #f2f3f0;
+    --paper-raised: #fbfbf9;
+    --ink: #1a2130;
+    --muted: #5b6460;
+    --line: #d3d6cf;
+    --line-strong: #b7bbb1;
+    --global: #00838d;
+    --global-soft: #dcf0f1;
+    --regional: #a85a26;
+    --regional-soft: #f4e4d5;
+    --status-good: #1b7a3d;
+    --status-warn: #a9790a;
+    --status-bad: #b23a3a;
+    --analyst-1: #009da8; --analyst-2: #a85a26; --analyst-3: #3b5bdb; --analyst-4: #8a3ba8; --analyst-5: #7a6a10;
+    --shadow: 0 1px 2px rgba(26, 33, 48, 0.06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #14171a; --paper-raised: #1b1f22; --ink: #e8e7e1; --muted: #9ba39c;
+      --line: #2b3430; --line-strong: #3a443e; --global: #2fa7b0; --global-soft: #17302f;
+      --regional: #c77b3a; --regional-soft: #2f2318;
+      --status-good: #4fbe7c; --status-warn: #e0b04c; --status-bad: #e0685f;
+      --analyst-1: #2fa7b0; --analyst-2: #c77b3a; --analyst-3: #5c7fe6; --analyst-4: #d16b93; --analyst-5: #a68b2e;
+      --shadow: none; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #14171a; --paper-raised: #1b1f22; --ink: #e8e7e1; --muted: #9ba39c;
+    --line: #2b3430; --line-strong: #3a443e; --global: #2fa7b0; --global-soft: #17302f;
+    --regional: #c77b3a; --regional-soft: #2f2318;
+    --status-good: #4fbe7c; --status-warn: #e0b04c; --status-bad: #e0685f;
+    --analyst-1: #2fa7b0; --analyst-2: #c77b3a; --analyst-3: #5c7fe6; --analyst-4: #d16b93; --analyst-5: #a68b2e;
+    --shadow: none; color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --paper: #f2f3f0; --paper-raised: #fbfbf9; --ink: #1a2130; --muted: #5b6460;
+    --line: #d3d6cf; --line-strong: #b7bbb1; --global: #00838d; --global-soft: #dcf0f1;
+    --regional: #a85a26; --regional-soft: #f4e4d5;
+    --status-good: #1b7a3d; --status-warn: #a9790a; --status-bad: #b23a3a;
+    --analyst-1: #009da8; --analyst-2: #a85a26; --analyst-3: #3b5bdb; --analyst-4: #8a3ba8; --analyst-5: #7a6a10;
+    --shadow: 0 1px 2px rgba(26, 33, 48, 0.06); color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { background: var(--paper); color: var(--ink); }
+  body {
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--global-soft); }
+  h1, h2, h3 {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    font-weight: 400; color: var(--ink); text-wrap: balance; margin: 0;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace; }
+
+  /* ---------- Fixed header ---------- */
+  .svc-header {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    padding: 20px 24px 0;
+  }
+  .svc-header-inner { max-width: 980px; margin: 0 auto; }
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px;
+  }
+  .svc-title { font-size: 26px; line-height: 1.2; margin-bottom: 14px; }
+  .svc-nav {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px;
+  }
+  .nav-input { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+  .svc-nav label {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 9px 4px; margin-right: 22px; color: var(--muted); cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: color 0.12s ease, border-color 0.12s ease;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .svc-nav label:hover { color: var(--ink); }
+  .nav-badge {
+    font-size: 9.5px; border: 1px solid var(--line-strong); border-radius: 100px;
+    padding: 1px 6px; color: var(--muted); text-transform: none; letter-spacing: 0;
+  }
+  #nav-review:checked ~ .svc-header .svc-nav label[for="nav-review"],
+  #nav-promotion:checked ~ .svc-header .svc-nav label[for="nav-promotion"],
+  #nav-aggregation:checked ~ .svc-header .svc-nav label[for="nav-aggregation"],
+  #nav-reporting:checked ~ .svc-header .svc-nav label[for="nav-reporting"] {
+    color: var(--ink); border-bottom-color: var(--ink);
+  }
+  .report-select {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px; letter-spacing: 0.02em;
+    background: var(--paper-raised); color: var(--ink);
+    border: 1px solid var(--line-strong); border-radius: 4px;
+    padding: 6px 10px; margin: 4px 0 10px 0; cursor: pointer;
+  }
+  .nav-hint { display: none; width: 100%; }
+  #nav-reporting:checked ~ .svc-header .svc-nav .nav-hint { display: block; }
+
+  /* ---------- Page body ---------- */
+  .page { max-width: 980px; margin: 0 auto; padding: 32px 24px 96px; }
+  .panel { display: none; }
+  #nav-review:checked ~ .page .panel-review,
+  #nav-promotion:checked ~ .page .panel-promotion,
+  #nav-aggregation:checked ~ .page .panel-aggregation,
+  #nav-reporting:checked ~ .page .panel-reporting { display: block; }
+
+  .report-panel { display: none; }
+  .report-panel.active { display: block; }
+
+  section { margin-top: 44px; }
+  section:first-child { margin-top: 0; }
+  .section-label {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  h2.section-title { font-size: 22px; margin-bottom: 14px; }
+  p.dek { color: var(--muted); font-size: 15px; }
+
+  .empty-state {
+    border: 1px dashed var(--line-strong); border-radius: 4px; padding: 28px 26px;
+    background: var(--paper-raised);
+  }
+  .empty-state h3 { font-size: 17px; margin-bottom: 8px; }
+  .empty-state p { color: var(--muted); font-size: 14px; margin: 0; max-width: 60ch; }
+
+  .callout {
+    margin-top: 18px; border: 1px dashed var(--line-strong); border-radius: 3px;
+    padding: 14px 18px; font-size: 13.5px; color: var(--muted);
+  }
+  .callout strong { color: var(--ink); }
+
+  /* ---------- Filter bar ---------- */
+  .filter-bar {
+    display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end;
+    background: var(--paper-raised); border: 1px solid var(--line); border-radius: 4px;
+    padding: 14px 16px; margin-bottom: 8px;
+  }
+  .filter-field { display: flex; flex-direction: column; gap: 4px; }
+  .filter-field label {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+  }
+  .filter-field select {
+    font-family: -apple-system, "Segoe UI", sans-serif; font-size: 13.5px;
+    background: var(--paper); color: var(--ink); border: 1px solid var(--line-strong);
+    border-radius: 4px; padding: 7px 10px; min-width: 168px; cursor: pointer;
+  }
+  .filter-reset {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px;
+    color: var(--muted); background: none; border: none; text-decoration: underline;
+    cursor: pointer; padding: 7px 4px;
+  }
+  .filter-reset:hover { color: var(--ink); }
+  .filter-summary { font-size: 12.5px; color: var(--muted); margin: 10px 0 0; }
+  .filter-summary strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  /* ---------- Stat tiles ---------- */
+  .stat-row { display: flex; flex-wrap: wrap; gap: 30px; }
+  .stat { display: flex; flex-direction: column; gap: 3px; min-width: 92px; }
+  .stat-num { font-family: Georgia, serif; font-size: 32px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .stat-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .stat-sub { font-size: 12px; color: var(--muted); margin-top: 2px; max-width: 22ch; }
+
+  /* ---------- Bar chart ---------- */
+  .bars { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row { display: grid; grid-template-columns: 168px 1fr 34px; align-items: center; gap: 10px; }
+  .bar-label { font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar-track { background: var(--line); border-radius: 3px; height: 14px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width 0.25s ease; }
+  .bar-value { font-family: Georgia, serif; font-size: 13.5px; text-align: right; font-variant-numeric: tabular-nums; }
+  .bars-empty { font-size: 13px; color: var(--muted); font-style: italic; }
+
+  /* ---------- Stacked bar (severity by type) ---------- */
+  .stack-legend { display: flex; gap: 18px; margin-bottom: 14px; font-size: 12.5px; color: var(--muted); }
+  .stack-legend-item { display: flex; align-items: center; gap: 6px; }
+  .stack-swatch { width: 10px; height: 10px; border-radius: 2px; }
+  .stack-row { display: grid; grid-template-columns: 140px 1fr 40px; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .stack-track { display: flex; gap: 2px; height: 16px; border-radius: 3px; overflow: hidden; background: var(--line); }
+  .stack-seg { height: 100%; transition: width 0.25s ease; }
+  .stack-total { font-family: Georgia, serif; font-size: 13.5px; text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Due-soon table ---------- */
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .due-table th, .due-table td {
+    border-bottom: 1px solid var(--line); padding: 9px 12px; text-align: left; vertical-align: top;
+  }
+  .due-table thead th {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px;
+    letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
+    border-bottom: 2px solid var(--line-strong);
+  }
+  .due-table td.num { font-variant-numeric: tabular-nums; }
+  .win-tag {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px;
+    padding: 2px 7px; border-radius: 100px; white-space: nowrap;
+  }
+  .win-30 { background: color-mix(in srgb, var(--status-bad) 14%, transparent); color: var(--status-bad); }
+  .win-60 { background: color-mix(in srgb, var(--status-warn) 16%, transparent); color: var(--status-warn); }
+  .win-90 { background: color-mix(in srgb, var(--global) 16%, transparent); color: var(--global); }
+
+  /* ---------- Line chart (opened/closed volume) ---------- */
+  .line-chart-wrap { position: relative; }
+  .line-chart-svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .chart-gridline { stroke: var(--line); stroke-width: 1; }
+  .chart-axis-label {
+    font-size: 10px; fill: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  .chart-line { fill: none; stroke-width: 2; }
+  .chart-point { transition: r 0.1s ease; }
+  .chart-hover-line { stroke: var(--line-strong); stroke-width: 1; opacity: 0; }
+  .line-tooltip {
+    position: absolute; pointer-events: none; opacity: 0;
+    background: var(--paper-raised); border: 1px solid var(--line-strong);
+    border-radius: 4px; padding: 8px 11px; font-size: 12px; line-height: 1.5;
+    box-shadow: var(--shadow); white-space: nowrap; z-index: 5;
+    transition: opacity 0.1s ease; transform: translate(-50%, -100%);
+  }
+  .line-tooltip .tt-title { font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+  .line-tooltip .tt-row { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+  .line-tooltip .tt-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .line-tooltip .tt-val { color: var(--ink); font-variant-numeric: tabular-nums; margin-left: 2px; }
+  .line-tooltip .tt-row.dim { opacity: 0.4; }
+
+  /* ---------- Aging-by-analyst table ---------- */
+  .aging-group-row td {
+    background: var(--paper-raised);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--muted); border-bottom: 2px solid var(--line-strong);
+    padding-top: 14px;
+  }
+  .aging-group-row td strong { color: var(--ink); font-family: -apple-system, sans-serif; text-transform: none; letter-spacing: normal; font-size: 13px; }
+
+  footer {
+    margin-top: 72px; padding-top: 18px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); display: flex; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap; max-width: 980px; margin-left: auto; margin-right: auto; padding-left: 24px; padding-right: 24px;
+  }
+
+  @media (max-width: 640px) {
+    .svc-title { font-size: 21px; }
+    .bar-row { grid-template-columns: 108px 1fr 30px; }
+    .stack-row { grid-template-columns: 96px 1fr 34px; }
+    .filter-field select { min-width: 130px; }
+  }
+</style>
+
+<input type="radio" name="nav" id="nav-review" class="nav-input">
+<input type="radio" name="nav" id="nav-promotion" class="nav-input">
+<input type="radio" name="nav" id="nav-aggregation" class="nav-input">
+<input type="radio" name="nav" id="nav-reporting" class="nav-input" checked>
+
+<div class="svc-header">
+  <div class="svc-header-inner">
+    <div class="eyebrow">Global IT Risk · Regulatory, Audit &amp; Issues Management</div>
+    <h1 class="svc-title">IT Risk Issues Management — Overview</h1>
+
+    <nav class="svc-nav">
+      <label for="nav-reporting">Reporting</label>
+      <label for="nav-review">Service Performance</label>
+      <label for="nav-promotion">Promotion to Enterprise Issues</label>
+      <label for="nav-aggregation">Aggregation of Issues</label>
+      <div class="nav-hint">
+        <select class="report-select" id="reportSelect" aria-label="Select report">
+          <option value="summary">Issues Summary</option>
+          <option value="overdue">Issue Aging Report</option>
+          <option value="remediation">Remediation Plan Status (coming soon)</option>
+        </select>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="panel panel-review">
+
+    <section>
+      <div class="section-label">Service Performance</div>
+      <h2 class="section-title">Review quality &amp; timeliness — Findings &amp; Enterprise Issues</h2>
+      <p class="dek">Sample data, as of 2026-08-02. Covers the analyst review step only — receiving a Finding or Enterprise Issue, approving it (routing High-severity items to Second Line of Defense) or rejecting it back to the issue owner. 54 records; 40 already reviewed, 14 still in an analyst's queue.</p>
+    </section>
+
+    <section>
+      <div class="filter-bar">
+        <div class="filter-field">
+          <label for="f3-analyst">Analyst</label>
+          <select id="f3-analyst"><option value="All">All</option></select>
+        </div>
+        <div class="filter-field">
+          <label for="f3-owner">Issue Owner</label>
+          <select id="f3-owner"><option value="All">All</option></select>
+        </div>
+        <button class="filter-reset" id="filterReset3" type="button">Reset filters</button>
+      </div>
+      <p class="filter-summary" id="filterSummary3"></p>
+    </section>
+
+    <section>
+      <div class="section-label">Summary</div>
+      <h2 class="section-title">Headline stats</h2>
+      <div class="stat-row">
+        <div class="stat"><span class="stat-num" id="statAvgReview">0</span><span class="stat-label">Avg. days to review</span></div>
+        <div class="stat"><span class="stat-num" id="statPerWeek">0</span><span class="stat-label">Reviewed / week</span></div>
+        <div class="stat"><span class="stat-num" id="stat2lodRate">0%</span><span class="stat-label">Rejected by 2LOD</span></div>
+        <div class="stat"><span class="stat-num" id="statAnalystRejectRate">0%</span><span class="stat-label">Rejected by analyst</span></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Graph 1 · Timeliness</div>
+      <h2 class="section-title">Average time to review, by analyst</h2>
+      <p class="dek" style="margin-bottom:14px;">8-week rolling average, weekly over the past year. A line stops where an analyst had no completed reviews in that window.</p>
+      <div class="stack-legend" id="perfLegend1"></div>
+      <div class="line-chart-wrap" id="reviewTimeChartWrap">
+        <svg class="line-chart-svg" id="reviewTimeChart" viewBox="0 0 900 260" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="line-tooltip" id="reviewTimeTooltip"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Graph 2 · Quality</div>
+      <h2 class="section-title">2LOD rejection rate, by analyst</h2>
+      <p class="dek" style="margin-bottom:14px;">20-week rolling rate, weekly over the past year — a wider window than Graph 1 since only High-severity items reach 2LOD, so raw weekly volume is thin. Same axis scale and analyst colors as Graph 1.</p>
+      <div class="stack-legend" id="perfLegend2"></div>
+      <div class="line-chart-wrap" id="qualityChartWrap">
+        <svg class="line-chart-svg" id="qualityChart" viewBox="0 0 900 260" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="line-tooltip" id="qualityTooltip"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-label">Table</div>
+      <h2 class="section-title">Aging by analyst — top 5 oldest in queue</h2>
+      <p class="dek" style="margin-bottom:16px;">Items received but not yet decisioned, oldest first per analyst.</p>
+      <div class="table-scroll">
+        <table class="due-table">
+          <thead><tr><th>Reference</th><th>Issue Owner</th><th>Time in Queue</th><th>Severity</th></tr></thead>
+          <tbody id="agingByAnalystBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="panel panel-promotion">
+    <section>
+      <div class="section-label">Promotion to Enterprise Issues</div>
+      <h2 class="section-title">Not yet documented</h2>
+      <div class="empty-state">
+        <h3>Waiting on process detail</h3>
+        <p>This is where the Finding → Enterprise Issue elevation workflow
+        (materiality threshold, remediation plan, target date, governance
+        reporting) will live once documented as its own process.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="panel panel-aggregation">
+    <section>
+      <div class="section-label">Aggregation of Issues</div>
+      <h2 class="section-title">Not yet documented</h2>
+      <div class="empty-state">
+        <h3>Waiting on process detail</h3>
+        <p>The process steps (trigger, inputs, outputs) for this one
+        already exist —
+        <a href="../processes/aggregated-issues-reporting/README.md" class="mono">processes/aggregated-issues-reporting/README.md</a>
+        — but this page doesn't visualize the process flow itself yet,
+        only the report it produces (see Reporting).</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="panel panel-reporting">
+
+    <div class="report-panel active" id="report-summary">
+      <section>
+        <div class="section-label">Reporting · Issues Summary</div>
+        <h2 class="section-title">Issues across Findings, Enterprise Issues &amp; Internal Audit</h2>
+        <p class="dek">Sample data, as of 2026-08-02 — synthetic, generated to prototype this report before real system access is wired up. 72 issues spanning roughly the last 18 months. See <span class="mono">data/README.md</span> for the schema. For due dates and aging, see the <span class="mono">Issue Aging Report</span> above.</p>
+      </section>
+
+      <section>
+        <div class="filter-bar">
+          <div class="filter-field">
+            <label for="f-owner">Owner</label>
+            <select id="f-owner"><option value="All">All</option></select>
+          </div>
+          <div class="filter-field">
+            <label for="f-business">Business</label>
+            <select id="f-business"><option value="All">All</option></select>
+          </div>
+          <div class="filter-field">
+            <label for="f-region">Region</label>
+            <select id="f-region"><option value="All">All</option></select>
+          </div>
+          <button class="filter-reset" id="filterReset" type="button">Reset filters</button>
+        </div>
+        <p class="filter-summary" id="filterSummary"></p>
+      </section>
+
+      <section>
+        <div class="section-label">a</div>
+        <h2 class="section-title">Number of issues by type</h2>
+        <div class="bars" id="chartByType"></div>
+      </section>
+
+      <section>
+        <div class="section-label">c</div>
+        <h2 class="section-title">Severity by type</h2>
+        <div class="stack-legend">
+          <div class="stack-legend-item"><span class="stack-swatch" style="background:var(--status-bad)"></span>High</div>
+          <div class="stack-legend-item"><span class="stack-swatch" style="background:var(--status-warn)"></span>Medium</div>
+          <div class="stack-legend-item"><span class="stack-swatch" style="background:var(--status-good)"></span>Low</div>
+        </div>
+        <div id="chartSeverityByType"></div>
+      </section>
+
+      <section>
+        <div class="section-label">d</div>
+        <h2 class="section-title">Number of issues by owner</h2>
+        <div class="bars" id="chartByOwner"></div>
+      </section>
+
+      <section>
+        <div class="section-label">e</div>
+        <h2 class="section-title">Number of issues by risk category</h2>
+        <div class="bars" id="chartByRiskCategory"></div>
+      </section>
+
+      <section>
+        <div class="section-label">Trend</div>
+        <h2 class="section-title">Opened vs. closed volume — past year</h2>
+        <p class="dek" style="margin-bottom:16px;">By month, over the trailing 12 months. Hover a point for the exact counts.</p>
+        <div class="stack-legend">
+          <div class="stack-legend-item"><span class="stack-swatch" style="background:var(--global)"></span>Opened</div>
+          <div class="stack-legend-item"><span class="stack-swatch" style="background:var(--regional)"></span>Closed</div>
+        </div>
+        <div class="line-chart-wrap" id="volumeChartWrap">
+          <svg class="line-chart-svg" id="volumeChart" viewBox="0 0 900 260" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="line-tooltip" id="volumeTooltip"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="report-panel" id="report-overdue">
+
+      <section>
+        <div class="section-label">Reporting · Issue Aging Report</div>
+        <h2 class="section-title">What's coming due, what's overdue, and what it means</h2>
+        <p class="dek">Sample data, as of 2026-08-02. Filters below apply to every section in this report.</p>
+      </section>
+
+      <section>
+        <div class="filter-bar">
+          <div class="filter-field">
+            <label for="f2-owner">Owner</label>
+            <select id="f2-owner"><option value="All">All</option></select>
+          </div>
+          <div class="filter-field">
+            <label for="f2-business">Business</label>
+            <select id="f2-business"><option value="All">All</option></select>
+          </div>
+          <div class="filter-field">
+            <label for="f2-region">Region</label>
+            <select id="f2-region"><option value="All">All</option></select>
+          </div>
+          <button class="filter-reset" id="filterReset2" type="button">Reset filters</button>
+        </div>
+        <p class="filter-summary" id="filterSummary2"></p>
+      </section>
+
+      <section>
+        <div class="section-label">Severity mix</div>
+        <h2 class="section-title">Currently open issues, by severity</h2>
+        <div class="stat-row">
+          <div class="stat"><span class="stat-num" id="statSevHigh">0</span><span class="stat-label">High</span></div>
+          <div class="stat"><span class="stat-num" id="statSevMedium">0</span><span class="stat-label">Medium</span></div>
+          <div class="stat"><span class="stat-num" id="statSevLow">0</span><span class="stat-label">Low</span></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-label">Coming due</div>
+        <h2 class="section-title">Open issues due within 90 days</h2>
+        <p class="dek" style="margin-bottom:16px;">Open or in-remediation issues only — already-overdue and closed items are excluded.</p>
+        <div class="table-scroll">
+          <table class="due-table">
+            <thead><tr><th>ID</th><th>Title</th><th>Type</th><th>Severity</th><th>Owner</th><th>Due</th><th>Window</th></tr></thead>
+            <tbody id="agingDueTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-label">By owner</div>
+        <h2 class="section-title">Coming due by owner — 30 / 60 / 90 days</h2>
+        <div class="stack-legend">
+          <div class="stack-legend-item"><span class="stack-swatch" style="background:var(--status-bad)"></span>&le;30 days</div>
+          <div class="stack-legend-item"><span class="stack-swatch" style="background:var(--status-warn)"></span>31&ndash;60 days</div>
+          <div class="stack-legend-item"><span class="stack-swatch" style="background:var(--global)"></span>61&ndash;90 days</div>
+        </div>
+        <div id="agingOwnerChart"></div>
+      </section>
+
+    </div>
+
+    <div class="report-panel" id="report-remediation">
+      <section>
+        <div class="section-label">Reporting · Remediation Plan Status</div>
+        <h2 class="section-title">Not yet built</h2>
+        <div class="empty-state">
+          <h3>Coming soon</h3>
+          <p>Will track remediation plan submission/rejection once that
+          data exists — the same dimension behind the Remediation Plan
+          Rejection Rate KPI in the Service catalog.</p>
+        </div>
+      </section>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <span>IT Risk Issues Management — Overview</span>
+  <span>Source: <span class="mono">services/it-risk-issues-management/</span></span>
+</footer>
+
+<script>
+(function () {
+  var ISSUES = [
+    {id:'F-1001', type:'Findings', title:'Excessive access - App-2210 shared accounts', severity:'Medium', status:'Open', owner:'L. Farrow', region:'EMEA', business:'Payments', riskCategory:'Access Management', dateIdentified:'2025-07-10', dueDate:'2026-07-29', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'F-1002', type:'Findings', title:'Risk acceptance missing formal approval - CW-118', severity:'Low', status:'Open', owner:'M. Chen', region:'EMEA', business:'Technology Infrastructure', riskCategory:'Governance & Documentation', dateIdentified:'2025-11-28', dueDate:'2026-08-05', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'Documentation updates are pending sign-off from a second stakeholder group whose availability has been limited. Follow-up has been scheduled to secure the required approval.'},
+    {id:'F-1003', type:'Findings', title:'Vendor SOC1/SOC2 exceptions not tracked - NorthBridge Tech', severity:'Low', status:'Closed', owner:'L. Farrow', region:'EMEA', business:'Retail Banking', riskCategory:'Third Party Risk', dateIdentified:'2026-02-09', dueDate:'2026-06-11', closedDate:'2026-05-28', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'F-1004', type:'Findings', title:'Vendor SOC1/SOC2 exceptions not tracked - Vantage Processing', severity:'Medium', status:'Overdue', owner:'D. Whitfield', region:'EMEA', business:'Payments', riskCategory:'Third Party Risk', dateIdentified:'2025-09-13', dueDate:'2026-07-14', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'The vendor has not yet returned the updated assurance report needed to close this item. Escalation to vendor management is in progress to expedite the response.'},
+    {id:'F-1005', type:'Findings', title:'Unencrypted data at rest - DataLake-EMEA', severity:'Medium', status:'In Remediation', owner:'P. Singh', region:'EMEA', business:'Enterprise', riskCategory:'Data Protection', dateIdentified:'2026-06-27', dueDate:'2026-08-10', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'F-1006', type:'Findings', title:'Open ports identified on Payments Gateway', severity:'High', status:'Closed', owner:'D. Whitfield', region:'US', business:'Technology Infrastructure', riskCategory:'Network Security', dateIdentified:'2025-05-24', dueDate:'2025-07-12', closedDate:'2025-08-29', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'F-1007', type:'Findings', title:'Risk acceptance missing formal approval - App-3391', severity:'Medium', status:'Closed', owner:'S. Patel', region:'US', business:'Technology Infrastructure', riskCategory:'Governance & Documentation', dateIdentified:'2025-11-01', dueDate:'2026-02-05', closedDate:'2026-02-02', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'F-1008', type:'Findings', title:'Critical vulnerability unpatched - App-4470', severity:'High', status:'Open', owner:'R. Osei', region:'US', business:'Payments', riskCategory:'Patch Management', dateIdentified:'2026-07-05', dueDate:'2026-09-07', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'F-1009', type:'Findings', title:'Application criticality tier undocumented - Treasury-Sys', severity:'Medium', status:'Closed', owner:'M. Chen', region:'EMEA', business:'Payments', riskCategory:'Governance & Documentation', dateIdentified:'2025-10-04', dueDate:'2026-01-02', closedDate:'2025-12-03', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'F-1010', type:'Findings', title:'Stale firewall rules - Mobile Banking App segment', severity:'Low', status:'Open', owner:'D. Whitfield', region:'US', business:'Payments', riskCategory:'Network Security', dateIdentified:'2026-04-10', dueDate:'2026-10-24', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'F-1011', type:'Findings', title:'Vendor SOC1/SOC2 exceptions not tracked - Acme Cloud Services', severity:'High', status:'Closed', owner:'K. Brooks', region:'US', business:'Enterprise', riskCategory:'Third Party Risk', dateIdentified:'2025-09-14', dueDate:'2025-10-29', closedDate:'2025-12-13', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'F-1012', type:'Findings', title:'Payment gateway logging incomplete - Wire Transfer Platform', severity:'Low', status:'In Remediation', owner:'A. Kowalski', region:'US', business:'Payments', riskCategory:'Application Security', dateIdentified:'2026-06-13', dueDate:'2026-10-30', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'F-1013', type:'Findings', title:'Public cloud storage bucket exposure - App-2210', severity:'High', status:'Overdue', owner:'L. Farrow', region:'EMEA', business:'Retail Banking', riskCategory:'Cloud Security', dateIdentified:'2025-03-28', dueDate:'2026-04-16', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'F-1014', type:'Findings', title:'End-of-life software still in use - CW-118', severity:'Medium', status:'In Remediation', owner:'T. Nguyen', region:'US', business:'Retail Banking', riskCategory:'Patch Management', dateIdentified:'2025-05-12', dueDate:'2026-12-01', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'Patching has been delayed due to an application compatibility test that failed in the last cycle. The vendor has been engaged to provide an updated patch.'},
+    {id:'F-1015', type:'Findings', title:'Public cloud storage bucket exposure - Core Banking Platform', severity:'High', status:'Open', owner:'D. Whitfield', region:'EMEA', business:'Retail Banking', riskCategory:'Cloud Security', dateIdentified:'2026-06-14', dueDate:'2026-08-04', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'F-1016', type:'Findings', title:'Stale firewall rules - CRM-Retail segment', severity:'Medium', status:'Overdue', owner:'A. Kowalski', region:'US', business:'Enterprise', riskCategory:'Network Security', dateIdentified:'2025-04-12', dueDate:'2026-05-29', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'Firewall rule remediation requires a change window that has been delayed twice due to competing priorities. The next available change window is being scheduled with network operations.'},
+    {id:'F-1017', type:'Findings', title:'Insecure API endpoint identified - DataLake-EMEA', severity:'Medium', status:'Closed', owner:'T. Nguyen', region:'EMEA', business:'Enterprise', riskCategory:'Application Security', dateIdentified:'2025-10-30', dueDate:'2026-01-21', closedDate:'2026-03-04', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'F-1018', type:'Findings', title:'Unencrypted data at rest - Payments Gateway', severity:'Low', status:'Open', owner:'D. Whitfield', region:'US', business:'Technology Infrastructure', riskCategory:'Data Protection', dateIdentified:'2025-09-07', dueDate:'2026-11-09', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'F-1019', type:'Findings', title:'Stale user access not deprovisioned - App-3391', severity:'Medium', status:'Open', owner:'M. Chen', region:'US', business:'Payments', riskCategory:'Access Management', dateIdentified:'2025-05-30', dueDate:'2026-09-10', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'F-1020', type:'Findings', title:'Critical vulnerability unpatched - App-4470', severity:'High', status:'Closed', owner:'D. Whitfield', region:'EMEA', business:'Technology Infrastructure', riskCategory:'Patch Management', dateIdentified:'2025-05-06', dueDate:'2025-07-10', closedDate:'2025-06-05', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'F-1021', type:'Findings', title:'Patch compliance gap - Treasury-Sys', severity:'Medium', status:'Open', owner:'D. Whitfield', region:'EMEA', business:'Technology Infrastructure', riskCategory:'Patch Management', dateIdentified:'2025-05-26', dueDate:'2026-07-21', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'F-1022', type:'Findings', title:'Stale user access not deprovisioned - Mobile Banking App', severity:'Low', status:'Overdue', owner:'T. Nguyen', region:'US', business:'Technology Infrastructure', riskCategory:'Access Management', dateIdentified:'2026-01-29', dueDate:'2026-06-19', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'F-1023', type:'Findings', title:'Unsegmented network zone - App-5581', severity:'Low', status:'Closed', owner:'J. Alvarez', region:'US', business:'Payments', riskCategory:'Network Security', dateIdentified:'2026-03-29', dueDate:'2026-07-24', closedDate:'2026-06-24', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'F-1024', type:'Findings', title:'Vendor SOC1/SOC2 exceptions not tracked - Vantage Processing', severity:'Low', status:'In Remediation', owner:'D. Whitfield', region:'EMEA', business:'Payments', riskCategory:'Third Party Risk', dateIdentified:'2025-09-22', dueDate:'2026-08-13', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'The vendor has not yet returned the updated assurance report needed to close this item. Escalation to vendor management is in progress to expedite the response.'},
+    {id:'F-1025', type:'Findings', title:'Cloud IAM policy too permissive - App-2210', severity:'High', status:'Closed', owner:'A. Kowalski', region:'EMEA', business:'Technology Infrastructure', riskCategory:'Cloud Security', dateIdentified:'2025-05-30', dueDate:'2025-08-11', closedDate:'2025-09-14', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'F-1026', type:'Findings', title:'Application code scan findings unresolved - CW-118', severity:'Medium', status:'Closed', owner:'K. Brooks', region:'EMEA', business:'Technology Infrastructure', riskCategory:'Application Security', dateIdentified:'2026-03-02', dueDate:'2026-05-28', closedDate:'2026-04-23', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'F-1027', type:'Findings', title:'Data retention policy gap - Core Banking Platform', severity:'High', status:'In Remediation', owner:'K. Brooks', region:'EMEA', business:'Technology Infrastructure', riskCategory:'Data Protection', dateIdentified:'2025-12-05', dueDate:'2026-09-14', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'F-1028', type:'Findings', title:'Open ports identified on CRM-Retail', severity:'Medium', status:'Closed', owner:'P. Singh', region:'EMEA', business:'Retail Banking', riskCategory:'Network Security', dateIdentified:'2025-02-01', dueDate:'2025-05-05', closedDate:'2025-05-20', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'F-1029', type:'Findings', title:'Vendor contract missing security addendum - Vantage Processing', severity:'Medium', status:'Closed', owner:'D. Whitfield', region:'US', business:'Technology Infrastructure', riskCategory:'Third Party Risk', dateIdentified:'2025-11-18', dueDate:'2026-02-22', closedDate:'2026-04-19', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'F-1030', type:'Findings', title:'Stale firewall rules - Payments Gateway segment', severity:'Low', status:'Open', owner:'J. Alvarez', region:'US', business:'Retail Banking', riskCategory:'Network Security', dateIdentified:'2025-04-16', dueDate:'2026-10-24', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'EI-0501', type:'Enterprise Issues', title:'Control procedure out of date - App-2210', severity:'Low', status:'Closed', owner:'S. Patel', region:'US', business:'Payments', riskCategory:'Governance & Documentation', dateIdentified:'2026-07-19', dueDate:'2026-11-13', closedDate:'2026-10-04', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'EI-0502', type:'Enterprise Issues', title:'Insecure API endpoint identified - CW-118', severity:'High', status:'In Remediation', owner:'A. Kowalski', region:'US', business:'Enterprise', riskCategory:'Application Security', dateIdentified:'2025-07-05', dueDate:'2026-08-09', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'The required code fix is more complex than originally scoped and has been re-prioritized into the next development sprint. Delivery is now expected in the following release cycle.'},
+    {id:'EI-0503', type:'Enterprise Issues', title:'Third-party penetration test overdue - NorthBridge Tech', severity:'Medium', status:'Overdue', owner:'L. Farrow', region:'US', business:'Retail Banking', riskCategory:'Third Party Risk', dateIdentified:'2026-06-04', dueDate:'2026-06-19', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'EI-0504', type:'Enterprise Issues', title:'Third-party penetration test overdue - Vantage Processing', severity:'Medium', status:'Open', owner:'T. Nguyen', region:'EMEA', business:'Retail Banking', riskCategory:'Third Party Risk', dateIdentified:'2026-06-13', dueDate:'2026-10-27', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'EI-0505', type:'Enterprise Issues', title:'Privileged access review overdue - DataLake-EMEA', severity:'Low', status:'Closed', owner:'P. Singh', region:'US', business:'Technology Infrastructure', riskCategory:'Access Management', dateIdentified:'2026-04-15', dueDate:'2026-08-04', closedDate:'2026-06-28', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'EI-0506', type:'Enterprise Issues', title:'Insecure API endpoint identified - Payments Gateway', severity:'High', status:'Open', owner:'L. Farrow', region:'EMEA', business:'Retail Banking', riskCategory:'Application Security', dateIdentified:'2025-10-17', dueDate:'2026-07-15', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'The required code fix is more complex than originally scoped and has been re-prioritized into the next development sprint. Delivery is now expected in the following release cycle.'},
+    {id:'EI-0507', type:'Enterprise Issues', title:'Missing MFA on privileged accounts - App-3391', severity:'Low', status:'Closed', owner:'T. Nguyen', region:'US', business:'Technology Infrastructure', riskCategory:'Access Management', dateIdentified:'2025-07-07', dueDate:'2025-11-14', closedDate:'2025-12-29', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'EI-0508', type:'Enterprise Issues', title:'End-of-life software still in use - App-4470', severity:'Medium', status:'In Remediation', owner:'R. Osei', region:'US', business:'Enterprise', riskCategory:'Patch Management', dateIdentified:'2025-12-16', dueDate:'2026-10-31', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'EI-0509', type:'Enterprise Issues', title:'Vendor SOC1/SOC2 exceptions not tracked - Vantage Processing', severity:'High', status:'Open', owner:'S. Patel', region:'US', business:'Technology Infrastructure', riskCategory:'Third Party Risk', dateIdentified:'2026-01-22', dueDate:'2026-09-18', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'EI-0510', type:'Enterprise Issues', title:'Sensitive data exposure in application logs - Mobile Banking App', severity:'Low', status:'Closed', owner:'K. Brooks', region:'EMEA', business:'Enterprise', riskCategory:'Data Protection', dateIdentified:'2026-04-22', dueDate:'2026-09-10', closedDate:'2026-08-02', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'EI-0511', type:'Enterprise Issues', title:'Control procedure out of date - App-5581', severity:'Medium', status:'Open', owner:'L. Farrow', region:'EMEA', business:'Payments', riskCategory:'Governance & Documentation', dateIdentified:'2025-10-10', dueDate:'2026-12-02', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'EI-0512', type:'Enterprise Issues', title:'Unsegmented network zone - Wire Transfer Platform', severity:'Low', status:'In Remediation', owner:'T. Nguyen', region:'EMEA', business:'Payments', riskCategory:'Network Security', dateIdentified:'2026-01-15', dueDate:'2026-07-26', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'Firewall rule remediation requires a change window that has been delayed twice due to competing priorities. The next available change window is being scheduled with network operations.'},
+    {id:'EI-0513', type:'Enterprise Issues', title:'Risk acceptance missing formal approval - App-2210', severity:'High', status:'Open', owner:'D. Whitfield', region:'EMEA', business:'Technology Infrastructure', riskCategory:'Governance & Documentation', dateIdentified:'2025-05-07', dueDate:'2026-10-11', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'EI-0514', type:'Enterprise Issues', title:'Insecure API endpoint identified - CW-118', severity:'High', status:'Closed', owner:'D. Whitfield', region:'EMEA', business:'Payments', riskCategory:'Application Security', dateIdentified:'2025-10-16', dueDate:'2025-12-07', closedDate:'2025-11-21', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'EI-0515', type:'Enterprise Issues', title:'Stale firewall rules - Core Banking Platform segment', severity:'Medium', status:'In Remediation', owner:'T. Nguyen', region:'EMEA', business:'Payments', riskCategory:'Network Security', dateIdentified:'2025-11-17', dueDate:'2026-08-08', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'EI-0516', type:'Enterprise Issues', title:'Critical vulnerability unpatched - CRM-Retail', severity:'Low', status:'Overdue', owner:'R. Osei', region:'EMEA', business:'Technology Infrastructure', riskCategory:'Patch Management', dateIdentified:'2025-02-13', dueDate:'2026-03-28', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'Patching has been delayed due to an application compatibility test that failed in the last cycle. The vendor has been engaged to provide an updated patch.'},
+    {id:'EI-0517', type:'Enterprise Issues', title:'Application criticality tier undocumented - DataLake-EMEA', severity:'High', status:'Overdue', owner:'M. Chen', region:'EMEA', business:'Retail Banking', riskCategory:'Governance & Documentation', dateIdentified:'2025-04-17', dueDate:'2026-06-20', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'EI-0518', type:'Enterprise Issues', title:'Cloud IAM policy too permissive - Payments Gateway', severity:'High', status:'Closed', owner:'P. Singh', region:'US', business:'Retail Banking', riskCategory:'Cloud Security', dateIdentified:'2026-05-08', dueDate:'2026-07-21', closedDate:'2026-07-18', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'EI-0519', type:'Enterprise Issues', title:'Missing MFA on privileged accounts - App-3391', severity:'High', status:'Open', owner:'T. Nguyen', region:'US', business:'Payments', riskCategory:'Access Management', dateIdentified:'2025-04-25', dueDate:'2026-09-07', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'Remediation is delayed because the new privileged access management tooling has not yet completed procurement. Implementation is expected to begin within 4-6 weeks, which will push the original target date.'},
+    {id:'EI-0520', type:'Enterprise Issues', title:'Third-party penetration test overdue - Meridian Data Solutions', severity:'High', status:'Open', owner:'S. Patel', region:'EMEA', business:'Technology Infrastructure', riskCategory:'Third Party Risk', dateIdentified:'2025-09-28', dueDate:'2026-11-26', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'EI-0521', type:'Enterprise Issues', title:'Stale firewall rules - Treasury-Sys segment', severity:'Low', status:'Closed', owner:'J. Alvarez', region:'US', business:'Payments', riskCategory:'Network Security', dateIdentified:'2025-11-23', dueDate:'2026-04-01', closedDate:'2026-05-19', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'EI-0522', type:'Enterprise Issues', title:'Control procedure out of date - Mobile Banking App', severity:'Low', status:'Closed', owner:'M. Chen', region:'US', business:'Retail Banking', riskCategory:'Governance & Documentation', dateIdentified:'2025-12-28', dueDate:'2026-04-08', closedDate:'2026-03-10', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'EI-0523', type:'Enterprise Issues', title:'Stale user access not deprovisioned - App-5581', severity:'Low', status:'Open', owner:'P. Singh', region:'US', business:'Enterprise', riskCategory:'Access Management', dateIdentified:'2026-05-28', dueDate:'2026-08-21', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'EI-0524', type:'Enterprise Issues', title:'Public cloud storage bucket exposure - Wire Transfer Platform', severity:'Medium', status:'Closed', owner:'K. Brooks', region:'US', business:'Enterprise', riskCategory:'Cloud Security', dateIdentified:'2026-01-04', dueDate:'2026-04-20', closedDate:'2026-06-03', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'IA-2201', type:'Internal Audit', title:'Risk acceptance missing formal approval - App-2210', severity:'Medium', status:'Open', owner:'D. Whitfield', region:'US', business:'Enterprise', riskCategory:'Governance & Documentation', dateIdentified:'2025-11-01', dueDate:'2026-09-24', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'IA-2202', type:'Internal Audit', title:'Vendor contract missing security addendum - SecureAudit Partners', severity:'Low', status:'Closed', owner:'R. Osei', region:'EMEA', business:'Technology Infrastructure', riskCategory:'Third Party Risk', dateIdentified:'2026-03-25', dueDate:'2026-07-10', closedDate:'2026-07-29', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'IA-2203', type:'Internal Audit', title:'Unsegmented network zone - Core Banking Platform', severity:'Low', status:'Open', owner:'S. Patel', region:'EMEA', business:'Retail Banking', riskCategory:'Network Security', dateIdentified:'2026-06-10', dueDate:'2026-09-14', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'IA-2204', type:'Internal Audit', title:'Stale firewall rules - CRM-Retail segment', severity:'Medium', status:'Open', owner:'S. Patel', region:'EMEA', business:'Payments', riskCategory:'Network Security', dateIdentified:'2026-07-05', dueDate:'2026-10-28', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'IA-2205', type:'Internal Audit', title:'Risk acceptance missing formal approval - DataLake-EMEA', severity:'Low', status:'Closed', owner:'D. Whitfield', region:'EMEA', business:'Payments', riskCategory:'Governance & Documentation', dateIdentified:'2026-02-22', dueDate:'2026-06-14', closedDate:'2026-08-02', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'IA-2206', type:'Internal Audit', title:'Cloud config drift - Payments Gateway storage', severity:'High', status:'In Remediation', owner:'L. Farrow', region:'US', business:'Payments', riskCategory:'Cloud Security', dateIdentified:'2026-05-31', dueDate:'2026-11-20', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'IA-2207', type:'Internal Audit', title:'Payment gateway logging incomplete - App-3391', severity:'High', status:'In Remediation', owner:'D. Whitfield', region:'US', business:'Retail Banking', riskCategory:'Application Security', dateIdentified:'2025-02-16', dueDate:'2026-11-20', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'The required code fix is more complex than originally scoped and has been re-prioritized into the next development sprint. Delivery is now expected in the following release cycle.'},
+    {id:'IA-2208', type:'Internal Audit', title:'Cloud IAM policy too permissive - App-4470', severity:'High', status:'Closed', owner:'M. Chen', region:'EMEA', business:'Retail Banking', riskCategory:'Cloud Security', dateIdentified:'2025-12-22', dueDate:'2026-02-25', closedDate:'2026-01-20', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'IA-2209', type:'Internal Audit', title:'Vendor contract missing security addendum - Vantage Processing', severity:'Medium', status:'Open', owner:'S. Patel', region:'US', business:'Technology Infrastructure', riskCategory:'Third Party Risk', dateIdentified:'2026-04-21', dueDate:'2026-08-12', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'IA-2210', type:'Internal Audit', title:'Stale user access not deprovisioned - Mobile Banking App', severity:'High', status:'Open', owner:'K. Brooks', region:'EMEA', business:'Retail Banking', riskCategory:'Access Management', dateIdentified:'2025-06-30', dueDate:'2026-10-27', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'IA-2211', type:'Internal Audit', title:'Cloud IAM policy too permissive - App-5581', severity:'High', status:'Overdue', owner:'T. Nguyen', region:'EMEA', business:'Enterprise', riskCategory:'Cloud Security', dateIdentified:'2025-09-26', dueDate:'2026-05-24', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'Remediation requires a broader review of the cloud landing zone configuration standard, which is still in progress. An interim compensating control has been implemented in the meantime.'},
+    {id:'IA-2212', type:'Internal Audit', title:'Stale firewall rules - Wire Transfer Platform segment', severity:'Low', status:'In Remediation', owner:'D. Whitfield', region:'EMEA', business:'Payments', riskCategory:'Network Security', dateIdentified:'2026-04-11', dueDate:'2026-11-26', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'IA-2213', type:'Internal Audit', title:'Cloud IAM policy too permissive - App-2210', severity:'High', status:'Closed', owner:'K. Brooks', region:'EMEA', business:'Payments', riskCategory:'Cloud Security', dateIdentified:'2025-02-23', dueDate:'2025-05-05', closedDate:'2025-03-27', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'IA-2214', type:'Internal Audit', title:'Privileged access review overdue - CW-118', severity:'Medium', status:'Closed', owner:'S. Patel', region:'US', business:'Payments', riskCategory:'Access Management', dateIdentified:'2025-09-13', dueDate:'2025-12-09', closedDate:'2025-12-01', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'IA-2215', type:'Internal Audit', title:'Open ports identified on Core Banking Platform', severity:'Medium', status:'RNV', owner:'M. Chen', region:'US', business:'Payments', riskCategory:'Network Security', dateIdentified:'2026-04-28', dueDate:'2026-07-24', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'Firewall rule remediation requires a change window that has been delayed twice due to competing priorities. The next available change window is being scheduled with network operations.'},
+    {id:'IA-2216', type:'Internal Audit', title:'Cloud config drift - CRM-Retail storage', severity:'High', status:'Overdue', owner:'T. Nguyen', region:'US', business:'Payments', riskCategory:'Cloud Security', dateIdentified:'2026-06-29', dueDate:'2026-07-14', closedDate:'', lastUpdateStatus:'On Track', lastUpdateNote:''},
+    {id:'IA-2217', type:'Internal Audit', title:'Critical vulnerability unpatched - DataLake-EMEA', severity:'Low', status:'Closed', owner:'K. Brooks', region:'US', business:'Retail Banking', riskCategory:'Patch Management', dateIdentified:'2025-04-19', dueDate:'2025-09-09', closedDate:'2025-10-31', lastUpdateStatus:'', lastUpdateNote:''},
+    {id:'IA-2218', type:'Internal Audit', title:'Cloud IAM policy too permissive - Payments Gateway', severity:'Medium', status:'RNV', owner:'K. Brooks', region:'US', business:'Retail Banking', riskCategory:'Cloud Security', dateIdentified:'2025-02-15', dueDate:'2026-07-03', closedDate:'', lastUpdateStatus:'Off Track', lastUpdateNote:'Remediation requires a broader review of the cloud landing zone configuration standard, which is still in progress. An interim compensating control has been implemented in the meantime.'}
+  ];
+
+  var REVIEWS = [
+    {id:'F-1001', type:'Findings', severity:'Medium', owner:'L. Farrow', analyst:'E. Marsh', received:'2025-07-11', decision:'Approved', decisionDate:'2025-07-13', slDate:'', slResult:''},
+    {id:'F-1002', type:'Findings', severity:'Low', owner:'M. Chen', analyst:'O. Adeyemi', received:'2026-07-20', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'F-1003', type:'Findings', severity:'Low', owner:'L. Farrow', analyst:'B. Torres', received:'2026-02-10', decision:'Approved', decisionDate:'2026-02-25', slDate:'', slResult:''},
+    {id:'F-1004', type:'Findings', severity:'Medium', owner:'D. Whitfield', analyst:'E. Marsh', received:'2026-07-18', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'F-1005', type:'Findings', severity:'Medium', owner:'P. Singh', analyst:'F. Nakamura', received:'2026-06-29', decision:'Approved', decisionDate:'2026-07-04', slDate:'', slResult:''},
+    {id:'F-1006', type:'Findings', severity:'High', owner:'D. Whitfield', analyst:'V. Kowalczyk', received:'2025-05-25', decision:'Rejected - Returned to Owner', decisionDate:'2025-06-01', slDate:'', slResult:''},
+    {id:'F-1007', type:'Findings', severity:'Medium', owner:'S. Patel', analyst:'E. Marsh', received:'2025-11-01', decision:'Approved', decisionDate:'2025-11-03', slDate:'', slResult:''},
+    {id:'F-1008', type:'Findings', severity:'High', owner:'R. Osei', analyst:'V. Kowalczyk', received:'2026-07-18', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'F-1009', type:'Findings', severity:'Medium', owner:'M. Chen', analyst:'O. Adeyemi', received:'2025-10-04', decision:'Approved', decisionDate:'2025-10-07', slDate:'', slResult:''},
+    {id:'F-1010', type:'Findings', severity:'Low', owner:'D. Whitfield', analyst:'B. Torres', received:'2026-04-12', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'F-1011', type:'Findings', severity:'High', owner:'K. Brooks', analyst:'E. Marsh', received:'2025-09-14', decision:'Approved - Sent to 2LOD', decisionDate:'2025-09-16', slDate:'2025-09-18', slResult:'Pass'},
+    {id:'F-1012', type:'Findings', severity:'Low', owner:'A. Kowalski', analyst:'E. Marsh', received:'2026-06-16', decision:'Approved', decisionDate:'2026-06-18', slDate:'', slResult:''},
+    {id:'F-1013', type:'Findings', severity:'High', owner:'L. Farrow', analyst:'V. Kowalczyk', received:'2025-03-31', decision:'Rejected - Returned to Owner', decisionDate:'2025-04-06', slDate:'', slResult:''},
+    {id:'F-1014', type:'Findings', severity:'Medium', owner:'T. Nguyen', analyst:'O. Adeyemi', received:'2025-05-15', decision:'Approved', decisionDate:'2025-05-18', slDate:'', slResult:''},
+    {id:'F-1015', type:'Findings', severity:'High', owner:'D. Whitfield', analyst:'V. Kowalczyk', received:'2026-06-17', decision:'Approved - Sent to 2LOD', decisionDate:'2026-06-20', slDate:'2026-06-21', slResult:'Fail'},
+    {id:'F-1016', type:'Findings', severity:'Medium', owner:'A. Kowalski', analyst:'F. Nakamura', received:'2026-06-22', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'F-1017', type:'Findings', severity:'Medium', owner:'T. Nguyen', analyst:'O. Adeyemi', received:'2025-10-31', decision:'Approved', decisionDate:'2025-11-04', slDate:'', slResult:''},
+    {id:'F-1018', type:'Findings', severity:'Low', owner:'D. Whitfield', analyst:'B. Torres', received:'2026-07-14', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'F-1019', type:'Findings', severity:'Medium', owner:'M. Chen', analyst:'F. Nakamura', received:'2025-06-02', decision:'Approved', decisionDate:'2025-06-06', slDate:'', slResult:''},
+    {id:'F-1020', type:'Findings', severity:'High', owner:'D. Whitfield', analyst:'B. Torres', received:'2025-05-06', decision:'Approved - Sent to 2LOD', decisionDate:'2025-05-22', slDate:'2025-05-23', slResult:'Fail'},
+    {id:'F-1021', type:'Findings', severity:'Medium', owner:'D. Whitfield', analyst:'O. Adeyemi', received:'2026-05-23', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'F-1022', type:'Findings', severity:'Low', owner:'T. Nguyen', analyst:'O. Adeyemi', received:'2026-04-24', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'F-1023', type:'Findings', severity:'Low', owner:'J. Alvarez', analyst:'V. Kowalczyk', received:'2026-03-30', decision:'Approved', decisionDate:'2026-04-03', slDate:'', slResult:''},
+    {id:'F-1024', type:'Findings', severity:'Low', owner:'D. Whitfield', analyst:'O. Adeyemi', received:'2026-05-03', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'F-1025', type:'Findings', severity:'High', owner:'A. Kowalski', analyst:'B. Torres', received:'2025-06-02', decision:'Rejected - Returned to Owner', decisionDate:'2025-06-17', slDate:'', slResult:''},
+    {id:'F-1026', type:'Findings', severity:'Medium', owner:'K. Brooks', analyst:'O. Adeyemi', received:'2026-03-05', decision:'Approved', decisionDate:'2026-03-09', slDate:'', slResult:''},
+    {id:'F-1027', type:'Findings', severity:'High', owner:'K. Brooks', analyst:'O. Adeyemi', received:'2026-07-01', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'F-1028', type:'Findings', severity:'Medium', owner:'P. Singh', analyst:'E. Marsh', received:'2025-02-04', decision:'Approved', decisionDate:'2025-02-08', slDate:'', slResult:''},
+    {id:'F-1029', type:'Findings', severity:'Medium', owner:'D. Whitfield', analyst:'F. Nakamura', received:'2025-11-20', decision:'Approved', decisionDate:'2025-11-25', slDate:'', slResult:''},
+    {id:'F-1030', type:'Findings', severity:'Low', owner:'J. Alvarez', analyst:'V. Kowalczyk', received:'2025-04-16', decision:'Approved', decisionDate:'2025-04-23', slDate:'', slResult:''},
+    {id:'EI-0501', type:'Enterprise Issues', severity:'Low', owner:'S. Patel', analyst:'F. Nakamura', received:'2026-07-21', decision:'Approved', decisionDate:'2026-08-01', slDate:'', slResult:''},
+    {id:'EI-0502', type:'Enterprise Issues', severity:'High', owner:'A. Kowalski', analyst:'V. Kowalczyk', received:'2026-07-23', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'EI-0503', type:'Enterprise Issues', severity:'Medium', owner:'L. Farrow', analyst:'B. Torres', received:'2026-06-07', decision:'Approved', decisionDate:'2026-06-10', slDate:'', slResult:''},
+    {id:'EI-0504', type:'Enterprise Issues', severity:'Medium', owner:'T. Nguyen', analyst:'B. Torres', received:'2026-06-14', decision:'Approved', decisionDate:'2026-06-23', slDate:'', slResult:''},
+    {id:'EI-0505', type:'Enterprise Issues', severity:'Low', owner:'P. Singh', analyst:'F. Nakamura', received:'2026-04-16', decision:'Approved', decisionDate:'2026-04-21', slDate:'', slResult:''},
+    {id:'EI-0506', type:'Enterprise Issues', severity:'High', owner:'L. Farrow', analyst:'B. Torres', received:'2025-10-20', decision:'Approved - Sent to 2LOD', decisionDate:'2025-11-04', slDate:'2025-11-06', slResult:'Fail'},
+    {id:'EI-0507', type:'Enterprise Issues', severity:'Low', owner:'T. Nguyen', analyst:'O. Adeyemi', received:'2025-07-09', decision:'Approved', decisionDate:'2025-07-12', slDate:'', slResult:''},
+    {id:'EI-0508', type:'Enterprise Issues', severity:'Medium', owner:'R. Osei', analyst:'O. Adeyemi', received:'2026-06-30', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'EI-0509', type:'Enterprise Issues', severity:'High', owner:'S. Patel', analyst:'F. Nakamura', received:'2026-01-25', decision:'Approved - Sent to 2LOD', decisionDate:'2026-01-26', slDate:'2026-01-30', slResult:'Fail'},
+    {id:'EI-0510', type:'Enterprise Issues', severity:'Low', owner:'K. Brooks', analyst:'E. Marsh', received:'2026-04-22', decision:'Approved', decisionDate:'2026-04-27', slDate:'', slResult:''},
+    {id:'EI-0511', type:'Enterprise Issues', severity:'Medium', owner:'L. Farrow', analyst:'F. Nakamura', received:'2025-10-11', decision:'Approved', decisionDate:'2025-10-14', slDate:'', slResult:''},
+    {id:'EI-0512', type:'Enterprise Issues', severity:'Low', owner:'T. Nguyen', analyst:'F. Nakamura', received:'2026-01-15', decision:'Approved', decisionDate:'2026-01-18', slDate:'', slResult:''},
+    {id:'EI-0513', type:'Enterprise Issues', severity:'High', owner:'D. Whitfield', analyst:'V. Kowalczyk', received:'2025-05-10', decision:'Approved - Sent to 2LOD', decisionDate:'2025-05-11', slDate:'2025-05-12', slResult:'Pass'},
+    {id:'EI-0514', type:'Enterprise Issues', severity:'High', owner:'D. Whitfield', analyst:'B. Torres', received:'2025-10-16', decision:'Approved - Sent to 2LOD', decisionDate:'2025-10-25', slDate:'2025-10-28', slResult:'Pass'},
+    {id:'EI-0515', type:'Enterprise Issues', severity:'Medium', owner:'T. Nguyen', analyst:'V. Kowalczyk', received:'2025-11-19', decision:'Approved', decisionDate:'2025-11-27', slDate:'', slResult:''},
+    {id:'EI-0516', type:'Enterprise Issues', severity:'Low', owner:'R. Osei', analyst:'V. Kowalczyk', received:'2026-04-21', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'EI-0517', type:'Enterprise Issues', severity:'High', owner:'M. Chen', analyst:'V. Kowalczyk', received:'2025-04-18', decision:'Approved - Sent to 2LOD', decisionDate:'2025-04-25', slDate:'2025-04-26', slResult:'Pass'},
+    {id:'EI-0518', type:'Enterprise Issues', severity:'High', owner:'P. Singh', analyst:'E. Marsh', received:'2026-05-10', decision:'Approved - Sent to 2LOD', decisionDate:'2026-05-13', slDate:'2026-05-16', slResult:'Pass'},
+    {id:'EI-0519', type:'Enterprise Issues', severity:'High', owner:'T. Nguyen', analyst:'E. Marsh', received:'2025-04-25', decision:'Approved - Sent to 2LOD', decisionDate:'2025-04-27', slDate:'2025-05-01', slResult:'Fail'},
+    {id:'EI-0520', type:'Enterprise Issues', severity:'High', owner:'S. Patel', analyst:'F. Nakamura', received:'2026-04-15', decision:'', decisionDate:'', slDate:'', slResult:''},
+    {id:'EI-0521', type:'Enterprise Issues', severity:'Low', owner:'J. Alvarez', analyst:'E. Marsh', received:'2025-11-24', decision:'Approved', decisionDate:'2025-11-28', slDate:'', slResult:''},
+    {id:'EI-0522', type:'Enterprise Issues', severity:'Low', owner:'M. Chen', analyst:'F. Nakamura', received:'2025-12-28', decision:'Approved', decisionDate:'2026-01-04', slDate:'', slResult:''},
+    {id:'EI-0523', type:'Enterprise Issues', severity:'Low', owner:'P. Singh', analyst:'E. Marsh', received:'2026-05-28', decision:'Approved', decisionDate:'2026-06-01', slDate:'', slResult:''},
+    {id:'EI-0524', type:'Enterprise Issues', severity:'Medium', owner:'K. Brooks', analyst:'B. Torres', received:'2026-01-07', decision:'Approved', decisionDate:'2026-01-16', slDate:'', slResult:''}
+  ];
+
+  var AS_OF = new Date('2026-08-02T00:00:00');
+  var SEV_COLOR = { High: 'var(--status-bad)', Medium: 'var(--status-warn)', Low: 'var(--status-good)' };
+
+  function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
+
+  function uniqueSorted(field) {
+    var set = {};
+    ISSUES.forEach(function (i) { set[i[field]] = true; });
+    return Object.keys(set).sort();
+  }
+
+  function populateSelect(id, field) {
+    var el = document.getElementById(id);
+    uniqueSorted(field).forEach(function (v) {
+      var opt = document.createElement('option');
+      opt.value = v; opt.textContent = v;
+      el.appendChild(opt);
+    });
+  }
+  populateSelect('f-owner', 'owner');
+  populateSelect('f-business', 'business');
+  populateSelect('f-region', 'region');
+  populateSelect('f2-owner', 'owner');
+  populateSelect('f2-business', 'business');
+  populateSelect('f2-region', 'region');
+
+  function filteredBy(ownerId, businessId, regionId) {
+    var owner = document.getElementById(ownerId).value;
+    var business = document.getElementById(businessId).value;
+    var region = document.getElementById(regionId).value;
+    return ISSUES.filter(function (i) {
+      return (owner === 'All' || i.owner === owner)
+        && (business === 'All' || i.business === business)
+        && (region === 'All' || i.region === region);
+    });
+  }
+
+  function getFiltered() { return filteredBy('f-owner', 'f-business', 'f-region'); }
+  function getFiltered2() { return filteredBy('f2-owner', 'f2-business', 'f2-region'); }
+
+  function countBy(list, field) {
+    var out = {};
+    list.forEach(function (i) { out[i[field]] = (out[i[field]] || 0) + 1; });
+    return out;
+  }
+
+  function renderBars(containerId, dataObj) {
+    var container = document.getElementById(containerId);
+    var entries = Object.keys(dataObj).map(function (k) { return [k, dataObj[k]]; });
+    entries.sort(function (a, b) { return b[1] - a[1]; });
+    if (!entries.length) { container.innerHTML = '<div class="bars-empty">No issues match the current filters.</div>'; return; }
+    var max = Math.max.apply(null, entries.map(function (e) { return e[1]; }));
+    container.innerHTML = entries.map(function (e) {
+      var pct = Math.max((e[1] / max) * 100, 4);
+      return '<div class="bar-row">' +
+        '<div class="bar-label" title="' + e[0] + '">' + e[0] + '</div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%; background:var(--global);"></div></div>' +
+        '<div class="bar-value">' + e[1] + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function renderSeverityByType(list) {
+    var container = document.getElementById('chartSeverityByType');
+    var types = ['Findings', 'Enterprise Issues', 'Internal Audit'];
+    var rows = types.map(function (t) {
+      var subset = list.filter(function (i) { return i.type === t; });
+      var counts = { High: 0, Medium: 0, Low: 0 };
+      subset.forEach(function (i) { counts[i.severity] = (counts[i.severity] || 0) + 1; });
+      var total = subset.length;
+      var segs = ['High', 'Medium', 'Low'].map(function (sev) {
+        if (!counts[sev]) return '';
+        var pct = total ? (counts[sev] / total) * 100 : 0;
+        return '<div class="stack-seg" title="' + sev + ': ' + counts[sev] + '" style="width:' + pct + '%; background:' + SEV_COLOR[sev] + ';"></div>';
+      }).join('');
+      return '<div class="stack-row">' +
+        '<div class="bar-label">' + t + '</div>' +
+        '<div class="stack-track">' + (total ? segs : '') + '</div>' +
+        '<div class="stack-total">' + total + '</div>' +
+        '</div>';
+    });
+    container.innerHTML = rows.join('');
+  }
+
+  function upcomingWithin(list, maxDays) {
+    var open = list.filter(function (i) { return i.status !== 'Closed'; });
+    var upcoming = open.map(function (i) {
+      var d = new Date(i.dueDate + 'T00:00:00');
+      return { issue: i, daysOut: daysBetween(AS_OF, d) };
+    }).filter(function (r) { return r.daysOut >= 0 && r.daysOut <= maxDays; });
+    upcoming.sort(function (a, b) { return a.daysOut - b.daysOut; });
+    return upcoming;
+  }
+
+  function winTagFor(daysOut) {
+    if (daysOut <= 30) return '<span class="win-tag win-30">&le;30d</span>';
+    if (daysOut <= 60) return '<span class="win-tag win-60">31&ndash;60d</span>';
+    return '<span class="win-tag win-90">61&ndash;90d</span>';
+  }
+
+  function renderDueTable(bodyId, upcoming, emptyLabel) {
+    var body = document.getElementById(bodyId);
+    if (!upcoming.length) {
+      body.innerHTML = '<tr><td colspan="7" class="bars-empty">' + emptyLabel + '</td></tr>';
+      return;
+    }
+    body.innerHTML = upcoming.map(function (r) {
+      var i = r.issue;
+      return '<tr>' +
+        '<td class="mono">' + i.id + '</td>' +
+        '<td>' + i.title + '</td>' +
+        '<td>' + i.type + '</td>' +
+        '<td>' + i.severity + '</td>' +
+        '<td>' + i.owner + '</td>' +
+        '<td class="num">' + i.dueDate + '</td>' +
+        '<td>' + winTagFor(r.daysOut) + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  function render() {
+    var list = getFiltered();
+
+    document.getElementById('filterSummary').innerHTML =
+      'Showing <strong>' + list.length + '</strong> of <strong>' + ISSUES.length + '</strong> issues.';
+
+    renderBars('chartByType', countBy(list, 'type'));
+    renderSeverityByType(list);
+    renderBars('chartByOwner', countBy(list, 'owner'));
+    renderBars('chartByRiskCategory', countBy(list, 'riskCategory'));
+    renderVolumeChart(list);
+  }
+
+  function renderAging() {
+    var list = getFiltered2();
+
+    document.getElementById('filterSummary2').innerHTML =
+      'Showing <strong>' + list.length + '</strong> of <strong>' + ISSUES.length + '</strong> issues.';
+
+    // Severity mix, currently open (not Closed)
+    var openIssues = list.filter(function (i) { return i.status !== 'Closed'; });
+    var sev = countBy(openIssues, 'severity');
+    document.getElementById('statSevHigh').textContent = sev.High || 0;
+    document.getElementById('statSevMedium').textContent = sev.Medium || 0;
+    document.getElementById('statSevLow').textContent = sev.Low || 0;
+
+    // Coming due (0-90 days), respects this report's own filters
+    var upcoming90 = upcomingWithin(list, 90);
+    renderDueTable('agingDueTableBody', upcoming90, 'No open issues due within 90 days for the current filters.');
+
+    // Coming due by owner, stacked 30 / 60 / 90
+    var byOwner = {};
+    upcoming90.forEach(function (r) {
+      var o = r.issue.owner;
+      if (!byOwner[o]) byOwner[o] = { d30: 0, d60: 0, d90: 0 };
+      if (r.daysOut <= 30) byOwner[o].d30++;
+      else if (r.daysOut <= 60) byOwner[o].d60++;
+      else byOwner[o].d90++;
+    });
+    var ownerEntries = Object.keys(byOwner).map(function (o) {
+      var b = byOwner[o];
+      return { owner: o, total: b.d30 + b.d60 + b.d90, b: b };
+    });
+    ownerEntries.sort(function (a, b) { return b.total - a.total; });
+    var maxTotal = Math.max.apply(null, ownerEntries.map(function (e) { return e.total; }).concat([1]));
+    var container = document.getElementById('agingOwnerChart');
+    if (!ownerEntries.length) {
+      container.innerHTML = '<div class="bars-empty">No issues coming due within 90 days for the current filters.</div>';
+    } else {
+      container.innerHTML = '<div class="bars">' + ownerEntries.map(function (e) {
+        var segs = [
+          ['d30', 'var(--status-bad)', '≤30 days'],
+          ['d60', 'var(--status-warn)', '31–60 days'],
+          ['d90', 'var(--global)', '61–90 days']
+        ].map(function (s) {
+          var count = e.b[s[0]];
+          if (!count) return '';
+          var pct = (count / maxTotal) * 100;
+          return '<div class="stack-seg" title="' + s[2] + ': ' + count + '" style="width:' + pct + '%; background:' + s[1] + ';"></div>';
+        }).join('');
+        return '<div class="stack-row">' +
+          '<div class="bar-label" title="' + e.owner + '">' + e.owner + '</div>' +
+          '<div class="stack-track">' + segs + '</div>' +
+          '<div class="stack-total">' + e.total + '</div>' +
+          '</div>';
+      }).join('') + '</div>';
+    }
+  }
+
+  // ---------- Opened/closed volume line chart (past 12 months) ----------
+  var volumeState = { months: [] };
+
+  function monthKey(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+  var MONTH_ABBR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  function renderVolumeChart(list) {
+    // Build 12 month buckets ending with the current month.
+    var months = [];
+    for (var k = 11; k >= 0; k--) {
+      var d = new Date(AS_OF.getFullYear(), AS_OF.getMonth() - k, 1);
+      months.push({ key: monthKey(d), label: MONTH_ABBR[d.getMonth()] + " '" + String(d.getFullYear()).slice(2), opened: 0, closed: 0 });
+    }
+    var byKey = {};
+    months.forEach(function (m) { byKey[m.key] = m; });
+
+    list.forEach(function (i) {
+      if (i.dateIdentified) {
+        var od = new Date(i.dateIdentified + 'T00:00:00');
+        var ok = monthKey(od);
+        if (byKey[ok]) byKey[ok].opened++;
+      }
+      if (i.closedDate) {
+        var cd = new Date(i.closedDate + 'T00:00:00');
+        var ck = monthKey(cd);
+        if (byKey[ck]) byKey[ck].closed++;
+      }
+    });
+
+    volumeState.months = months;
+
+    var svg = document.getElementById('volumeChart');
+    var W = 900, H = 260, padL = 32, padR = 12, padT = 14, padB = 28;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+    var maxVal = Math.max.apply(null, months.map(function (m) { return Math.max(m.opened, m.closed); }).concat([4]));
+    var yMax = Math.ceil(maxVal / 4) * 4 || 4;
+
+    function xFor(idx) { return padL + (idx / (months.length - 1)) * plotW; }
+    function yFor(v) { return padT + plotH - (v / yMax) * plotH; }
+
+    var svgns = 'http://www.w3.org/2000/svg';
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    // gridlines + y labels (0, 1/2, max)
+    [0, 0.5, 1].forEach(function (f) {
+      var v = Math.round(yMax * f);
+      var y = yFor(v);
+      var line = document.createElementNS(svgns, 'line');
+      line.setAttribute('x1', padL); line.setAttribute('x2', W - padR);
+      line.setAttribute('y1', y); line.setAttribute('y2', y);
+      line.setAttribute('class', 'chart-gridline');
+      svg.appendChild(line);
+      var lbl = document.createElementNS(svgns, 'text');
+      lbl.setAttribute('x', 4); lbl.setAttribute('y', y + 3);
+      lbl.setAttribute('class', 'chart-axis-label');
+      lbl.textContent = v;
+      svg.appendChild(lbl);
+    });
+
+    // x labels (every month)
+    months.forEach(function (m, idx) {
+      var lbl = document.createElementNS(svgns, 'text');
+      lbl.setAttribute('x', xFor(idx)); lbl.setAttribute('y', H - 6);
+      lbl.setAttribute('class', 'chart-axis-label');
+      lbl.setAttribute('text-anchor', 'middle');
+      lbl.textContent = m.label;
+      svg.appendChild(lbl);
+    });
+
+    function buildPath(field, color) {
+      var d = months.map(function (m, idx) {
+        return (idx === 0 ? 'M ' : 'L ') + xFor(idx) + ' ' + yFor(m[field]);
+      }).join(' ');
+      var path = document.createElementNS(svgns, 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('class', 'chart-line');
+      path.setAttribute('stroke', color);
+      svg.appendChild(path);
+      months.forEach(function (m, idx) {
+        var c = document.createElementNS(svgns, 'circle');
+        c.setAttribute('cx', xFor(idx)); c.setAttribute('cy', yFor(m[field]));
+        c.setAttribute('r', 3.5); c.setAttribute('fill', color);
+        c.setAttribute('class', 'chart-point');
+        svg.appendChild(c);
+      });
+    }
+    buildPath('opened', 'var(--global)');
+    buildPath('closed', 'var(--regional)');
+
+    // hover line (kept above data)
+    var hoverLine = document.createElementNS(svgns, 'line');
+    hoverLine.setAttribute('id', 'volumeHoverLine');
+    hoverLine.setAttribute('y1', padT); hoverLine.setAttribute('y2', H - padB);
+    hoverLine.setAttribute('class', 'chart-hover-line');
+    svg.appendChild(hoverLine);
+
+    // transparent capture rect for hover
+    var capture = document.createElementNS(svgns, 'rect');
+    capture.setAttribute('x', padL); capture.setAttribute('y', padT);
+    capture.setAttribute('width', plotW); capture.setAttribute('height', plotH);
+    capture.setAttribute('fill', 'transparent');
+    capture.setAttribute('id', 'volumeCapture');
+    svg.appendChild(capture);
+
+    volumeState.xFor = xFor;
+  }
+
+  (function setupVolumeHover() {
+    var svg = document.getElementById('volumeChart');
+    var wrap = document.getElementById('volumeChartWrap');
+    var tooltip = document.getElementById('volumeTooltip');
+    svg.addEventListener('mousemove', function (ev) {
+      var months = volumeState.months;
+      if (!months.length) return;
+      var rect = svg.getBoundingClientRect();
+      var svgX = (ev.clientX - rect.left) / rect.width * 900;
+      var idx = Math.round((svgX - 32) / ((900 - 32 - 12) / (months.length - 1)));
+      idx = Math.max(0, Math.min(months.length - 1, idx));
+      var m = months[idx];
+      var hoverLine = document.getElementById('volumeHoverLine');
+      if (hoverLine) {
+        hoverLine.setAttribute('x1', volumeState.xFor(idx));
+        hoverLine.setAttribute('x2', volumeState.xFor(idx));
+        hoverLine.style.opacity = 1;
+      }
+      tooltip.innerHTML =
+        '<div class="tt-title">' + m.label + '</div>' +
+        '<div class="tt-row"><span class="tt-dot" style="background:var(--global)"></span>Opened<span class="tt-val">' + m.opened + '</span></div>' +
+        '<div class="tt-row"><span class="tt-dot" style="background:var(--regional)"></span>Closed<span class="tt-val">' + m.closed + '</span></div>';
+      var wrapRect = wrap.getBoundingClientRect();
+      var px = (volumeState.xFor(idx) / 900) * wrapRect.width;
+      tooltip.style.left = px + 'px';
+      tooltip.style.top = '0px';
+      tooltip.classList.add('visible');
+      tooltip.style.opacity = 1;
+    });
+    svg.addEventListener('mouseleave', function () {
+      tooltip.style.opacity = 0;
+      var hoverLine = document.getElementById('volumeHoverLine');
+      if (hoverLine) hoverLine.style.opacity = 0;
+    });
+  })();
+
+  // ---------- Service Performance report ----------
+  var ANALYSTS = ['E. Marsh', 'O. Adeyemi', 'V. Kowalczyk', 'F. Nakamura', 'B. Torres'];
+  var ANALYST_COLOR = {
+    'E. Marsh': 'var(--analyst-1)',
+    'O. Adeyemi': 'var(--analyst-2)',
+    'V. Kowalczyk': 'var(--analyst-3)',
+    'F. Nakamura': 'var(--analyst-4)',
+    'B. Torres': 'var(--analyst-5)'
+  };
+
+  function uniqueSortedFrom(arr, field) {
+    var set = {};
+    arr.forEach(function (i) { set[i[field]] = true; });
+    return Object.keys(set).sort();
+  }
+  function populateSelectFrom(id, arr, field) {
+    var el = document.getElementById(id);
+    uniqueSortedFrom(arr, field).forEach(function (v) {
+      var opt = document.createElement('option');
+      opt.value = v; opt.textContent = v;
+      el.appendChild(opt);
+    });
+  }
+  populateSelectFrom('f3-analyst', REVIEWS, 'analyst');
+  populateSelectFrom('f3-owner', REVIEWS, 'owner');
+
+  function filteredReviews() {
+    var analyst = document.getElementById('f3-analyst').value;
+    var owner = document.getElementById('f3-owner').value;
+    return REVIEWS.filter(function (r) {
+      return (analyst === 'All' || r.analyst === analyst) && (owner === 'All' || r.owner === owner);
+    });
+  }
+
+  function addWeeks(d, n) { var r = new Date(d); r.setDate(r.getDate() + n * 7); return r; }
+  function buildWeeks() {
+    var weeks = [];
+    for (var k = 51; k >= 0; k--) weeks.push(addWeeks(AS_OF, -k));
+    return weeks;
+  }
+
+  function rollingSeries(list, weeks, rollWeeks, dateField, valueFn) {
+    var out = {};
+    var byAnalyst = {};
+    list.forEach(function (r) { (byAnalyst[r.analyst] = byAnalyst[r.analyst] || []).push(r); });
+    ANALYSTS.forEach(function (a) {
+      var recs = (byAnalyst[a] || []).filter(function (r) { return r[dateField]; });
+      out[a] = weeks.map(function (w) {
+        var wstart = addWeeks(w, -rollWeeks);
+        var pts = recs.filter(function (r) {
+          var d = new Date(r[dateField] + 'T00:00:00');
+          return d > wstart && d <= w;
+        });
+        return pts.length ? valueFn(pts) : null;
+      });
+    });
+    return out;
+  }
+
+  function createMultiLineChart(svgId, wrapId, tooltipId, legendId, fmt, fixedMax) {
+    var state = { weeks: [], series: null };
+    var svg = document.getElementById(svgId);
+    var wrap = document.getElementById(wrapId);
+    var tooltip = document.getElementById(tooltipId);
+    var svgns = 'http://www.w3.org/2000/svg';
+    var W = 900, H = 260, padL = 34, padR = 12, padT = 14, padB = 28;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+
+    function xFor(i) { return padL + (i / (state.weeks.length - 1)) * plotW; }
+
+    function redraw() {
+      var weeks = state.weeks, series = state.series;
+      if (!series || !weeks.length) return;
+      var allVals = [];
+      ANALYSTS.forEach(function (a) { (series[a] || []).forEach(function (v) { if (v != null) allVals.push(v); }); });
+      var yMax = fixedMax != null ? fixedMax : (Math.ceil(Math.max.apply(null, allVals.concat([1])) / 2) * 2 || 2);
+      function yFor(v) { return padT + plotH - (v / yMax) * plotH; }
+
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+      [0, 0.5, 1].forEach(function (f) {
+        var v = Math.round(yMax * f);
+        var y = yFor(v);
+        var line = document.createElementNS(svgns, 'line');
+        line.setAttribute('x1', padL); line.setAttribute('x2', W - padR);
+        line.setAttribute('y1', y); line.setAttribute('y2', y);
+        line.setAttribute('class', 'chart-gridline');
+        svg.appendChild(line);
+        var lbl = document.createElementNS(svgns, 'text');
+        lbl.setAttribute('x', 4); lbl.setAttribute('y', y + 3);
+        lbl.setAttribute('class', 'chart-axis-label');
+        lbl.textContent = fixedMax != null ? v + '%' : v;
+        svg.appendChild(lbl);
+      });
+
+      weeks.forEach(function (w, idx) {
+        if (idx % 4 !== 0 && idx !== weeks.length - 1) return;
+        var lbl = document.createElementNS(svgns, 'text');
+        lbl.setAttribute('x', xFor(idx)); lbl.setAttribute('y', H - 6);
+        lbl.setAttribute('class', 'chart-axis-label');
+        lbl.setAttribute('text-anchor', 'middle');
+        lbl.textContent = (w.getMonth() + 1) + '/' + w.getDate();
+        svg.appendChild(lbl);
+      });
+
+      ANALYSTS.forEach(function (a) {
+        var vals = series[a] || [];
+        var color = ANALYST_COLOR[a];
+        var d = '', drawing = false;
+        vals.forEach(function (v, idx) {
+          if (v == null) { drawing = false; return; }
+          d += (d ? ' ' : '') + (drawing ? 'L' : 'M') + ' ' + xFor(idx) + ' ' + yFor(v);
+          drawing = true;
+        });
+        if (d) {
+          var path = document.createElementNS(svgns, 'path');
+          path.setAttribute('d', d);
+          path.setAttribute('class', 'chart-line');
+          path.setAttribute('stroke', color);
+          svg.appendChild(path);
+        }
+        vals.forEach(function (v, idx) {
+          if (v == null) return;
+          var c = document.createElementNS(svgns, 'circle');
+          c.setAttribute('cx', xFor(idx)); c.setAttribute('cy', yFor(v));
+          c.setAttribute('r', 2.5); c.setAttribute('fill', color);
+          c.setAttribute('class', 'chart-point');
+          svg.appendChild(c);
+        });
+      });
+
+      var hoverLine = document.createElementNS(svgns, 'line');
+      hoverLine.setAttribute('id', svgId + 'HoverLine');
+      hoverLine.setAttribute('y1', padT); hoverLine.setAttribute('y2', H - padB);
+      hoverLine.setAttribute('class', 'chart-hover-line');
+      svg.appendChild(hoverLine);
+
+      var capture = document.createElementNS(svgns, 'rect');
+      capture.setAttribute('x', padL); capture.setAttribute('y', padT);
+      capture.setAttribute('width', plotW); capture.setAttribute('height', plotH);
+      capture.setAttribute('fill', 'transparent');
+      svg.appendChild(capture);
+
+      document.getElementById(legendId).innerHTML = ANALYSTS.map(function (a) {
+        return '<div class="stack-legend-item"><span class="stack-swatch" style="background:' + ANALYST_COLOR[a] + '"></span>' + a + '</div>';
+      }).join('');
+    }
+
+    svg.addEventListener('mousemove', function (ev) {
+      var weeks = state.weeks, series = state.series;
+      if (!series || !weeks.length) return;
+      var rect = svg.getBoundingClientRect();
+      var svgX = (ev.clientX - rect.left) / rect.width * W;
+      var idx = Math.round((svgX - padL) / (plotW / (weeks.length - 1)));
+      idx = Math.max(0, Math.min(weeks.length - 1, idx));
+      var hoverLine = document.getElementById(svgId + 'HoverLine');
+      if (hoverLine) { hoverLine.setAttribute('x1', xFor(idx)); hoverLine.setAttribute('x2', xFor(idx)); hoverLine.style.opacity = 1; }
+      var w = weeks[idx];
+      var rows = ANALYSTS.map(function (a) {
+        var v = (series[a] || [])[idx];
+        return '<div class="tt-row' + (v == null ? ' dim' : '') + '"><span class="tt-dot" style="background:' + ANALYST_COLOR[a] + '"></span>' + a + '<span class="tt-val">' + (v == null ? '—' : fmt(v)) + '</span></div>';
+      }).join('');
+      tooltip.innerHTML = '<div class="tt-title">Week of ' + (w.getMonth() + 1) + '/' + w.getDate() + '/' + w.getFullYear() + '</div>' + rows;
+      var wrapRect = wrap.getBoundingClientRect();
+      var px = (xFor(idx) / W) * wrapRect.width;
+      tooltip.style.left = px + 'px';
+      tooltip.style.top = '0px';
+      tooltip.style.opacity = 1;
+    });
+    svg.addEventListener('mouseleave', function () {
+      tooltip.style.opacity = 0;
+      var hoverLine = document.getElementById(svgId + 'HoverLine');
+      if (hoverLine) hoverLine.style.opacity = 0;
+    });
+
+    return { update: function (series, weeks) { state.series = series; state.weeks = weeks; redraw(); } };
+  }
+
+  var reviewTimeChart = createMultiLineChart('reviewTimeChart', 'reviewTimeChartWrap', 'reviewTimeTooltip', 'perfLegend1', function (v) { return v.toFixed(1) + 'd'; }, null);
+  var qualityChart = createMultiLineChart('qualityChart', 'qualityChartWrap', 'qualityTooltip', 'perfLegend2', function (v) { return Math.round(v) + '%'; }, 100);
+
+  function renderAgingByAnalyst(pending) {
+    var body = document.getElementById('agingByAnalystBody');
+    var byAnalyst = {};
+    pending.forEach(function (r) { (byAnalyst[r.analyst] = byAnalyst[r.analyst] || []).push(r); });
+    var groups = ANALYSTS.map(function (a) {
+      var recs = (byAnalyst[a] || []).slice();
+      recs.sort(function (x, y) {
+        var dx = daysBetween(new Date(x.received + 'T00:00:00'), AS_OF);
+        var dy = daysBetween(new Date(y.received + 'T00:00:00'), AS_OF);
+        return dy - dx;
+      });
+      return { analyst: a, recs: recs.slice(0, 5) };
+    }).filter(function (g) { return g.recs.length > 0; });
+
+    if (!groups.length) {
+      body.innerHTML = '<tr><td colspan="4" class="bars-empty">No items currently in queue for the current filters.</td></tr>';
+      return;
+    }
+
+    body.innerHTML = groups.map(function (g) {
+      var head = '<tr class="aging-group-row"><td colspan="4"><strong>' + g.analyst + '</strong> — ' + g.recs.length + (g.recs.length === 1 ? ' item' : ' items') + ' in queue shown</td></tr>';
+      var rows = g.recs.map(function (r) {
+        var days = daysBetween(new Date(r.received + 'T00:00:00'), AS_OF);
+        return '<tr><td class="mono">' + r.id + '</td><td>' + r.owner + '</td><td class="num">' + days + 'd</td><td>' + r.severity + '</td></tr>';
+      }).join('');
+      return head + rows;
+    }).join('');
+  }
+
+  function renderPerformance() {
+    var list = filteredReviews();
+    document.getElementById('filterSummary3').innerHTML =
+      'Showing <strong>' + list.length + '</strong> of <strong>' + REVIEWS.length + '</strong> reviews.';
+
+    var decisioned = list.filter(function (r) { return r.decision; });
+    var pending = list.filter(function (r) { return !r.decision; });
+
+    var reviewDays = decisioned.map(function (r) {
+      return daysBetween(new Date(r.received + 'T00:00:00'), new Date(r.decisionDate + 'T00:00:00'));
+    });
+    document.getElementById('statAvgReview').textContent = reviewDays.length
+      ? (reviewDays.reduce(function (a, b) { return a + b; }, 0) / reviewDays.length).toFixed(1) : '—';
+    document.getElementById('statPerWeek').textContent = (decisioned.length / 52).toFixed(1);
+
+    var sl = decisioned.filter(function (r) { return r.slResult; });
+    var slFail = sl.filter(function (r) { return r.slResult === 'Fail'; });
+    document.getElementById('stat2lodRate').textContent = sl.length ? Math.round(100 * slFail.length / sl.length) + '%' : '—';
+
+    var rejected = decisioned.filter(function (r) { return r.decision === 'Rejected - Returned to Owner'; });
+    document.getElementById('statAnalystRejectRate').textContent = decisioned.length ? Math.round(100 * rejected.length / decisioned.length) + '%' : '—';
+
+    var weeks = buildWeeks();
+
+    var reviewSeries = rollingSeries(decisioned, weeks, 8, 'decisionDate', function (pts) {
+      var sum = pts.reduce(function (a, r) {
+        return a + daysBetween(new Date(r.received + 'T00:00:00'), new Date(r.decisionDate + 'T00:00:00'));
+      }, 0);
+      return sum / pts.length;
+    });
+    reviewTimeChart.update(reviewSeries, weeks);
+
+    var qualitySeries = rollingSeries(decisioned, weeks, 20, 'slDate', function (pts) {
+      var fails = pts.filter(function (r) { return r.slResult === 'Fail'; }).length;
+      return 100 * fails / pts.length;
+    });
+    qualityChart.update(qualitySeries, weeks);
+
+    renderAgingByAnalyst(pending);
+  }
+
+  ['f3-analyst', 'f3-owner'].forEach(function (id) {
+    document.getElementById(id).addEventListener('change', renderPerformance);
+  });
+  document.getElementById('filterReset3').addEventListener('click', function () {
+    document.getElementById('f3-analyst').value = 'All';
+    document.getElementById('f3-owner').value = 'All';
+    renderPerformance();
+  });
+
+  ['f-owner', 'f-business', 'f-region'].forEach(function (id) {
+    document.getElementById(id).addEventListener('change', render);
+  });
+  document.getElementById('filterReset').addEventListener('click', function () {
+    document.getElementById('f-owner').value = 'All';
+    document.getElementById('f-business').value = 'All';
+    document.getElementById('f-region').value = 'All';
+    render();
+  });
+
+  ['f2-owner', 'f2-business', 'f2-region'].forEach(function (id) {
+    document.getElementById(id).addEventListener('change', renderAging);
+  });
+  document.getElementById('filterReset2').addEventListener('click', function () {
+    document.getElementById('f2-owner').value = 'All';
+    document.getElementById('f2-business').value = 'All';
+    document.getElementById('f2-region').value = 'All';
+    renderAging();
+  });
+
+  document.getElementById('reportSelect').addEventListener('change', function () {
+    var val = this.value;
+    document.querySelectorAll('.report-panel').forEach(function (p) { p.classList.remove('active'); });
+    var target = document.getElementById('report-' + val);
+    if (target) target.classList.add('active');
+  });
+
+  render();
+  renderAging();
+  renderPerformance();
+})();
+</script>

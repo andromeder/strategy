@@ -1,0 +1,19 @@
+Audit_Finding_ID,Audit_Name,Rating,Status,Due_Date,Closed_Date,Owner,Region,Business,Risk_Category,Last_Update_Date,Last_Update_Status,Last_Update_Note
+IA-2201,Risk acceptance missing formal approval - App-2210,Medium,Open,2026-09-24,,D. Whitfield,US,Enterprise,Governance & Documentation,2026-07-15,On Track,
+IA-2202,Vendor contract missing security addendum - SecureAudit Partners,Low,Closed,2026-07-10,2026-07-29,R. Osei,EMEA,Technology Infrastructure,Third Party Risk,,,
+IA-2203,Unsegmented network zone - Core Banking Platform,Low,Open,2026-09-14,,S. Patel,EMEA,Retail Banking,Network Security,2026-07-31,On Track,
+IA-2204,Stale firewall rules - CRM-Retail segment,Medium,Open,2026-10-28,,S. Patel,EMEA,Payments,Network Security,2026-07-30,On Track,
+IA-2205,Risk acceptance missing formal approval - DataLake-EMEA,Low,Closed,2026-06-14,2026-08-02,D. Whitfield,EMEA,Payments,Governance & Documentation,,,
+IA-2206,Cloud config drift - Payments Gateway storage,High,In Remediation,2026-11-20,,L. Farrow,US,Payments,Cloud Security,2026-07-16,On Track,
+IA-2207,Payment gateway logging incomplete - App-3391,High,In Remediation,2026-11-20,,D. Whitfield,US,Retail Banking,Application Security,2026-07-23,Off Track,The required code fix is more complex than originally scoped and has been re-prioritized into the next development sprint. Delivery is now expected in the following release cycle.
+IA-2208,Cloud IAM policy too permissive - App-4470,High,Closed,2026-02-25,2026-01-20,M. Chen,EMEA,Retail Banking,Cloud Security,,,
+IA-2209,Vendor contract missing security addendum - Vantage Processing,Medium,Open,2026-08-12,,S. Patel,US,Technology Infrastructure,Third Party Risk,2026-07-16,On Track,
+IA-2210,Stale user access not deprovisioned - Mobile Banking App,High,Open,2026-10-27,,K. Brooks,EMEA,Retail Banking,Access Management,2026-07-20,On Track,
+IA-2211,Cloud IAM policy too permissive - App-5581,High,Overdue,2026-05-24,,T. Nguyen,EMEA,Enterprise,Cloud Security,2026-07-29,Off Track,"Remediation requires a broader review of the cloud landing zone configuration standard, which is still in progress. An interim compensating control has been implemented in the meantime."
+IA-2212,Stale firewall rules - Wire Transfer Platform segment,Low,In Remediation,2026-11-26,,D. Whitfield,EMEA,Payments,Network Security,2026-07-30,On Track,
+IA-2213,Cloud IAM policy too permissive - App-2210,High,Closed,2025-05-05,2025-03-27,K. Brooks,EMEA,Payments,Cloud Security,,,
+IA-2214,Privileged access review overdue - CW-118,Medium,Closed,2025-12-09,2025-12-01,S. Patel,US,Payments,Access Management,,,
+IA-2215,Open ports identified on Core Banking Platform,Medium,RNV,2026-07-24,,M. Chen,US,Payments,Network Security,2026-07-24,Off Track,Firewall rule remediation requires a change window that has been delayed twice due to competing priorities. The next available change window is being scheduled with network operations.
+IA-2216,Cloud config drift - CRM-Retail storage,High,Overdue,2026-07-14,,T. Nguyen,US,Payments,Cloud Security,2026-07-30,On Track,
+IA-2217,Critical vulnerability unpatched - DataLake-EMEA,Low,Closed,2025-09-09,2025-10-31,K. Brooks,US,Retail Banking,Patch Management,,,
+IA-2218,Cloud IAM policy too permissive - Payments Gateway,Medium,RNV,2026-07-03,,K. Brooks,US,Retail Banking,Cloud Security,2026-07-23,Off Track,"Remediation requires a broader review of the cloud landing zone configuration standard, which is still in progress. An interim compensating control has been implemented in the meantime."

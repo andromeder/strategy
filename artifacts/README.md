@@ -6,7 +6,9 @@ build step, no external dependencies.
 
 | File | Live version | Covers |
 |---|---|---|
-| `strategy-2026-2029.html` | https://claude.ai/code/artifact/f7fa8255-330e-4c5c-b8dd-847358f608ae | Department 2026–2029 strategy: org structure (F1–F8/30 subteams, reconciled against working-session pillar names), risk taxonomy, three cross-cutting themes, People/Process/Technology (Program Walrus), US/EU/APAC regional detail, all six center pillars, pain-point summary, and a 17-item open-items list. Governance pilots the standard section template (mission, capabilities & achievements, gaps & 3-year deliverables by subgroup, milestone timeline) — the other five pillars are marked "template not yet applied" pending rollout. |
+| `strategy-2026-2029.html` | https://claude.ai/code/artifact/f7fa8255-330e-4c5c-b8dd-847358f608ae | Department 2026–2029 strategy, paged by section with collapsible nav groups: Overview (org structure, risk taxonomy, People), Processes/Risks/Controls, Technology (Program Walrus), Regional (US/EU/APAC), Functions (the six center pillars), Operations (Issues Management, Response Management — summarized from the two files below), Financial (placeholder), consolidated roadmap, pain-point summary, and open items. Governance pilots the standard section template (mission, capabilities & achievements, gaps & 3-year deliverables, milestone timeline) pending rollout to the rest. |
+| `it-risk-issues-management.html` | https://claude.ai/code/artifact/ae791543-54b6-4745-a6d7-434fecab19f1 | Mirrored from `work-automation`. IT Risk Issues Management service overview: fixed process nav (Reporting default), Service Performance / Issues Summary / Issue Aging Report on the sample data in `services/it-risk-issues-management/`. |
+| `response-management.html` | https://claude.ai/code/artifact/402cf547-0dc7-4f8e-af24-bdf2e2c6ecb8 | Mirrored from `work-automation`. Response Management (Audit - Internal and External, Regulatory, Client) service overview: fixed nav (Overview default; Audit, Regulatory, Client, Service Performance not yet built), cross-channel inquiry Overview report on the sample data in `services/response-management/`. |
 
 ## Design system for future artifacts
 
@@ -35,6 +37,15 @@ already defines the same tokens, so the linked sheet doesn't change
 anything even where it does load) — don't remove the inline tokens when
 adding the link, and don't expect the link to do anything when the page
 is opened via its `claude.ai/code/artifact/...` URL.
+
+## Underlying data for the mirrored artifacts
+
+`it-risk-issues-management.html` and `response-management.html` embed
+their sample data inline (no runtime `fetch`), but the source CSVs they
+were built from are mirrored too, at [../services/](../services/) and
+[../docs/reference/domains.md](../docs/reference/domains.md) — see
+[../services/README.md](../services/README.md) for the scope of what
+was and wasn't carried over from `work-automation`.
 
 ## These are snapshots, not the source of truth
 

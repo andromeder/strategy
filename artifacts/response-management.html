@@ -1,0 +1,693 @@
+<title>Response Management — Overview</title>
+<link rel="stylesheet" href="design-system.css">
+<style>
+  :root {
+    --paper: #f2f3f0;
+    --paper-raised: #fbfbf9;
+    --ink: #1a2130;
+    --muted: #5b6460;
+    --line: #d3d6cf;
+    --line-strong: #b7bbb1;
+    --global: #00838d;
+    --global-soft: #dcf0f1;
+    --regional: #a85a26;
+    --regional-soft: #f4e4d5;
+    --status-good: #1b7a3d;
+    --status-warn: #a9790a;
+    --status-bad: #b23a3a;
+    --shadow: 0 1px 2px rgba(26, 33, 48, 0.06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #14171a; --paper-raised: #1b1f22; --ink: #e8e7e1; --muted: #9ba39c;
+      --line: #2b3430; --line-strong: #3a443e; --global: #2fa7b0; --global-soft: #17302f;
+      --regional: #c77b3a; --regional-soft: #2f2318;
+      --status-good: #4fbe7c; --status-warn: #e0b04c; --status-bad: #e0685f;
+      --shadow: none; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #14171a; --paper-raised: #1b1f22; --ink: #e8e7e1; --muted: #9ba39c;
+    --line: #2b3430; --line-strong: #3a443e; --global: #2fa7b0; --global-soft: #17302f;
+    --regional: #c77b3a; --regional-soft: #2f2318;
+    --status-good: #4fbe7c; --status-warn: #e0b04c; --status-bad: #e0685f;
+    --shadow: none; color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --paper: #f2f3f0; --paper-raised: #fbfbf9; --ink: #1a2130; --muted: #5b6460;
+    --line: #d3d6cf; --line-strong: #b7bbb1; --global: #00838d; --global-soft: #dcf0f1;
+    --regional: #a85a26; --regional-soft: #f4e4d5;
+    --status-good: #1b7a3d; --status-warn: #a9790a; --status-bad: #b23a3a;
+    --shadow: 0 1px 2px rgba(26, 33, 48, 0.06); color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { background: var(--paper); color: var(--ink); }
+  body {
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--global-soft); }
+  h1, h2, h3 {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    font-weight: 400; color: var(--ink); text-wrap: balance; margin: 0;
+  }
+  .mono { font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace; }
+
+  /* ---------- Fixed header ---------- */
+  .svc-header {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    padding: 20px 24px 0;
+  }
+  .svc-header-inner { max-width: 980px; margin: 0 auto; }
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px;
+  }
+  .svc-title { font-size: 24px; line-height: 1.25; margin-bottom: 14px; }
+  .svc-nav {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px;
+  }
+  .nav-input { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+  .svc-nav label {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 9px 4px; margin-right: 22px; color: var(--muted); cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    transition: color 0.12s ease, border-color 0.12s ease;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .svc-nav label:hover { color: var(--ink); }
+  #nav-overview:checked ~ .svc-header .svc-nav label[for="nav-overview"],
+  #nav-audit:checked ~ .svc-header .svc-nav label[for="nav-audit"],
+  #nav-regulatory:checked ~ .svc-header .svc-nav label[for="nav-regulatory"],
+  #nav-client:checked ~ .svc-header .svc-nav label[for="nav-client"],
+  #nav-performance:checked ~ .svc-header .svc-nav label[for="nav-performance"] {
+    color: var(--ink); border-bottom-color: var(--ink);
+  }
+
+  /* ---------- Page body ---------- */
+  .page { max-width: 980px; margin: 0 auto; padding: 32px 24px 96px; }
+  .panel { display: none; }
+  #nav-overview:checked ~ .page .panel-overview,
+  #nav-audit:checked ~ .page .panel-audit,
+  #nav-regulatory:checked ~ .page .panel-regulatory,
+  #nav-client:checked ~ .page .panel-client,
+  #nav-performance:checked ~ .page .panel-performance { display: block; }
+
+  section { margin-top: 44px; }
+  section:first-child { margin-top: 0; }
+  .section-label {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  h2.section-title { font-size: 22px; margin-bottom: 14px; }
+  p.dek { color: var(--muted); font-size: 15px; }
+
+  .empty-state {
+    border: 1px dashed var(--line-strong); border-radius: 4px; padding: 28px 26px;
+    background: var(--paper-raised);
+  }
+  .empty-state h3 { font-size: 17px; margin-bottom: 8px; }
+  .empty-state p { color: var(--muted); font-size: 14px; margin: 0; max-width: 60ch; }
+
+  /* ---------- Filter bar ---------- */
+  .filter-bar {
+    display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end;
+    background: var(--paper-raised); border: 1px solid var(--line); border-radius: 4px;
+    padding: 14px 16px; margin-bottom: 8px;
+  }
+  .filter-field { display: flex; flex-direction: column; gap: 4px; }
+  .filter-field label {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+  }
+  .filter-field select {
+    font-family: -apple-system, "Segoe UI", sans-serif; font-size: 13.5px;
+    background: var(--paper); color: var(--ink); border: 1px solid var(--line-strong);
+    border-radius: 4px; padding: 7px 10px; min-width: 168px; cursor: pointer;
+  }
+  .filter-reset {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px;
+    color: var(--muted); background: none; border: none; text-decoration: underline;
+    cursor: pointer; padding: 7px 4px;
+  }
+  .filter-reset:hover { color: var(--ink); }
+  .filter-summary { font-size: 12.5px; color: var(--muted); margin: 10px 0 0; }
+  .filter-summary strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  /* ---------- Stacked bar list (open/closed) ---------- */
+  .stack-legend { display: flex; gap: 18px; margin-bottom: 14px; font-size: 12.5px; color: var(--muted); }
+  .stack-legend-item { display: flex; align-items: center; gap: 6px; }
+  .stack-swatch { width: 10px; height: 10px; border-radius: 2px; }
+  .bars { display: flex; flex-direction: column; gap: 10px; }
+  .bar-label { font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bars-empty { font-size: 13px; color: var(--muted); font-style: italic; }
+  .stack-row { display: grid; grid-template-columns: 220px 1fr 40px; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .stack-track { display: flex; gap: 2px; height: 16px; border-radius: 3px; overflow: hidden; background: var(--line); }
+  .stack-seg { height: 100%; transition: width 0.25s ease; }
+  .stack-total { font-family: Georgia, serif; font-size: 13.5px; text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Tables ---------- */
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .due-table th, .due-table td {
+    border-bottom: 1px solid var(--line); padding: 9px 12px; text-align: left; vertical-align: top;
+  }
+  .due-table thead th {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px;
+    letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
+    border-bottom: 2px solid var(--line-strong);
+  }
+  .due-table td.num { font-variant-numeric: tabular-nums; text-align: right; }
+  .due-table td.bucket-cell { text-align: right; cursor: default; color: var(--muted); }
+  .due-table td.bucket-cell.has-items { cursor: pointer; color: var(--ink); font-weight: 600; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; }
+  .due-table td.bucket-cell.has-items:hover { color: var(--global); }
+  .due-table td.bucket-cell.active-cell { background: var(--global-soft); }
+  .due-table tr.review-total-row td { font-weight: 600; }
+
+  .rag-chip {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px;
+    padding: 2px 7px; border-radius: 100px; white-space: nowrap; font-weight: 600;
+  }
+  .rag-red { background: color-mix(in srgb, var(--status-bad) 16%, transparent); color: var(--status-bad); }
+  .rag-amber { background: color-mix(in srgb, var(--status-warn) 18%, transparent); color: var(--status-warn); }
+  .rag-green { background: color-mix(in srgb, var(--status-good) 16%, transparent); color: var(--status-good); }
+
+  /* ---------- Drill-down ---------- */
+  .drilldown { display: none; margin-top: 18px; border: 1px solid var(--line-strong); border-radius: 4px; overflow: hidden; }
+  .drilldown.open { display: block; }
+  .drilldown-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--paper-raised); padding: 12px 16px; border-bottom: 1px solid var(--line);
+  }
+  .drilldown-head h3 { font-size: 15px; }
+  .drilldown-close {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px;
+    color: var(--muted); background: none; border: none; text-decoration: underline;
+    cursor: pointer; padding: 2px 4px; flex-shrink: 0;
+  }
+  .drilldown-close:hover { color: var(--ink); }
+  .drilldown-body { padding: 4px 16px 14px; }
+
+  footer {
+    margin-top: 72px; padding-top: 18px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--muted); display: flex; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap; max-width: 980px; margin-left: auto; margin-right: auto; padding-left: 24px; padding-right: 24px;
+  }
+
+  @media (max-width: 640px) {
+    .svc-title { font-size: 19px; }
+    .stack-row { grid-template-columns: 130px 1fr 34px; }
+    .filter-field select { min-width: 130px; }
+  }
+</style>
+
+<input type="radio" name="nav" id="nav-overview" class="nav-input" checked>
+<input type="radio" name="nav" id="nav-audit" class="nav-input">
+<input type="radio" name="nav" id="nav-regulatory" class="nav-input">
+<input type="radio" name="nav" id="nav-client" class="nav-input">
+<input type="radio" name="nav" id="nav-performance" class="nav-input">
+
+<div class="svc-header">
+  <div class="svc-header-inner">
+    <div class="eyebrow">Global IT Risk · Regulatory, Audit &amp; Issues Management</div>
+    <h1 class="svc-title">Response Management (Audit - Internal and External, Regulatory, Client) — Overview</h1>
+
+    <nav class="svc-nav">
+      <label for="nav-overview">Overview</label>
+      <label for="nav-audit">Audit</label>
+      <label for="nav-regulatory">Regulatory</label>
+      <label for="nav-client">Client</label>
+      <label for="nav-performance">Service Performance</label>
+    </nav>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="panel panel-overview">
+
+    <section>
+      <div class="section-label">Overview</div>
+      <h2 class="section-title">Inquiries across Audit, Regulatory &amp; Client</h2>
+      <p class="dek">Sample data, as of 2026-08-02 — synthetic, generated to prototype this report before real system access is wired up. 70 inquiries across the three channels this Service coordinates; 23 still open. See <span class="mono">data/README.md</span> for the schema.</p>
+    </section>
+
+    <section>
+      <div class="filter-bar">
+        <div class="filter-field">
+          <label for="f-type">Inquiry Type</label>
+          <select id="f-type"><option value="All">All</option></select>
+        </div>
+        <div class="filter-field">
+          <label for="f-client">Client</label>
+          <select id="f-client"><option value="All">All</option></select>
+        </div>
+        <div class="filter-field">
+          <label for="f-exam">Exam / Audit Name</label>
+          <select id="f-exam"><option value="All">All</option></select>
+        </div>
+        <button class="filter-reset" id="filterReset" type="button">Reset filters</button>
+      </div>
+      <p class="filter-summary" id="filterSummary"></p>
+    </section>
+
+    <section>
+      <div class="section-label">Volume</div>
+      <h2 class="section-title">Open reviews with the most inquiries</h2>
+      <p class="dek" style="margin-bottom:14px;">Ranked by total inquiry volume per exam/audit/client engagement, stacked to show the open vs. closed split. Top 10 shown.</p>
+      <div class="stack-legend">
+        <div class="stack-legend-item"><span class="stack-swatch" style="background:var(--status-warn)"></span>Open</div>
+        <div class="stack-legend-item"><span class="stack-swatch" style="background:var(--status-good)"></span>Closed</div>
+      </div>
+      <div class="bars" id="reviewsStack"></div>
+    </section>
+
+    <section>
+      <div class="section-label">Domain</div>
+      <h2 class="section-title">Inquiries received, by domain</h2>
+      <p class="dek" style="margin-bottom:14px;">Same open/closed stacking, across the 8 domains in the shared <span class="mono">docs/reference/domains.md</span> taxonomy.</p>
+      <div class="stack-legend">
+        <div class="stack-legend-item"><span class="stack-swatch" style="background:var(--status-warn)"></span>Open</div>
+        <div class="stack-legend-item"><span class="stack-swatch" style="background:var(--status-good)"></span>Closed</div>
+      </div>
+      <div class="bars" id="domainStack"></div>
+    </section>
+
+    <section>
+      <div class="section-label">Aging</div>
+      <h2 class="section-title">Inquiries due, by exam/audit</h2>
+      <p class="dek" style="margin-bottom:16px;">Open inquiries only, bucketed by time remaining to the due date. Click a bucket count to see the inquiries behind it.</p>
+      <div class="table-scroll">
+        <table class="due-table">
+          <thead>
+            <tr>
+              <th>Exam / Audit / Client Engagement</th>
+              <th>Open</th>
+              <th>Closed</th>
+              <th>Overdue</th>
+              <th>&le;24h</th>
+              <th>&le;48h</th>
+              <th>&le;5 bd</th>
+              <th>&le;20 bd</th>
+              <th>Beyond</th>
+            </tr>
+          </thead>
+          <tbody id="agingByExamBody"></tbody>
+        </table>
+      </div>
+
+      <div class="drilldown" id="drilldownPanel">
+        <div class="drilldown-head">
+          <h3 id="drilldownTitle">Drill-down</h3>
+          <button class="drilldown-close" id="drilldownClose" type="button">Close</button>
+        </div>
+        <div class="drilldown-body">
+          <div class="table-scroll">
+            <table class="due-table">
+              <thead>
+                <tr><th>Reference</th><th>Due Date</th><th>Date Received</th><th>Description</th><th>Owner</th><th>Analyst</th><th>RAG</th></tr>
+              </thead>
+              <tbody id="drilldownBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="panel panel-audit">
+    <section>
+      <div class="section-label">Audit</div>
+      <h2 class="section-title">Not yet built</h2>
+      <div class="empty-state">
+        <h3>Coming soon</h3>
+        <p>Will show Audit-channel inquiries and responses in detail — data
+        already exists (<span class="mono">data/audit_inquiries.csv</span>,
+        <span class="mono">data/audit_responses.csv</span>), just not
+        visualized here yet. See the Overview tab for the cross-channel view.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="panel panel-regulatory">
+    <section>
+      <div class="section-label">Regulatory</div>
+      <h2 class="section-title">Not yet built</h2>
+      <div class="empty-state">
+        <h3>Coming soon</h3>
+        <p>Will show Regulatory-channel (examiner) inquiries and responses
+        in detail — data already exists
+        (<span class="mono">data/regulatory_inquiries.csv</span>,
+        <span class="mono">data/regulatory_responses.csv</span>), just not
+        visualized here yet. See the Overview tab for the cross-channel view.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="panel panel-client">
+    <section>
+      <div class="section-label">Client</div>
+      <h2 class="section-title">Not yet built</h2>
+      <div class="empty-state">
+        <h3>Coming soon</h3>
+        <p>Will show Client-channel due-diligence inquiries and responses
+        in detail — data already exists
+        (<span class="mono">data/client_inquiries.csv</span>,
+        <span class="mono">data/client_responses.csv</span>), just not
+        visualized here yet. See the Overview tab for the cross-channel view.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="panel panel-performance">
+    <section>
+      <div class="section-label">Service Performance</div>
+      <h2 class="section-title">Not yet built</h2>
+      <div class="empty-state">
+        <h3>Coming soon</h3>
+        <p>Will track analyst and response-owner timeliness/quality across
+        all three channels — the same pattern already built for
+        <a href="it-risk-issues-management.html" class="mono">IT Risk Issues Management</a>.</p>
+      </div>
+    </section>
+  </div>
+
+</div>
+
+<footer>
+  <span>Response Management — Overview</span>
+  <span>Source: <span class="mono">services/response-management/</span></span>
+</footer>
+
+<script>
+(function () {
+  var AS_OF = new Date(2026, 7, 2); // 2026-08-02
+
+  var INQUIRIES = [
+        {id:'AUD-001',channel:'Audit',type:'Control Documentation Request',received:'2026-07-30',due:'2026-09-18',desc:'Provide current policy and procedure documentation for Network Security.',analyst:'H. Lindqvist',owner:'L. Bertrand',domain:'Network Security',status:'Open',closed:'',response:'',exam:'PCI DSS Assessment 2025',isClient:'N',client:''},
+    {id:'AUD-002',channel:'Audit',type:'Walkthrough / Interview Request',received:'2026-01-15',due:'2026-02-19',desc:'Schedule a walkthrough of the Data Protection process with the control owner.',analyst:'K. Reyes',owner:'S. Okafor',domain:'Data Protection',status:'Closed',closed:'2026-02-14',response:'Control owner walkthrough was completed and the summary was submitted on schedule. The requester accepted the response as sufficient to close the item. No follow-up items were opened.',exam:'Third Party Risk Audit 2026',isClient:'N',client:''},
+    {id:'AUD-003',channel:'Audit',type:'Evidence Request',received:'2025-11-29',due:'2026-01-01',desc:'Provide evidence of Third Party Risk control operation for the period under review.',analyst:'T. Familusi',owner:'M. Devereux',domain:'Third Party Risk',status:'Closed',closed:'2026-01-08',response:'Requester identified an inconsistency between the Third Party Risk narrative and supporting evidence. A corrected submission was provided and the item was closed following a short delay.',exam:'FY2026 Internal IT Audit',isClient:'N',client:''},
+    {id:'AUD-004',channel:'Audit',type:'Control Documentation Request',received:'2026-01-06',due:'2026-01-20',desc:'Provide current policy and procedure documentation for Network Security.',analyst:'K. Reyes',owner:'L. Bertrand',domain:'Network Security',status:'Closed',closed:'2026-01-30',response:'The first response was returned for clarification on scope; the analyst worked with the Network Security control owner to resubmit a corrected version, which closed the item after the original due date.',exam:'PCI DSS Assessment 2025',isClient:'N',client:''},
+    {id:'AUD-005',channel:'Audit',type:'Evidence Request',received:'2026-03-08',due:'2026-04-01',desc:'Provide evidence of Network Security control operation for the period under review.',analyst:'H. Lindqvist',owner:'L. Bertrand',domain:'Network Security',status:'Closed',closed:'2026-03-26',response:'Control owner walkthrough was completed and the summary was submitted on schedule. The requester accepted the response as sufficient to close the item. No follow-up items were opened.',exam:'External Audit – FY2025 Year-End',isClient:'N',client:''},
+    {id:'AUD-006',channel:'Audit',type:'Follow-up Request',received:'2026-05-04',due:'2026-06-04',desc:'Clarify an open point on the Data Protection evidence submitted previously.',analyst:'H. Lindqvist',owner:'S. Okafor',domain:'Data Protection',status:'Closed',closed:'2026-06-11',response:'Initial Data Protection evidence was submitted but the requester flagged a gap in the sample population. A revised package was resubmitted and subsequently accepted, closing the item late.',exam:'FY2026 Internal IT Audit',isClient:'N',client:''},
+    {id:'AUD-007',channel:'Audit',type:'Control Documentation Request',received:'2026-03-15',due:'2026-04-13',desc:'Provide current policy and procedure documentation for Patch Management.',analyst:'S. Park',owner:'J. Alvarez',domain:'Patch Management',status:'Closed',closed:'2026-04-10',response:'Requested Patch Management evidence was compiled and submitted with no exceptions noted. The requester confirmed receipt and closed the item without further follow-up. No resubmission was required.',exam:'Business Continuity Audit 2025',isClient:'N',client:''},
+    {id:'AUD-008',channel:'Audit',type:'Sample Testing Request',received:'2026-07-30',due:'2026-08-28',desc:'Provide the requested sample population for Access Management testing.',analyst:'T. Familusi',owner:'D. Whitfield',domain:'Access Management',status:'Open',closed:'',response:'',exam:'SOX ITGC Audit 2026',isClient:'N',client:''},
+    {id:'AUD-009',channel:'Audit',type:'Sample Testing Request',received:'2025-09-23',due:'2025-10-21',desc:'Provide the requested sample population for Cloud Security testing.',analyst:'D. Marchetti',owner:'A. Novak',domain:'Cloud Security',status:'Closed',closed:'2025-10-19',response:'The documentation package was assembled from the Cloud Security control owner and submitted directly to the requester. Response was accepted on first submission with no clarification requested.',exam:'FY2026 Internal IT Audit',isClient:'N',client:''},
+    {id:'AUD-010',channel:'Audit',type:'Sample Testing Request',received:'2026-07-28',due:'2026-08-07',desc:'Provide the requested sample population for Access Management testing.',analyst:'K. Reyes',owner:'D. Whitfield',domain:'Access Management',status:'Open',closed:'',response:'',exam:'Third Party Risk Audit 2026',isClient:'N',client:''},
+    {id:'AUD-011',channel:'Audit',type:'Walkthrough / Interview Request',received:'2025-10-31',due:'2025-11-25',desc:'Schedule a walkthrough of the Data Protection process with the control owner.',analyst:'T. Familusi',owner:'S. Okafor',domain:'Data Protection',status:'Closed',closed:'2025-11-25',response:'Control owner walkthrough was completed and the summary was submitted on schedule. The requester accepted the response as sufficient to close the item. No follow-up items were opened.',exam:'SOX ITGC Audit 2026',isClient:'N',client:''},
+    {id:'AUD-012',channel:'Audit',type:'Walkthrough / Interview Request',received:'2026-05-22',due:'2026-06-09',desc:'Schedule a walkthrough of the Application Security process with the control owner.',analyst:'D. Marchetti',owner:'P. Sundaram',domain:'Application Security',status:'Closed',closed:'2026-06-05',response:'Requested Application Security evidence was compiled and submitted with no exceptions noted. The requester confirmed receipt and closed the item without further follow-up. No resubmission was required.',exam:'FY2026 Internal IT Audit',isClient:'N',client:''},
+    {id:'AUD-013',channel:'Audit',type:'Evidence Request',received:'2026-06-06',due:'2026-07-09',desc:'Provide evidence of Patch Management control operation for the period under review.',analyst:'H. Lindqvist',owner:'J. Alvarez',domain:'Patch Management',status:'Closed',closed:'2026-07-06',response:'The documentation package was assembled from the Patch Management control owner and submitted directly to the requester. Response was accepted on first submission with no clarification requested.',exam:'Business Continuity Audit 2025',isClient:'N',client:''},
+    {id:'AUD-014',channel:'Audit',type:'Sample Testing Request',received:'2025-10-01',due:'2025-10-27',desc:'Provide the requested sample population for Governance & Documentation testing.',analyst:'T. Familusi',owner:'T. Okonjo',domain:'Governance & Documentation',status:'Closed',closed:'2025-10-22',response:'Requested Governance & Documentation evidence was compiled and submitted with no exceptions noted. The requester confirmed receipt and closed the item without further follow-up. No resubmission was required.',exam:'FY2026 Internal IT Audit',isClient:'N',client:''},
+    {id:'AUD-015',channel:'Audit',type:'Walkthrough / Interview Request',received:'2026-01-19',due:'2026-02-09',desc:'Schedule a walkthrough of the Data Protection process with the control owner.',analyst:'D. Marchetti',owner:'S. Okafor',domain:'Data Protection',status:'Closed',closed:'2026-02-20',response:'Requester identified an inconsistency between the Data Protection narrative and supporting evidence. A corrected submission was provided and the item was closed following a short delay.',exam:'Third Party Risk Audit 2026',isClient:'N',client:''},
+    {id:'AUD-016',channel:'Audit',type:'Walkthrough / Interview Request',received:'2026-07-24',due:'2026-08-18',desc:'Schedule a walkthrough of the Access Management process with the control owner.',analyst:'K. Reyes',owner:'D. Whitfield',domain:'Access Management',status:'Open',closed:'',response:'',exam:'Third Party Risk Audit 2026',isClient:'N',client:''},
+    {id:'AUD-017',channel:'Audit',type:'Follow-up Request',received:'2026-07-20',due:'2026-08-02',desc:'Clarify an open point on the Access Management evidence submitted previously.',analyst:'D. Marchetti',owner:'D. Whitfield',domain:'Access Management',status:'Open',closed:'',response:'',exam:'Third Party Risk Audit 2026',isClient:'N',client:''},
+    {id:'AUD-018',channel:'Audit',type:'Control Documentation Request',received:'2026-05-05',due:'2026-05-20',desc:'Provide current policy and procedure documentation for Application Security.',analyst:'H. Lindqvist',owner:'P. Sundaram',domain:'Application Security',status:'Closed',closed:'2026-05-14',response:'The documentation package was assembled from the Application Security control owner and submitted directly to the requester. Response was accepted on first submission with no clarification requested.',exam:'SOX ITGC Audit 2026',isClient:'N',client:''},
+    {id:'AUD-019',channel:'Audit',type:'Sample Testing Request',received:'2026-04-10',due:'2026-05-14',desc:'Provide the requested sample population for Cloud Security testing.',analyst:'K. Reyes',owner:'A. Novak',domain:'Cloud Security',status:'Closed',closed:'2026-05-13',response:'Requested Cloud Security evidence was compiled and submitted with no exceptions noted. The requester confirmed receipt and closed the item without further follow-up. No resubmission was required.',exam:'PCI DSS Assessment 2025',isClient:'N',client:''},
+    {id:'AUD-020',channel:'Audit',type:'Control Documentation Request',received:'2026-03-07',due:'2026-04-07',desc:'Provide current policy and procedure documentation for Cloud Security.',analyst:'H. Lindqvist',owner:'A. Novak',domain:'Cloud Security',status:'Closed',closed:'2026-04-19',response:'The first response was returned for clarification on scope; the analyst worked with the Cloud Security control owner to resubmit a corrected version, which closed the item after the original due date.',exam:'External Audit – FY2025 Year-End',isClient:'N',client:''},
+    {id:'AUD-021',channel:'Audit',type:'Follow-up Request',received:'2026-02-12',due:'2026-03-05',desc:'Clarify an open point on the Access Management evidence submitted previously.',analyst:'D. Marchetti',owner:'D. Whitfield',domain:'Access Management',status:'Closed',closed:'2026-03-02',response:'Requested Access Management evidence was compiled and submitted with no exceptions noted. The requester confirmed receipt and closed the item without further follow-up. No resubmission was required.',exam:'External Audit – FY2025 Year-End',isClient:'N',client:''},
+    {id:'AUD-022',channel:'Audit',type:'Evidence Request',received:'2026-07-12',due:'2026-08-05',desc:'Provide evidence of Third Party Risk control operation for the period under review.',analyst:'H. Lindqvist',owner:'M. Devereux',domain:'Third Party Risk',status:'Open',closed:'',response:'',exam:'FY2026 Internal IT Audit',isClient:'N',client:''},
+    {id:'AUD-023',channel:'Audit',type:'Walkthrough / Interview Request',received:'2025-12-19',due:'2026-01-20',desc:'Schedule a walkthrough of the Patch Management process with the control owner.',analyst:'T. Familusi',owner:'J. Alvarez',domain:'Patch Management',status:'Closed',closed:'2026-01-14',response:'Control owner walkthrough was completed and the summary was submitted on schedule. The requester accepted the response as sufficient to close the item. No follow-up items were opened.',exam:'SOX ITGC Audit 2026',isClient:'N',client:''},
+    {id:'AUD-024',channel:'Audit',type:'Follow-up Request',received:'2026-06-30',due:'2026-07-27',desc:'Clarify an open point on the Network Security evidence submitted previously.',analyst:'H. Lindqvist',owner:'L. Bertrand',domain:'Network Security',status:'Open',closed:'',response:'',exam:'External Audit – FY2025 Year-End',isClient:'N',client:''},
+    {id:'AUD-025',channel:'Audit',type:'Evidence Request',received:'2026-07-14',due:'2026-08-03',desc:'Provide evidence of Data Protection control operation for the period under review.',analyst:'T. Familusi',owner:'S. Okafor',domain:'Data Protection',status:'Open',closed:'',response:'',exam:'External Audit – FY2025 Year-End',isClient:'N',client:''},
+    {id:'AUD-026',channel:'Audit',type:'Evidence Request',received:'2026-07-21',due:'2026-07-31',desc:'Provide evidence of Data Protection control operation for the period under review.',analyst:'D. Marchetti',owner:'S. Okafor',domain:'Data Protection',status:'Open',closed:'',response:'',exam:'Third Party Risk Audit 2026',isClient:'N',client:''},
+    {id:'REG-001',channel:'Regulatory',type:'Post-Exam Clarification Request',received:'2026-07-08',due:'2026-08-07',desc:'Clarify an examiner follow-up question on Application Security findings.',analyst:'S. Park',owner:'P. Sundaram',domain:'Application Security',status:'Open',closed:'',response:'',exam:'FFIEC IT Exam 2026',isClient:'N',client:''},
+    {id:'REG-002',channel:'Regulatory',type:'Post-Exam Clarification Request',received:'2026-05-07',due:'2026-06-11',desc:'Clarify an examiner follow-up question on Access Management findings.',analyst:'T. Familusi',owner:'D. Whitfield',domain:'Access Management',status:'Closed',closed:'2026-06-11',response:'The documentation package was assembled from the Access Management control owner and submitted directly to the requester. Response was accepted on first submission with no clarification requested.',exam:'State DFS Cybersecurity Exam 2025',isClient:'N',client:''},
+    {id:'REG-003',channel:'Regulatory',type:'Examiner Document Request',received:'2026-06-09',due:'2026-07-10',desc:'Produce supporting documentation for Application Security controls for examiner review.',analyst:'S. Park',owner:'P. Sundaram',domain:'Application Security',status:'Closed',closed:'2026-07-06',response:'Requested Application Security evidence was compiled and submitted with no exceptions noted. The requester confirmed receipt and closed the item without further follow-up. No resubmission was required.',exam:'FFIEC IT Exam 2026',isClient:'N',client:''},
+    {id:'REG-004',channel:'Regulatory',type:'Examiner Document Request',received:'2026-01-03',due:'2026-01-19',desc:'Produce supporting documentation for Third Party Risk controls for examiner review.',analyst:'K. Reyes',owner:'M. Devereux',domain:'Third Party Risk',status:'Closed',closed:'2026-01-15',response:'Control owner walkthrough was completed and the summary was submitted on schedule. The requester accepted the response as sufficient to close the item. No follow-up items were opened.',exam:'FRB Safety & Soundness Exam 2026',isClient:'N',client:''},
+    {id:'REG-005',channel:'Regulatory',type:'Follow-up Request',received:'2026-07-30',due:'2026-08-18',desc:'Clarify an open point on the Application Security evidence submitted previously.',analyst:'S. Park',owner:'P. Sundaram',domain:'Application Security',status:'Open',closed:'',response:'',exam:'OCC IT Examination 2026',isClient:'N',client:''},
+    {id:'REG-006',channel:'Regulatory',type:'Examiner Interview Request',received:'2026-07-01',due:'2026-07-31',desc:'Make the Third Party Risk control owner available for an examiner interview.',analyst:'S. Park',owner:'M. Devereux',domain:'Third Party Risk',status:'Open',closed:'',response:'',exam:'FFIEC IT Exam 2026',isClient:'N',client:''},
+    {id:'REG-007',channel:'Regulatory',type:'Examiner Interview Request',received:'2025-11-02',due:'2025-11-20',desc:'Make the Governance & Documentation control owner available for an examiner interview.',analyst:'H. Lindqvist',owner:'T. Okonjo',domain:'Governance & Documentation',status:'Closed',closed:'2025-12-02',response:'Initial Governance & Documentation evidence was submitted but the requester flagged a gap in the sample population. A revised package was resubmitted and subsequently accepted, closing the item late.',exam:'State DFS Cybersecurity Exam 2025',isClient:'N',client:''},
+    {id:'REG-008',channel:'Regulatory',type:'Examiner Interview Request',received:'2025-08-29',due:'2025-09-18',desc:'Make the Network Security control owner available for an examiner interview.',analyst:'K. Reyes',owner:'L. Bertrand',domain:'Network Security',status:'Closed',closed:'2025-09-15',response:'The documentation package was assembled from the Network Security control owner and submitted directly to the requester. Response was accepted on first submission with no clarification requested.',exam:'FRB Safety & Soundness Exam 2026',isClient:'N',client:''},
+    {id:'REG-009',channel:'Regulatory',type:'Examiner Document Request',received:'2026-07-30',due:'2026-08-28',desc:'Produce supporting documentation for Third Party Risk controls for examiner review.',analyst:'T. Familusi',owner:'M. Devereux',domain:'Third Party Risk',status:'Open',closed:'',response:'',exam:'FFIEC IT Exam 2026',isClient:'N',client:''},
+    {id:'REG-010',channel:'Regulatory',type:'Pre-Exam Data Request',received:'2026-07-07',due:'2026-08-05',desc:'Submit the pre-exam data package covering Patch Management for the upcoming exam.',analyst:'S. Park',owner:'J. Alvarez',domain:'Patch Management',status:'Open',closed:'',response:'',exam:'FRB Safety & Soundness Exam 2026',isClient:'N',client:''},
+    {id:'REG-011',channel:'Regulatory',type:'Follow-up Request',received:'2026-07-19',due:'2026-08-03',desc:'Clarify an open point on the Access Management evidence submitted previously.',analyst:'K. Reyes',owner:'D. Whitfield',domain:'Access Management',status:'Open',closed:'',response:'',exam:'OCC IT Examination 2026',isClient:'N',client:''},
+    {id:'REG-012',channel:'Regulatory',type:'Post-Exam Clarification Request',received:'2025-11-22',due:'2025-12-15',desc:'Clarify an examiner follow-up question on Network Security findings.',analyst:'T. Familusi',owner:'L. Bertrand',domain:'Network Security',status:'Closed',closed:'2025-12-20',response:'The first response was returned for clarification on scope; the analyst worked with the Network Security control owner to resubmit a corrected version, which closed the item after the original due date.',exam:'FFIEC IT Exam 2026',isClient:'N',client:''},
+    {id:'REG-013',channel:'Regulatory',type:'Post-Exam Clarification Request',received:'2026-05-03',due:'2026-05-15',desc:'Clarify an examiner follow-up question on Network Security findings.',analyst:'H. Lindqvist',owner:'L. Bertrand',domain:'Network Security',status:'Closed',closed:'2026-05-09',response:'Requested Network Security evidence was compiled and submitted with no exceptions noted. The requester confirmed receipt and closed the item without further follow-up. No resubmission was required.',exam:'CFPB Technology Risk Exam 2025',isClient:'N',client:''},
+    {id:'REG-014',channel:'Regulatory',type:'Follow-up Request',received:'2026-06-30',due:'2026-07-14',desc:'Clarify an open point on the Third Party Risk evidence submitted previously.',analyst:'K. Reyes',owner:'M. Devereux',domain:'Third Party Risk',status:'Closed',closed:'2026-07-09',response:'Control owner walkthrough was completed and the summary was submitted on schedule. The requester accepted the response as sufficient to close the item. No follow-up items were opened.',exam:'FFIEC IT Exam 2026',isClient:'N',client:''},
+    {id:'REG-015',channel:'Regulatory',type:'Examiner Document Request',received:'2025-11-25',due:'2025-12-30',desc:'Produce supporting documentation for Data Protection controls for examiner review.',analyst:'T. Familusi',owner:'S. Okafor',domain:'Data Protection',status:'Closed',closed:'2025-12-27',response:'The documentation package was assembled from the Data Protection control owner and submitted directly to the requester. Response was accepted on first submission with no clarification requested.',exam:'FFIEC IT Exam 2026',isClient:'N',client:''},
+    {id:'REG-016',channel:'Regulatory',type:'Follow-up Request',received:'2026-04-09',due:'2026-05-11',desc:'Clarify an open point on the Data Protection evidence submitted previously.',analyst:'H. Lindqvist',owner:'S. Okafor',domain:'Data Protection',status:'Closed',closed:'2026-05-11',response:'The documentation package was assembled from the Data Protection control owner and submitted directly to the requester. Response was accepted on first submission with no clarification requested.',exam:'FFIEC IT Exam 2026',isClient:'N',client:''},
+    {id:'REG-017',channel:'Regulatory',type:'Post-Exam Clarification Request',received:'2026-01-28',due:'2026-02-23',desc:'Clarify an examiner follow-up question on Third Party Risk findings.',analyst:'T. Familusi',owner:'M. Devereux',domain:'Third Party Risk',status:'Closed',closed:'2026-02-17',response:'Requested Third Party Risk evidence was compiled and submitted with no exceptions noted. The requester confirmed receipt and closed the item without further follow-up. No resubmission was required.',exam:'CFPB Technology Risk Exam 2025',isClient:'N',client:''},
+    {id:'REG-018',channel:'Regulatory',type:'Examiner Interview Request',received:'2026-07-11',due:'2026-08-02',desc:'Make the Third Party Risk control owner available for an examiner interview.',analyst:'H. Lindqvist',owner:'M. Devereux',domain:'Third Party Risk',status:'Open',closed:'',response:'',exam:'CFPB Technology Risk Exam 2025',isClient:'N',client:''},
+    {id:'REG-019',channel:'Regulatory',type:'Post-Exam Clarification Request',received:'2026-07-01',due:'2026-07-27',desc:'Clarify an examiner follow-up question on Application Security findings.',analyst:'T. Familusi',owner:'P. Sundaram',domain:'Application Security',status:'Open',closed:'',response:'',exam:'FRB Safety & Soundness Exam 2026',isClient:'N',client:''},
+    {id:'REG-020',channel:'Regulatory',type:'Post-Exam Clarification Request',received:'2025-11-11',due:'2025-12-01',desc:'Clarify an examiner follow-up question on Access Management findings.',analyst:'S. Park',owner:'D. Whitfield',domain:'Access Management',status:'Closed',closed:'2025-11-26',response:'Requested Access Management evidence was compiled and submitted with no exceptions noted. The requester confirmed receipt and closed the item without further follow-up. No resubmission was required.',exam:'FRB Safety & Soundness Exam 2026',isClient:'N',client:''},
+    {id:'CLI-001',channel:'Client',type:'Due Diligence Questionnaire',received:'2025-11-05',due:'2025-12-01',desc:'Complete the annual due diligence questionnaire section on Access Management.',analyst:'D. Marchetti',owner:'D. Whitfield',domain:'Access Management',status:'Closed',closed:'2025-12-06',response:'The first response was returned for clarification on scope; the analyst worked with the Access Management control owner to resubmit a corrected version, which closed the item after the original due date.',exam:'Vantage Point Advisors – Annual DDQ 2026',isClient:'Y',client:'Vantage Point Advisors'},
+    {id:'CLI-002',channel:'Client',type:'Onsite Assessment Request',received:'2025-09-27',due:'2025-10-28',desc:'Support an onsite assessment covering Cloud Security for the client engagement.',analyst:'K. Reyes',owner:'A. Novak',domain:'Cloud Security',status:'Closed',closed:'2025-10-23',response:'Control owner walkthrough was completed and the summary was submitted on schedule. The requester accepted the response as sufficient to close the item. No follow-up items were opened.',exam:'Acme Bank – Annual DDQ 2026',isClient:'Y',client:'Acme Bank'},
+    {id:'CLI-003',channel:'Client',type:'Contract Risk Review Request',received:'2026-07-24',due:'2026-08-07',desc:'Provide Patch Management control attestations to support the contract risk review.',analyst:'K. Reyes',owner:'J. Alvarez',domain:'Patch Management',status:'Open',closed:'',response:'',exam:'Northbridge Financial – Annual DDQ 2026',isClient:'Y',client:'Northbridge Financial'},
+    {id:'CLI-004',channel:'Client',type:'Security Questionnaire',received:'2026-07-30',due:'2026-08-18',desc:'Complete the client security questionnaire covering Data Protection controls.',analyst:'D. Marchetti',owner:'S. Okafor',domain:'Data Protection',status:'Open',closed:'',response:'',exam:'Continental Trust Co. – Onboarding Review 2025',isClient:'Y',client:'Continental Trust Co.'},
+    {id:'CLI-005',channel:'Client',type:'Onsite Assessment Request',received:'2026-07-16',due:'2026-08-02',desc:'Support an onsite assessment covering Cloud Security for the client engagement.',analyst:'T. Familusi',owner:'A. Novak',domain:'Cloud Security',status:'Open',closed:'',response:'',exam:'Vantage Point Advisors – Onboarding Review 2025',isClient:'Y',client:'Vantage Point Advisors'},
+    {id:'CLI-006',channel:'Client',type:'Onsite Assessment Request',received:'2026-07-30',due:'2026-09-18',desc:'Support an onsite assessment covering Cloud Security for the client engagement.',analyst:'S. Park',owner:'A. Novak',domain:'Cloud Security',status:'Open',closed:'',response:'',exam:'Acme Bank – Annual Review 2025',isClient:'Y',client:'Acme Bank'},
+    {id:'CLI-007',channel:'Client',type:'Due Diligence Questionnaire',received:'2026-07-30',due:'2026-08-28',desc:'Complete the annual due diligence questionnaire section on Patch Management.',analyst:'H. Lindqvist',owner:'J. Alvarez',domain:'Patch Management',status:'Open',closed:'',response:'',exam:'Acme Bank – Security Assessment 2026',isClient:'Y',client:'Acme Bank'},
+    {id:'CLI-008',channel:'Client',type:'Security Questionnaire',received:'2026-03-04',due:'2026-03-31',desc:'Complete the client security questionnaire covering Cloud Security controls.',analyst:'K. Reyes',owner:'A. Novak',domain:'Cloud Security',status:'Closed',closed:'2026-03-30',response:'Control owner walkthrough was completed and the summary was submitted on schedule. The requester accepted the response as sufficient to close the item. No follow-up items were opened.',exam:'Crestmark Financial – Annual Review 2025',isClient:'Y',client:'Crestmark Financial'},
+    {id:'CLI-009',channel:'Client',type:'Follow-up Request',received:'2026-07-03',due:'2026-07-28',desc:'Clarify an open point on the Access Management evidence submitted previously.',analyst:'S. Park',owner:'D. Whitfield',domain:'Access Management',status:'Closed',closed:'2026-07-31',response:'Requester identified an inconsistency between the Access Management narrative and supporting evidence. A corrected submission was provided and the item was closed following a short delay.',exam:'Continental Trust Co. – Onboarding Review 2025',isClient:'Y',client:'Continental Trust Co.'},
+    {id:'CLI-010',channel:'Client',type:'Security Questionnaire',received:'2026-07-10',due:'2026-08-03',desc:'Complete the client security questionnaire covering Application Security controls.',analyst:'K. Reyes',owner:'P. Sundaram',domain:'Application Security',status:'Open',closed:'',response:'',exam:'Meridian Capital Partners – Onboarding Review 2025',isClient:'Y',client:'Meridian Capital Partners'},
+    {id:'CLI-011',channel:'Client',type:'Onsite Assessment Request',received:'2026-04-30',due:'2026-05-22',desc:'Support an onsite assessment covering Access Management for the client engagement.',analyst:'D. Marchetti',owner:'D. Whitfield',domain:'Access Management',status:'Closed',closed:'2026-05-21',response:'Control owner walkthrough was completed and the summary was submitted on schedule. The requester accepted the response as sufficient to close the item. No follow-up items were opened.',exam:'Meridian Capital Partners – Annual DDQ 2026',isClient:'Y',client:'Meridian Capital Partners'},
+    {id:'CLI-012',channel:'Client',type:'Onsite Assessment Request',received:'2026-02-04',due:'2026-03-09',desc:'Support an onsite assessment covering Data Protection for the client engagement.',analyst:'D. Marchetti',owner:'S. Okafor',domain:'Data Protection',status:'Closed',closed:'2026-03-07',response:'The documentation package was assembled from the Data Protection control owner and submitted directly to the requester. Response was accepted on first submission with no clarification requested.',exam:'Crestmark Financial – Annual DDQ 2026',isClient:'Y',client:'Crestmark Financial'},
+    {id:'CLI-013',channel:'Client',type:'Contract Risk Review Request',received:'2026-01-04',due:'2026-01-19',desc:'Provide Governance & Documentation control attestations to support the contract risk review.',analyst:'K. Reyes',owner:'T. Okonjo',domain:'Governance & Documentation',status:'Closed',closed:'2026-01-18',response:'Control owner walkthrough was completed and the summary was submitted on schedule. The requester accepted the response as sufficient to close the item. No follow-up items were opened.',exam:'Harborview Asset Management – Annual DDQ 2026',isClient:'Y',client:'Harborview Asset Management'},
+    {id:'CLI-014',channel:'Client',type:'Security Questionnaire',received:'2025-09-29',due:'2025-10-23',desc:'Complete the client security questionnaire covering Patch Management controls.',analyst:'D. Marchetti',owner:'J. Alvarez',domain:'Patch Management',status:'Closed',closed:'2025-10-28',response:'Initial Patch Management evidence was submitted but the requester flagged a gap in the sample population. A revised package was resubmitted and subsequently accepted, closing the item late.',exam:'Meridian Capital Partners – Annual DDQ 2025',isClient:'Y',client:'Meridian Capital Partners'},
+    {id:'CLI-015',channel:'Client',type:'Onsite Assessment Request',received:'2026-01-27',due:'2026-02-19',desc:'Support an onsite assessment covering Application Security for the client engagement.',analyst:'K. Reyes',owner:'P. Sundaram',domain:'Application Security',status:'Closed',closed:'2026-02-25',response:'Initial Application Security evidence was submitted but the requester flagged a gap in the sample population. A revised package was resubmitted and subsequently accepted, closing the item late.',exam:'Harborview Asset Management – Annual Review 2025',isClient:'Y',client:'Harborview Asset Management'},
+    {id:'CLI-016',channel:'Client',type:'Due Diligence Questionnaire',received:'2026-07-15',due:'2026-07-27',desc:'Complete the annual due diligence questionnaire section on Data Protection.',analyst:'S. Park',owner:'S. Okafor',domain:'Data Protection',status:'Open',closed:'',response:'',exam:'Silverline Bank – Security Assessment 2026',isClient:'Y',client:'Silverline Bank'},
+    {id:'CLI-017',channel:'Client',type:'Contract Risk Review Request',received:'2026-04-07',due:'2026-04-28',desc:'Provide Third Party Risk control attestations to support the contract risk review.',analyst:'H. Lindqvist',owner:'M. Devereux',domain:'Third Party Risk',status:'Closed',closed:'2026-05-07',response:'Initial Third Party Risk evidence was submitted but the requester flagged a gap in the sample population. A revised package was resubmitted and subsequently accepted, closing the item late.',exam:'Continental Trust Co. – Annual DDQ 2026',isClient:'Y',client:'Continental Trust Co.'},
+    {id:'CLI-018',channel:'Client',type:'Contract Risk Review Request',received:'2026-04-25',due:'2026-05-14',desc:'Provide Cloud Security control attestations to support the contract risk review.',analyst:'K. Reyes',owner:'A. Novak',domain:'Cloud Security',status:'Closed',closed:'2026-05-10',response:'The documentation package was assembled from the Cloud Security control owner and submitted directly to the requester. Response was accepted on first submission with no clarification requested.',exam:'Harborview Asset Management – Annual DDQ 2025',isClient:'Y',client:'Harborview Asset Management'},
+    {id:'CLI-019',channel:'Client',type:'Due Diligence Questionnaire',received:'2025-12-28',due:'2026-01-13',desc:'Complete the annual due diligence questionnaire section on Third Party Risk.',analyst:'H. Lindqvist',owner:'M. Devereux',domain:'Third Party Risk',status:'Closed',closed:'2026-01-24',response:'Initial Third Party Risk evidence was submitted but the requester flagged a gap in the sample population. A revised package was resubmitted and subsequently accepted, closing the item late.',exam:'Meridian Capital Partners – Annual DDQ 2026',isClient:'Y',client:'Meridian Capital Partners'},
+    {id:'CLI-020',channel:'Client',type:'Onsite Assessment Request',received:'2026-04-28',due:'2026-05-19',desc:'Support an onsite assessment covering Third Party Risk for the client engagement.',analyst:'T. Familusi',owner:'M. Devereux',domain:'Third Party Risk',status:'Closed',closed:'2026-05-13',response:'Requested Third Party Risk evidence was compiled and submitted with no exceptions noted. The requester confirmed receipt and closed the item without further follow-up. No resubmission was required.',exam:'Continental Trust Co. – Security Assessment 2026',isClient:'Y',client:'Continental Trust Co.'},
+    {id:'CLI-021',channel:'Client',type:'Onsite Assessment Request',received:'2026-02-26',due:'2026-03-16',desc:'Support an onsite assessment covering Network Security for the client engagement.',analyst:'T. Familusi',owner:'L. Bertrand',domain:'Network Security',status:'Closed',closed:'2026-03-12',response:'The documentation package was assembled from the Network Security control owner and submitted directly to the requester. Response was accepted on first submission with no clarification requested.',exam:'Meridian Capital Partners – Onboarding Review 2025',isClient:'Y',client:'Meridian Capital Partners'},
+    {id:'CLI-022',channel:'Client',type:'Due Diligence Questionnaire',received:'2025-09-11',due:'2025-10-01',desc:'Complete the annual due diligence questionnaire section on Network Security.',analyst:'T. Familusi',owner:'L. Bertrand',domain:'Network Security',status:'Closed',closed:'2025-10-13',response:'Requester identified an inconsistency between the Network Security narrative and supporting evidence. A corrected submission was provided and the item was closed following a short delay.',exam:'Silverline Bank – Onboarding Review 2025',isClient:'Y',client:'Silverline Bank'},
+    {id:'CLI-023',channel:'Client',type:'Due Diligence Questionnaire',received:'2026-07-12',due:'2026-07-31',desc:'Complete the annual due diligence questionnaire section on Network Security.',analyst:'S. Park',owner:'L. Bertrand',domain:'Network Security',status:'Open',closed:'',response:'',exam:'Silverline Bank – Annual Review 2025',isClient:'Y',client:'Silverline Bank'},
+    {id:'CLI-024',channel:'Client',type:'Follow-up Request',received:'2026-07-19',due:'2026-08-05',desc:'Clarify an open point on the Governance & Documentation evidence submitted previously.',analyst:'S. Park',owner:'T. Okonjo',domain:'Governance & Documentation',status:'Open',closed:'',response:'',exam:'Meridian Capital Partners – Security Assessment 2026',isClient:'Y',client:'Meridian Capital Partners'}
+  ];
+
+  var DOMAINS = ['Access Management', 'Data Protection', 'Network Security', 'Third Party Risk',
+    'Patch Management', 'Application Security', 'Cloud Security', 'Governance & Documentation'];
+
+  var BUCKET_KEYS = ['overdue', 'd24', 'd48', 'd5bd', 'd20bd', 'beyond'];
+  var BUCKET_LABELS = {
+    overdue: 'Overdue', d24: 'Due ≤24h', d48: 'Due ≤48h',
+    d5bd: 'Due ≤5 business days', d20bd: 'Due ≤20 business days', beyond: 'Beyond 20 business days'
+  };
+  var BUCKET_RAG = { overdue: 'red', d24: 'red', d48: 'amber', d5bd: 'amber', d20bd: 'green', beyond: 'green' };
+
+  function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
+
+  function businessDaysBetween(start, end) {
+    if (end <= start) return 0;
+    var d = new Date(start), n = 0;
+    while (d < end) {
+      d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+      var dow = d.getDay();
+      if (dow !== 0 && dow !== 6) n++;
+    }
+    return n;
+  }
+
+  function bucketFor(due) {
+    if (due < AS_OF) return 'overdue';
+    if (daysBetween(AS_OF, due) === 0) return 'd24';
+    if (daysBetween(AS_OF, due) === 1) return 'd48';
+    var bd = businessDaysBetween(AS_OF, due);
+    if (bd <= 5) return 'd5bd';
+    if (bd <= 20) return 'd20bd';
+    return 'beyond';
+  }
+
+  function parseDate(s) { return new Date(s + 'T00:00:00'); }
+
+  // ---------- Filters ----------
+  function uniqueSorted(field) {
+    var set = {};
+    INQUIRIES.forEach(function (i) { if (i[field]) set[i[field]] = true; });
+    return Object.keys(set).sort();
+  }
+
+  function populateSelect(id, field) {
+    var el = document.getElementById(id);
+    uniqueSorted(field).forEach(function (v) {
+      var opt = document.createElement('option');
+      opt.value = v; opt.textContent = v;
+      el.appendChild(opt);
+    });
+  }
+  populateSelect('f-type', 'type');
+  populateSelect('f-client', 'client');
+  populateSelect('f-exam', 'exam');
+
+  function getFiltered() {
+    var type = document.getElementById('f-type').value;
+    var client = document.getElementById('f-client').value;
+    var exam = document.getElementById('f-exam').value;
+    return INQUIRIES.filter(function (i) {
+      return (type === 'All' || i.type === type)
+        && (client === 'All' || i.client === client)
+        && (exam === 'All' || i.exam === exam);
+    });
+  }
+
+  // ---------- Open/closed stacked bar list ----------
+  function renderOpenClosedStack(containerId, groupField, limit) {
+    var list = getFiltered();
+    var groups = {};
+    list.forEach(function (i) {
+      var key = i[groupField];
+      if (!groups[key]) groups[key] = { open: 0, closed: 0 };
+      if (i.status === 'Open') groups[key].open++; else groups[key].closed++;
+    });
+    var entries = Object.keys(groups).map(function (k) {
+      var g = groups[k];
+      return { label: k, open: g.open, closed: g.closed, total: g.open + g.closed };
+    });
+    entries.sort(function (a, b) { return b.total - a.total; });
+    if (limit) entries = entries.slice(0, limit);
+
+    var container = document.getElementById(containerId);
+    if (!entries.length) {
+      container.innerHTML = '<div class="bars-empty">No inquiries match the current filters.</div>';
+      return;
+    }
+    var maxTotal = Math.max.apply(null, entries.map(function (e) { return e.total; }).concat([1]));
+    container.innerHTML = entries.map(function (e) {
+      var segs = [
+        ['open', e.open, 'var(--status-warn)', 'Open'],
+        ['closed', e.closed, 'var(--status-good)', 'Closed']
+      ].map(function (s) {
+        if (!s[1]) return '';
+        var pct = (s[1] / maxTotal) * 100;
+        return '<div class="stack-seg" title="' + s[3] + ': ' + s[1] + '" style="width:' + pct + '%; background:' + s[2] + ';"></div>';
+      }).join('');
+      return '<div class="stack-row">' +
+        '<div class="bar-label" title="' + e.label + '">' + e.label + '</div>' +
+        '<div class="stack-track">' + segs + '</div>' +
+        '<div class="stack-total">' + e.total + '</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  // ---------- Aging-by-exam table ----------
+  var lastDrilldown = null; // {exam, bucket}
+
+  function renderAgingByExam() {
+    var list = getFiltered();
+    var groups = {};
+    list.forEach(function (i) {
+      var key = i.exam;
+      if (!groups[key]) {
+        groups[key] = { open: 0, closed: 0, buckets: { overdue: 0, d24: 0, d48: 0, d5bd: 0, d20bd: 0, beyond: 0 } };
+      }
+      if (i.status === 'Open') {
+        groups[key].open++;
+        var b = bucketFor(parseDate(i.due));
+        groups[key].buckets[b]++;
+      } else {
+        groups[key].closed++;
+      }
+    });
+    var entries = Object.keys(groups).map(function (k) {
+      var g = groups[k];
+      return { exam: k, open: g.open, closed: g.closed, buckets: g.buckets, total: g.open + g.closed };
+    });
+    entries.sort(function (a, b) { return b.total - a.total; });
+    entries = entries.slice(0, 12);
+
+    var body = document.getElementById('agingByExamBody');
+    if (!entries.length) {
+      body.innerHTML = '<tr><td colspan="9" class="bars-empty">No inquiries match the current filters.</td></tr>';
+      return;
+    }
+    body.innerHTML = entries.map(function (e) {
+      var cells = BUCKET_KEYS.map(function (bk) {
+        var count = e.buckets[bk];
+        var cls = 'bucket-cell' + (count ? ' has-items' : '');
+        if (lastDrilldown && lastDrilldown.exam === e.exam && lastDrilldown.bucket === bk && count) cls += ' active-cell';
+        return '<td class="' + cls + '" data-exam="' + escapeAttr(e.exam) + '" data-bucket="' + bk + '">' + (count || '–') + '</td>';
+      }).join('');
+      return '<tr>' +
+        '<td title="' + escapeAttr(e.exam) + '">' + e.exam + '</td>' +
+        '<td class="num">' + e.open + '</td>' +
+        '<td class="num">' + e.closed + '</td>' +
+        cells +
+        '</tr>';
+    }).join('');
+  }
+
+  function escapeAttr(s) { return String(s).replace(/"/g, '&quot;'); }
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  document.getElementById('agingByExamBody').addEventListener('click', function (ev) {
+    var td = ev.target.closest('td.bucket-cell.has-items');
+    if (!td) return;
+    var exam = td.getAttribute('data-exam');
+    var bucket = td.getAttribute('data-bucket');
+    lastDrilldown = { exam: exam, bucket: bucket };
+    renderDrilldown();
+    renderAgingByExam();
+  });
+
+  document.getElementById('drilldownClose').addEventListener('click', function () {
+    lastDrilldown = null;
+    document.getElementById('drilldownPanel').classList.remove('open');
+    renderAgingByExam();
+  });
+
+  function renderDrilldown() {
+    var panel = document.getElementById('drilldownPanel');
+    if (!lastDrilldown) { panel.classList.remove('open'); return; }
+    var list = getFiltered().filter(function (i) {
+      return i.status === 'Open' && i.exam === lastDrilldown.exam && bucketFor(parseDate(i.due)) === lastDrilldown.bucket;
+    });
+    document.getElementById('drilldownTitle').textContent =
+      lastDrilldown.exam + ' — ' + BUCKET_LABELS[lastDrilldown.bucket] + ' (' + list.length + ')';
+    var body = document.getElementById('drilldownBody');
+    if (!list.length) {
+      body.innerHTML = '<tr><td colspan="7" class="bars-empty">No inquiries in this bucket.</td></tr>';
+    } else {
+      list.sort(function (a, b) { return a.due.localeCompare(b.due); });
+      body.innerHTML = list.map(function (i) {
+        var rag = BUCKET_RAG[lastDrilldown.bucket];
+        return '<tr>' +
+          '<td class="mono">' + i.id + '</td>' +
+          '<td class="num">' + i.due + '</td>' +
+          '<td class="num">' + i.received + '</td>' +
+          '<td>' + escapeHtml(i.desc) + '</td>' +
+          '<td>' + i.owner + '</td>' +
+          '<td>' + i.analyst + '</td>' +
+          '<td><span class="rag-chip rag-' + rag + '">' + rag.charAt(0).toUpperCase() + rag.slice(1) + '</span></td>' +
+          '</tr>';
+      }).join('');
+    }
+    panel.classList.add('open');
+  }
+
+  function render() {
+    var list = getFiltered();
+    document.getElementById('filterSummary').innerHTML =
+      'Showing <strong>' + list.length + '</strong> of <strong>' + INQUIRIES.length + '</strong> inquiries.';
+    renderOpenClosedStack('reviewsStack', 'exam', 10);
+    renderOpenClosedStack('domainStack', 'domain', null);
+    renderAgingByExam();
+    renderDrilldown();
+  }
+
+  ['f-type', 'f-client', 'f-exam'].forEach(function (id) {
+    document.getElementById(id).addEventListener('change', function () {
+      lastDrilldown = null;
+      render();
+    });
+  });
+  document.getElementById('filterReset').addEventListener('click', function () {
+    document.getElementById('f-type').value = 'All';
+    document.getElementById('f-client').value = 'All';
+    document.getElementById('f-exam').value = 'All';
+    lastDrilldown = null;
+    render();
+  });
+
+  render();
+})();
+</script>
