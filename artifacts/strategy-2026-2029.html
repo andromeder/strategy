@@ -57,7 +57,17 @@ p { margin: 0 0 .9em; max-width: 64ch; }
 .nav .brand { font-family: Georgia, serif; font-size: 16px; color: var(--ink); }
 .nav .brand-sub { display: block; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 2px 0 22px; }
 .nav-group { margin-bottom: 16px; }
-.nav-group-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 5px; padding: 0 6px; }
+.nav-group-label {
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 5px; padding: 4px 6px; background: none; border: none; cursor: pointer; font-weight: inherit;
+}
+.nav-group-label:hover { color: var(--ink); }
+.nav-chevron { font-size: 11px; transition: transform .15s; }
+.nav-group-label[aria-expanded="false"] .nav-chevron { transform: rotate(0deg); }
+.nav-group-label[aria-expanded="true"] .nav-chevron { transform: rotate(90deg); }
+.nav-group-links { display: flex; flex-direction: column; }
+.nav-group-links.collapsed { display: none; }
 .nav a { display: block; padding: 5px 6px; border-radius: 4px; color: var(--muted); text-decoration: none; font-size: 13.5px; }
 .nav a:hover { background: var(--paper); color: var(--ink); }
 .nav a.pending::after { content: "draft"; float: right; font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--status-warn); }
@@ -253,32 +263,53 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
     <span class="brand-sub">2026&ndash;2029 &middot; Working Draft</span>
 
     <div class="nav-group">
-      <p class="nav-group-label">Foundations</p>
-      <a href="#org-structure">Org structure, people &amp; taxonomy</a>
-      <a href="#themes">Cross-cutting themes</a>
-      <a href="#prc">Processes, Risks &amp; Controls</a>
-      <a href="#technology">Technology</a>
+      <button type="button" class="nav-group-label" aria-expanded="true"><span>Overview</span><span class="nav-chevron">&rsaquo;</span></button>
+      <div class="nav-group-links">
+        <a href="#org-structure">Org structure, people &amp; taxonomy</a>
+        <a href="#prc">Processes, Risks &amp; Controls</a>
+        <a href="#technology">Technology</a>
+      </div>
     </div>
     <div class="nav-group">
-      <p class="nav-group-label">Regional</p>
-      <a href="#region-us">United States</a>
-      <a href="#region-eu">Europe</a>
-      <a href="#region-apac">APAC</a>
+      <button type="button" class="nav-group-label" aria-expanded="true"><span>Regional</span><span class="nav-chevron">&rsaquo;</span></button>
+      <div class="nav-group-links">
+        <a href="#region-us">United States</a>
+        <a href="#region-eu">Europe</a>
+        <a href="#region-apac">APAC</a>
+      </div>
     </div>
     <div class="nav-group">
-      <p class="nav-group-label">Central pillars</p>
-      <a href="#pillar-governance">Governance &mdash; template</a>
-      <a href="#pillar-oprisk" class="pending">Op Risk &amp; Issues Mgmt</a>
-      <a href="#pillar-assessments" class="pending">Assessments</a>
-      <a href="#pillar-reporting" class="pending">Reporting &amp; Analytics</a>
-      <a href="#pillar-thirdparty" class="pending">Third Party Risk</a>
-      <a href="#pillar-controltesting" class="pending">Control Testing</a>
+      <button type="button" class="nav-group-label" aria-expanded="true"><span>Functions</span><span class="nav-chevron">&rsaquo;</span></button>
+      <div class="nav-group-links">
+        <a href="#pillar-governance">Governance &mdash; template</a>
+        <a href="#pillar-oprisk" class="pending">Op Risk &amp; Issues Mgmt</a>
+        <a href="#pillar-assessments" class="pending">Assessments</a>
+        <a href="#pillar-reporting" class="pending">Reporting &amp; Analytics</a>
+        <a href="#pillar-thirdparty" class="pending">Third Party Risk</a>
+        <a href="#pillar-controltesting" class="pending">Control Testing</a>
+      </div>
     </div>
     <div class="nav-group">
-      <p class="nav-group-label">Reference</p>
-      <a href="#roadmap">Consolidated roadmap</a>
-      <a href="#summary">Pain point summary</a>
-      <a href="#open-items">Open items</a>
+      <button type="button" class="nav-group-label" aria-expanded="true"><span>Operations</span><span class="nav-chevron">&rsaquo;</span></button>
+      <div class="nav-group-links">
+        <a href="#ops-issues">Issues Management</a>
+        <a href="#ops-response">Response Management</a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <button type="button" class="nav-group-label" aria-expanded="true"><span>Financial</span><span class="nav-chevron">&rsaquo;</span></button>
+      <div class="nav-group-links">
+        <a href="#financial-overview" class="pending">Financial overview</a>
+      </div>
+    </div>
+    <div class="nav-group">
+      <button type="button" class="nav-group-label" aria-expanded="true"><span>Reference</span><span class="nav-chevron">&rsaquo;</span></button>
+      <div class="nav-group-links">
+        <a href="#themes">Cross-cutting themes</a>
+        <a href="#roadmap">Consolidated roadmap</a>
+        <a href="#summary">Pain point summary</a>
+        <a href="#open-items">Open items</a>
+      </div>
     </div>
   </nav>
 
@@ -297,7 +328,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ ORG STRUCTURE ============ -->
       <section id="org-structure" class="wide">
-        <div class="section-label">Foundations &middot; 00</div>
+        <div class="section-label">Overview &middot; 00</div>
         <h2 class="section-title">Organizational structure, people &amp; taxonomy</h2>
         <p class="dek">One Head, eight functions, matrixed across two axes &mdash; function (what work is done) and region (where it's done) &mdash; plus who staffs it and the risk taxonomy it all operates within.</p>
 
@@ -444,7 +475,6 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
         <div class="subpage" data-subpage="people">
         <h3>People</h3>
-        <p class="dek">Who staffs the department today, the centralization posture, and where people sit geographically.</p>
 
         <div class="stat-row">
           <div class="stat"><span class="stat-num">200</span><span class="stat-label">People total</span></div>
@@ -513,7 +543,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ CROSS-CUTTING THEMES ============ -->
       <section id="themes" class="wide">
-        <div class="section-label">Foundations &middot; 01</div>
+        <div class="section-label">Reference &middot; 15</div>
         <h2 class="section-title">Three themes that recur everywhere</h2>
         <p class="dek">These surfaced independently across nearly every region and pillar. They belong at the macro level of the strategy &mdash; the pillar and regional detail later in this document are largely instances of one of the three.</p>
 
@@ -549,7 +579,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ PROCESSES, RISKS & CONTROLS ============ -->
       <section id="prc" class="wide">
-        <div class="section-label">Foundations &middot; 02</div>
+        <div class="section-label">Overview &middot; 01</div>
         <h2 class="section-title">Processes, Risks &amp; Controls</h2>
         <p class="dek">What the center actually delivers today, the risks it manages, and the controls that manage them.</p>
 
@@ -599,7 +629,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ TECHNOLOGY ============ -->
       <section id="technology" class="wide">
-        <div class="section-label">Foundations &middot; 03</div>
+        <div class="section-label">Overview &middot; 02</div>
         <h2 class="section-title">Technology</h2>
         <p class="dek">The platform meant to take the department to near-real-time visibility of its overall risk profile, and the reference architecture behind it.</p>
 
@@ -670,7 +700,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ REGIONAL ============ -->
       <section id="region-us" class="wide">
-        <div class="section-label">Regional &middot; 04 &middot; F6</div>
+        <div class="section-label">Regional &middot; 03 &middot; F6</div>
         <h2 class="section-title">United States</h2>
 
         <div class="card">
@@ -689,7 +719,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       </section>
 
       <section id="region-eu" class="wide">
-        <div class="section-label">Regional &middot; 05 &middot; F7</div>
+        <div class="section-label">Regional &middot; 04 &middot; F7</div>
         <h2 class="section-title">Europe</h2>
         <p class="dek">Today a deliberately thin model &mdash; a small UK team consuming and tailoring central output. Close to the department's own target operating model, worth citing as a proof point.</p>
         <div class="card"><div class="card-head"><h4>EU &middot; 01 &mdash; Capacity &amp; regulatory-capability gap</h4><span class="chip chip-reg">~12&ndash;18 months out</span></div><p>Already stretched; business expansion brings direct ECB engagement, raising both volume and required capability.</p><div class="flag"><span class="lbl">Open item</span>Whether the build-out is funded, and whether Germany/France entity onboarding staggers with the ECB timeline.</div></div>
@@ -697,7 +727,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       </section>
 
       <section id="region-apac" class="wide">
-        <div class="section-label">Regional &middot; 06</div>
+        <div class="section-label">Regional &middot; 05</div>
         <h2 class="section-title">APAC</h2>
         <div class="flag"><span class="lbl">Deferred &mdash; not yet detailed</span>Working assumption is that APAC echoes the European pattern &mdash; capacity/regulatory driver, multi-entity expansion, internal fragmentation. No formal function code exists yet for APAC in the org structure above; needs its own pain-point pass and formal naming.</div>
       </section>
@@ -705,7 +735,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ GOVERNANCE — TEMPLATE PILOT ============ -->
       <section id="pillar-governance" class="wide">
-        <div class="section-label">Center &middot; 07 &middot; F1</div>
+        <div class="section-label">Functions &middot; 06 &middot; F1</div>
         <span class="template-tag">Section template &middot; pilot</span>
         <h2 class="section-title">Governance</h2>
 
@@ -784,7 +814,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ REMAINING PILLARS — CONTENT PRESERVED, TEMPLATE PENDING ============ -->
       <section id="pillar-oprisk" class="wide">
-        <div class="section-label">Center &middot; 08 &middot; F2 / F5</div>
+        <div class="section-label">Functions &middot; 07 &middot; F2 / F5</div>
         <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
         <h2 class="section-title">Operational Risk, Issues Management &amp; Response Management</h2>
         <p class="dek">Four teams under one leader &mdash; a notable span of control worth weighing as strength or strain. Carries content from working sessions; mission, achievements, and the gap/deliverable table are pending, same as the Governance template above.</p>
@@ -807,7 +837,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       </section>
 
       <section id="pillar-assessments" class="wide">
-        <div class="section-label">Center &middot; 09 &middot; F8 / F2.4</div>
+        <div class="section-label">Functions &middot; 08 &middot; F8 / F2.4</div>
         <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
         <h2 class="section-title">Assessments</h2>
         <h3>Compliance &amp; Control Assessments <span class="mono-suffix">F8</span></h3>
@@ -818,7 +848,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       </section>
 
       <section id="pillar-reporting" class="wide">
-        <div class="section-label">Center &middot; 10 &middot; F3.2 / F3.4</div>
+        <div class="section-label">Functions &middot; 09 &middot; F3.2 / F3.4</div>
         <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
         <h2 class="section-title">Reporting &amp; Analytics</h2>
         <div class="grid-2">
@@ -829,7 +859,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       </section>
 
       <section id="pillar-thirdparty" class="wide">
-        <div class="section-label">Center &middot; 11 &middot; F4</div>
+        <div class="section-label">Functions &middot; 10 &middot; F4</div>
         <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
         <h2 class="section-title">Third Party Risk Management</h2>
         <p class="dek">A transversal category, like Cloud and AI &mdash; not one of the twelve domains. Runs centralized functions for all Supplier Management Offices bank-wide.</p>
@@ -842,7 +872,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       </section>
 
       <section id="pillar-controltesting" class="wide">
-        <div class="section-label">Center &middot; 12 &middot; F3.1</div>
+        <div class="section-label">Functions &middot; 11 &middot; F3.1</div>
         <span class="template-tag" style="background:var(--status-warn);color:var(--paper-raised);">Template not yet applied</span>
         <h2 class="section-title">Control Testing</h2>
         <p class="dek">The largest team, and the one genuine proof point that centralized, consistent delivery already works here.</p>
@@ -856,9 +886,84 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
         <div class="proof"><span class="lbl">2027 direction</span>Stratify and consolidate the control environment bank-wide; move toward continuous control monitoring; heavy ongoing investment in AI-driven test automation.</div>
       </section>
 
+      <!-- ============ OPERATIONS: ISSUES MANAGEMENT ============ -->
+      <section id="ops-issues" class="wide">
+        <div class="section-label">Operations &middot; 12 &middot; F5</div>
+        <h2 class="section-title">Issues Management</h2>
+        <p class="dek">The department's single point of accountability for two issue workflows: <strong>Technology Findings</strong> &mdash; control gaps surfaced by assessments, testing, and audits &mdash; and <strong>Enterprise Issues</strong> &mdash; the subset meeting materiality thresholds, elevated with remediation plans, target dates, and governance reporting through to closure.</p>
+
+        <div class="flag"><span class="lbl">Source</span>Adapted from the dedicated Issues Management reporting artifact (work-automation repo), reformatted to this document's style. That artifact runs on synthetic sample data prototyping the report ahead of real system access &mdash; the figures below are what the sample set contains, not live production counts.</div>
+
+        <h3>Review quality &amp; timeliness</h3>
+        <p>Covers the analyst review step &mdash; receiving a Finding or Enterprise Issue, approving it (routing High-severity items to Second Line of Defense) or rejecting it back to the issue owner.</p>
+        <div class="stat-row">
+          <div class="stat"><span class="stat-num">54</span><span class="stat-label">Sample records</span></div>
+          <div class="stat"><span class="stat-num">40</span><span class="stat-label">Already reviewed</span></div>
+          <div class="stat"><span class="stat-num">14</span><span class="stat-label">Still in queue</span></div>
+        </div>
+        <p>Tracked on an ongoing basis, by individual analyst so throughput and quality problems surface early: average days to review, reviews completed per week, Second Line rejection rate, and analyst rejection rate.</p>
+
+        <h3>Issue population</h3>
+        <p>72 issues spanning roughly the last 18 months, across Findings, Enterprise Issues, and Internal Audit &mdash; broken down by type, severity, owner, and risk category, with opened-vs-closed volume tracked over the past year.</p>
+
+        <h3>Aging</h3>
+        <p>Open issues bucketed by time remaining to due date (and by how overdue), with a High/Medium/Low severity split surfaced up front so aging risk is visible before it becomes a closure problem.</p>
+
+        <h3>Performance &mdash; proposed KPIs</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Workflow</th><th>KPI</th><th>Target</th><th>Why this one</th></tr></thead>
+            <tbody>
+              <tr><td>Technology Findings</td><td>Time to review (intake)</td><td>&le;5 business days</td><td>Speed of the first human touchpoint</td></tr>
+              <tr><td>Technology Findings</td><td>Rejection rate</td><td>&le;10%</td><td>Quality/efficiency signal in both directions</td></tr>
+              <tr><td>Technology Findings</td><td>Aging backlog (past SLA)</td><td>&le;5% of open findings</td><td>Surfaces a growing queue before it's a bigger problem</td></tr>
+              <tr><td>Enterprise Issues</td><td>Time to validate &amp; open</td><td>&le;10 business days</td><td>Elevation is higher-stakes, gets a longer but still tracked SLA</td></tr>
+              <tr><td>Enterprise Issues</td><td>Remediation plan rejection rate</td><td>&le;15%</td><td>Proxy for how well-understood the standard is</td></tr>
+              <tr><td>Enterprise Issues</td><td>On-time closure rate</td><td>&ge;90%</td><td>What governance actually cares about</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid-2">
+          <div class="panel-card"><span class="stat-num" style="font-size:20px;">4.5 FTE</span><div class="stat-label" style="margin-top:4px;">Team size (illustrative)</div></div>
+          <div class="panel-card"><span class="stat-num" style="font-size:20px;">$850K</span><div class="stat-label" style="margin-top:4px;">Annual operating cost (illustrative)</div></div>
+        </div>
+        <div class="flag"><span class="lbl">Illustrative, not confirmed</span>KPI targets and financial figures above are proposed/illustrative &mdash; built to demonstrate the reporting mechanism, not yet validated against real targets or costs.</div>
+      </section>
+
+      <!-- ============ OPERATIONS: RESPONSE MANAGEMENT ============ -->
+      <section id="ops-response" class="wide">
+        <div class="section-label">Operations &middot; 13 &middot; F5</div>
+        <h2 class="section-title">Response Management</h2>
+        <p class="dek">Coordinates the department's response across three inquiry channels &mdash; Audit (internal and external), Regulatory, and Client &mdash; from prework and readiness assessment through active coordination to post-engagement debrief.</p>
+
+        <div class="flag"><span class="lbl">Source</span>Adapted from the Response Management reporting artifact (work-automation repo), reformatted to this document's style. Built on synthetic sample data prototyping the report ahead of real system access.</div>
+
+        <h3>Cross-channel inquiry volume</h3>
+        <div class="stat-row">
+          <div class="stat"><span class="stat-num">70</span><span class="stat-label">Sample inquiries</span></div>
+          <div class="stat"><span class="stat-num">23</span><span class="stat-label">Still open</span></div>
+          <div class="stat"><span class="stat-num">3</span><span class="stat-label">Channels coordinated</span></div>
+        </div>
+        <p>Ranked by open review with the highest inquiry volume, and broken out across the shared eight-domain taxonomy, so the team can see where the heaviest active engagements sit.</p>
+
+        <h3>Aging &amp; readiness</h3>
+        <p>Open inquiries bucketed by time remaining to their due date, with drill-down to the individual inquiries behind each bucket &mdash; the same aging discipline as Issues Management, applied to inbound regulator, auditor, and client requests instead of internal findings.</p>
+
+        <h3>Build status</h3>
+        <p>Live today: the cross-channel Overview, Volume, Domain, and Aging views. Not yet built: dedicated Audit, Regulatory, and Client channel views, and a Service Performance view.</p>
+        <div class="proof"><span class="lbl">Consistent with the roadmap</span>This build-out tracks Response Management's stated plan to scale from regulatory-only coordination to full audit-and-regulatory coverage within five months &mdash; see the Consolidated Roadmap.</div>
+      </section>
+
+      <!-- ============ FINANCIAL ============ -->
+      <section id="financial-overview" class="wide">
+        <div class="section-label">Financial &middot; 14</div>
+        <h2 class="section-title">Financial overview</h2>
+        <div class="flag"><span class="lbl">Placeholder</span>Content pending &mdash; to be populated with the department's budget, cost-per-service, and investment view.</div>
+      </section>
+
       <!-- ============ CONSOLIDATED ROADMAP ============ -->
       <section id="roadmap" class="wide">
-        <div class="section-label">Reference &middot; 13</div>
+        <div class="section-label">Reference &middot; 16</div>
         <h2 class="section-title">Consolidated roadmap</h2>
         <p class="dek">Every group's deliverables on one timeline, each carrying the business benefit it exists to deliver. Solid bars and diamonds are confirmed; dashed/hollow ones are draft targets to be firmed up as the strategy is finalized.</p>
 
@@ -985,7 +1090,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ SUMMARY ============ -->
       <section id="summary" class="wide">
-        <div class="section-label">Reference &middot; 14</div>
+        <div class="section-label">Reference &middot; 17</div>
         <h2 class="section-title">Pain point summary</h2>
         <div class="tbl-wrap">
           <table>
@@ -1022,7 +1127,7 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
       <!-- ============ OPEN ITEMS ============ -->
       <section id="open-items" class="wide">
-        <div class="section-label">Reference &middot; 15</div>
+        <div class="section-label">Reference &middot; 18</div>
         <h2 class="section-title">Open items</h2>
         <ol class="oi-list">
           <li class="oi-item resolved"><span class="oi-num">&#10003;</span><div><p>SSRA acronym &mdash; resolved via org-structure.md: <strong>Shared Services Responsibility Assessment</strong> (F4.4), not the SaaS-specific reading assumed earlier.</p><span class="oi-src">Third Party Risk</span></div></li>
@@ -1116,6 +1221,18 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       var expanded = btn.getAttribute('aria-expanded') === 'true';
       btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
       if (detail) detail.classList.toggle('expanded', !expanded);
+    });
+  });
+})();
+
+(function () {
+  var groupLabels = Array.prototype.slice.call(document.querySelectorAll('.nav-group-label'));
+  groupLabels.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      var links = btn.nextElementSibling;
+      if (links) links.classList.toggle('collapsed', expanded);
     });
   });
 })();
