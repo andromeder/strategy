@@ -2,16 +2,16 @@
 <link rel="stylesheet" href="design-system.css">
 <style>
 :root {
-  --paper: #f2f3f0;
-  --paper-raised: #fbfbf9;
-  --ink: #1a2130;
-  --muted: #5b6460;
-  --line: #d3d6cf;
-  --line-strong: #b7bbb1;
-  --global: #00838d;
-  --global-soft: #dcf0f1;
-  --regional: #a85a26;
-  --regional-soft: #f4e4d5;
+  --paper: #f5f6f8;
+  --paper-raised: #ffffff;
+  --ink: #16233b;
+  --muted: #5b6472;
+  --line: #dce1e8;
+  --line-strong: #c3cad4;
+  --global: #1e4e8c;
+  --global-soft: #e4ecf6;
+  --regional: #c99a2e;
+  --regional-soft: #fbf1da;
   --status-good: #1b7a3d;
   --status-good-soft: #dcefe0;
   --status-warn: #a9790a;
@@ -25,36 +25,8 @@
   --rm-reporting: #3d5a80;
   --rm-controltesting: #7a3b3b;
   --rm-walrus: #4f6b4a;
-  --shadow: 0 1px 2px rgba(26, 33, 48, 0.06);
+  --shadow: 0 1px 2px rgba(22, 35, 59, 0.07);
   color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #14171a; --paper-raised: #1b1f22; --ink: #e8e7e1; --muted: #9ba39c;
-    --line: #2b3430; --line-strong: #3a443e;
-    --global: #2fa7b0; --global-soft: #17302f;
-    --regional: #c77b3a; --regional-soft: #2f2318;
-    --status-good: #4fbe7c; --status-good-soft: #17301f;
-    --status-warn: #e0b04c; --status-warn-soft: #332a12;
-    --status-bad: #e0685f; --status-bad-soft: #331d1a;
-    --tag-people: #b393bd; --tag-people-soft: #2a2130;
-    --tag-tech: #cfa855; --tag-tech-soft: #302914;
-    --rm-reporting: #7fa0c4; --rm-controltesting: #c98080; --rm-walrus: #8fb386;
-    --shadow: none; color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --paper: #14171a; --paper-raised: #1b1f22; --ink: #e8e7e1; --muted: #9ba39c;
-  --line: #2b3430; --line-strong: #3a443e;
-  --global: #2fa7b0; --global-soft: #17302f;
-  --regional: #c77b3a; --regional-soft: #2f2318;
-  --status-good: #4fbe7c; --status-good-soft: #17301f;
-  --status-warn: #e0b04c; --status-warn-soft: #332a12;
-  --status-bad: #e0685f; --status-bad-soft: #331d1a;
-  --tag-people: #b393bd; --tag-people-soft: #2a2130;
-  --tag-tech: #cfa855; --tag-tech-soft: #302914;
-  --rm-reporting: #7fa0c4; --rm-controltesting: #c98080; --rm-walrus: #8fb386;
-  --shadow: none; color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -90,8 +62,6 @@ p { margin: 0 0 .9em; max-width: 64ch; }
 .nav a:hover { background: var(--paper); color: var(--ink); }
 .nav a.pending::after { content: "draft"; float: right; font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--status-warn); }
 .nav a.active { background: var(--paper); color: var(--ink); font-weight: 600; box-shadow: inset 2px 0 0 var(--global); }
-.nav a.nav-parent { font-weight: 600; color: var(--ink); }
-.nav a.nav-sub { padding-left: 20px; font-size: 12.5px; }
 
 main { padding: 0 clamp(20px,5vw,64px) 100px; min-width: 0; }
 .page { max-width: 900px; margin: 0 auto; padding: 52px 0 0; }
@@ -284,18 +254,10 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
     <div class="nav-group">
       <p class="nav-group-label">Foundations</p>
-      <a href="#org-structure" class="nav-parent">Org structure, people &amp; taxonomy</a>
-      <a href="#org-structure/structure" class="nav-sub">Structure</a>
-      <a href="#org-structure/risk-taxonomy" class="nav-sub">Risk taxonomy</a>
-      <a href="#org-structure/people" class="nav-sub">People</a>
+      <a href="#org-structure">Org structure, people &amp; taxonomy</a>
       <a href="#themes">Cross-cutting themes</a>
-      <a href="#prc" class="nav-parent">Processes, Risks &amp; Controls</a>
-      <a href="#prc/processes" class="nav-sub">Processes</a>
-      <a href="#prc/risks" class="nav-sub">Risks</a>
-      <a href="#prc/controls" class="nav-sub">Controls</a>
-      <a href="#technology" class="nav-parent">Technology</a>
-      <a href="#technology/walrus" class="nav-sub">Program Walrus</a>
-      <a href="#technology/reference-architecture" class="nav-sub">Reference architecture</a>
+      <a href="#prc">Processes, Risks &amp; Controls</a>
+      <a href="#technology">Technology</a>
     </div>
     <div class="nav-group">
       <p class="nav-group-label">Regional</p>
