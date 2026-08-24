@@ -265,7 +265,12 @@ li { margin-bottom: .35em; }
 .milestone.draft .txt { color: var(--muted); font-style: italic; }
 
 /* ---- consolidated roadmap ---- */
-.rm-scroll { overflow-x: auto; margin: 20px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--paper-raised); }
+.rm-scroll { overflow-x: auto; margin: 20px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--paper-raised); padding-top: 24px; }
+.rm-scroll.full-bleed {
+  position: relative; left: 50%; right: 50%; width: 100vw; max-width: 100vw;
+  margin-left: -50vw; margin-right: -50vw; box-sizing: border-box; padding: 0 20px; border-left: none; border-right: none; border-radius: 0;
+}
+.rm-scroll.full-bleed .rm { padding: 0 4px; }
 .rm { min-width: 1180px; }
 .rm-grid { display: grid; grid-template-columns: 250px repeat(14, minmax(52px, 1fr)); }
 .rm-years, .rm-quarters { display: grid; grid-template-columns: 250px repeat(14, minmax(52px, 1fr)); }
@@ -292,8 +297,19 @@ li { margin-bottom: .35em; }
 .rm-benefit { display: block; font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.35; max-width: none; }
 .rm-bar { height: 15px; border-radius: 4px; background: var(--rm-color); opacity: .88; }
 .rm-bar.draft { background: transparent; border: 1.5px dashed var(--rm-color); opacity: 1; }
-.rm-milestone { width: 9px; height: 9px; transform: rotate(45deg); justify-self: center; background: var(--rm-color); }
-.rm-milestone.draft { background: transparent; border: 1.5px dashed var(--rm-color); }
+.rm-milestone { position: relative; width: 9px; height: 9px; justify-self: center; cursor: default; }
+.rm-milestone::before { content: ''; position: absolute; inset: 0; box-sizing: border-box; transform: rotate(45deg); background: var(--rm-color); }
+.rm-milestone.draft::before { background: transparent; border: 1.5px dashed var(--rm-color); }
+.rm-milestone::after {
+  content: "Description: " attr(data-desc) "\A" "Due: " attr(data-due) "\A" "Capability enabled: " attr(data-cap) "\A" "Owner: " attr(data-owner);
+  white-space: pre-line; position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: var(--paper-raised); font-family: -apple-system, "Segoe UI", sans-serif;
+  font-size: 11px; font-weight: 400; letter-spacing: normal; text-transform: none; line-height: 1.55;
+  padding: 9px 11px; border-radius: 6px; width: 230px; text-align: left;
+  opacity: 0; visibility: hidden; transition: opacity .12s ease; pointer-events: none; z-index: 30;
+  box-shadow: 0 6px 16px rgba(0,0,0,.2);
+}
+.rm-milestone:hover::after, .rm-milestone:focus-visible::after { opacity: 1; visibility: visible; }
 .rm-legend { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 14px; font-size: 12.5px; color: var(--muted); align-items: center; }
 .rm-legend .lg-item { display: flex; align-items: center; gap: 6px; }
 .rm-legend .lg-bar { width: 22px; height: 10px; border-radius: 3px; background: var(--muted-2, var(--muted)); }
@@ -891,7 +907,42 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
           </div>
         </div>
         <div class="callout"><strong>Solid marker</strong> = confirmed date. <strong>Hollow marker, italic</strong> = draft/placeholder pending confirmation &mdash; per the working agreement, these populate as real data arrives rather than blocking the section.</div>
-      </section>
+      
+        <h3>Roadmap <span class="mono-suffix">same sequencing as the Consolidated Roadmap</span></h3>
+        <div class="rm-scroll full-bleed">
+          <div class="rm">
+            <div class="rm-years">
+              <div></div>
+              <div class="yr" style="grid-column:2/4;">2026</div>
+              <div class="yr" style="grid-column:4/8;">2027</div>
+              <div class="yr" style="grid-column:8/12;">2028</div>
+              <div class="yr" style="grid-column:12/16;">2029</div>
+            </div>
+            <div class="rm-quarters">
+              <div class="rm-corner">Group / Deliverable</div>
+              <div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div>
+            </div>
+            <div class="rm-group" style="--rm-color:var(--global);">
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Governance</span><span class="code">F1</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
+              <div class="rm-row">
+                <div class="rm-label"><strong>Audit subcommittee</strong><span class="rm-benefit">Executive-mandated audit oversight — closure tracking and a horizontal look-across for duplicate/regulatory-linked findings.</span></div>
+                <div class="rm-bar" style="grid-column:2/3;"></div><div class="rm-milestone" style="grid-column:3;" tabindex="0" data-desc="Subcommittee chartered, membership confirmed, first session held." data-due="30 Sep 2026" data-cap="Horizontal audit look-across &amp; closure tracking" data-owner="Head of Governance"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Domain governance tiering</strong><span class="rm-benefit">Root-cause visibility and remediation tracking per domain, replacing high-level-only executive updates.</span></div>
+                <div class="rm-bar draft" style="grid-column:4/16;"></div>
+                <div class="rm-milestone draft" style="grid-column:5;" tabindex="0" data-desc="Tiered domain governance forums piloted in the US, reporting into the Technology Operating Committee." data-due="31 Mar 2027" data-cap="US domain-level root-cause tracking" data-owner="Domain Governance Lead"></div><div class="rm-milestone draft" style="grid-column:10;" tabindex="0" data-desc="Domain governance tiering extended to EMEA." data-due="30 Jun 2028" data-cap="EU domain-level root-cause tracking" data-owner="Domain Governance Lead"></div><div class="rm-milestone draft" style="grid-column:14;" tabindex="0" data-desc="Domain governance tiering extended to APAC; full twelve-domain coverage reached." data-due="30 Sep 2029" data-cap="Full twelve-domain governance coverage" data-owner="Domain Governance Lead"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Procedures mgmt. scope &amp; resourcing</strong><span class="rm-benefit">Clarifies resourcing for a mandate spanning all of Technology and Operations.</span></div>
+                <div class="rm-bar draft" style="grid-column:4/7;"></div><div class="rm-milestone draft" style="grid-column:6;" tabindex="0" data-desc="Procedure ownership formally resourced and scoped across all of Technology and Operations." data-due="30 Sep 2027" data-cap="Defensible procedure ownership at scale" data-owner="Policy &amp; Procedure Lead"></div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</section>
 
       <!-- ============ REMAINING PILLARS — CONTENT PRESERVED, TEMPLATE PENDING ============ -->
       <section id="pillar-oprisk" class="wide">
@@ -988,7 +1039,41 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
             </div>
           </div>
         </div>
-      </section>
+      
+        <h3>Roadmap <span class="mono-suffix">same sequencing as the Consolidated Roadmap</span></h3>
+        <div class="rm-scroll full-bleed">
+          <div class="rm">
+            <div class="rm-years">
+              <div></div>
+              <div class="yr" style="grid-column:2/4;">2026</div>
+              <div class="yr" style="grid-column:4/8;">2027</div>
+              <div class="yr" style="grid-column:8/12;">2028</div>
+              <div class="yr" style="grid-column:12/16;">2029</div>
+            </div>
+            <div class="rm-quarters">
+              <div class="rm-corner">Group / Deliverable</div>
+              <div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div>
+            </div>
+            <div class="rm-group" style="--rm-color:var(--tag-people);">
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Op Risk, Issues &amp; Response Mgmt</span><span class="code">F2 / F5</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
+              <div class="rm-row">
+                <div class="rm-label"><strong>Response Mgmt. scale-up</strong><span class="rm-benefit">One coordinated function for audit and regulatory engagement, instead of two separate workflows.</span></div>
+                <div class="rm-bar" style="grid-column:2/5;"></div><div class="rm-milestone" style="grid-column:4;" tabindex="0" data-desc="Response Management covers audit and regulatory coordination end-to-end, not regulatory alone." data-due="31 Jan 2027" data-cap="Unified audit + regulatory coordination" data-owner="Response Management Lead"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Maturity assessment, 12-domain</strong><span class="rm-benefit">Full technology-risk benchmarking, with findings now routed into Issues Management for enforcement.</span></div>
+                <div class="rm-bar draft" style="grid-column:2/5;"></div><div class="rm-milestone draft" style="grid-column:4;" tabindex="0" data-desc="NIST/COBIT maturity benchmarking extended from Cybersecurity-only to all twelve domains." data-due="31 Dec 2026" data-cap="Full technology-risk maturity benchmarking" data-owner="Maturity Assessments Lead"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Comprehensive risk profile</strong><span class="rm-benefit">Restores the department's core mandate — one trustworthy profile across all operational risk categories.</span></div>
+                <div class="rm-bar draft" style="grid-column:3/10;"></div><div class="rm-milestone draft" style="grid-column:10;" tabindex="0" data-desc="Operational risk profile spans every operational risk category for Technology and Operations, not technology risk alone." data-due="30 Jun 2028" data-cap="Complete operational risk profile" data-owner="Head of Operational Risk"></div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</section>
 
       <section id="pillar-assessments" class="wide">
         <div class="section-label">Functions &middot; 08 &middot; F8 / F2.4</div>
@@ -1059,7 +1144,37 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
             </div>
           </div>
         </div>
-      </section>
+      
+        <h3>Roadmap <span class="mono-suffix">same sequencing as the Consolidated Roadmap</span></h3>
+        <div class="rm-scroll full-bleed">
+          <div class="rm">
+            <div class="rm-years">
+              <div></div>
+              <div class="yr" style="grid-column:2/4;">2026</div>
+              <div class="yr" style="grid-column:4/8;">2027</div>
+              <div class="yr" style="grid-column:8/12;">2028</div>
+              <div class="yr" style="grid-column:12/16;">2029</div>
+            </div>
+            <div class="rm-quarters">
+              <div class="rm-corner">Group / Deliverable</div>
+              <div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div>
+            </div>
+            <div class="rm-group" style="--rm-color:var(--tag-tech);">
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Assessments</span><span class="code">F8 / F2.4</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
+              <div class="rm-row">
+                <div class="rm-label"><strong>Control assessment automation</strong><span class="rm-benefit">Cuts the manual burden driving turnover; improves assessment timeliness and data integrity.</span></div>
+                <div class="rm-bar" style="grid-column:2/7;"></div><div class="rm-milestone" style="grid-column:7;" tabindex="0" data-desc="Application, infrastructure, and cloud scorecard assessments fully automated end-to-end." data-due="30 Sep 2027" data-cap="Automated control assessment coverage" data-owner="Compliance &amp; Control Assessments Lead"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>RCSA standardization &amp; lineage</strong><span class="rm-benefit">Consistent, defensible risk registers bank-wide — answers Second Line's quality challenge directly.</span></div>
+                <div class="rm-bar draft" style="grid-column:5/12;"></div><div class="rm-milestone draft" style="grid-column:12;" tabindex="0" data-desc="Standardized RCSA methodology and centralized control inventory live bank-wide." data-due="31 Dec 2028" data-cap="Consistent, defensible risk registers" data-owner="RCSA Lead"></div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</section>
 
       <section id="pillar-reporting" class="wide">
         <div class="section-label">Functions &middot; 09 &middot; F3.2 / F3.4</div>
@@ -1131,7 +1246,37 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
             </div>
           </div>
         </div>
-      </section>
+      
+        <h3>Roadmap <span class="mono-suffix">same sequencing as the Consolidated Roadmap</span></h3>
+        <div class="rm-scroll full-bleed">
+          <div class="rm">
+            <div class="rm-years">
+              <div></div>
+              <div class="yr" style="grid-column:2/4;">2026</div>
+              <div class="yr" style="grid-column:4/8;">2027</div>
+              <div class="yr" style="grid-column:8/12;">2028</div>
+              <div class="yr" style="grid-column:12/16;">2029</div>
+            </div>
+            <div class="rm-quarters">
+              <div class="rm-corner">Group / Deliverable</div>
+              <div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div>
+            </div>
+            <div class="rm-group" style="--rm-color:var(--rm-reporting);">
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Reporting &amp; Analytics</span><span class="code">F3.2 / F3.4</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
+              <div class="rm-row">
+                <div class="rm-label"><strong>KPI consolidation, 4 domains</strong><span class="rm-benefit">Independent, trustworthy governance-channel data via segregation of duties.</span></div>
+                <div class="rm-bar" style="grid-column:3/8;"></div><div class="rm-milestone" style="grid-column:3;" tabindex="0" data-desc="KPI consolidation formally pitched for IT Risk Management, Cybersecurity, Data Protection, and Logical Access Management." data-due="Oct 2026" data-cap="Segregation-of-duties KPI production" data-owner="Reporting &amp; Analytics Lead"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Domain-aligned deep-dive reporting</strong><span class="rm-benefit">Feeds the overall risk profile with real per-domain narrative, not just raw metrics.</span></div>
+                <div class="rm-bar draft" style="grid-column:4/16;"></div><div class="rm-milestone draft" style="grid-column:15;" tabindex="0" data-desc="Domain-aligned deep-dive reporting live for all twelve domains." data-due="31 Dec 2029" data-cap="Full twelve-domain reporting narrative" data-owner="Reporting &amp; Analytics Lead"></div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</section>
 
       <section id="pillar-thirdparty" class="wide">
         <div class="section-label">Functions &middot; 10 &middot; F4</div>
@@ -1213,7 +1358,37 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
             </div>
           </div>
         </div>
-      </section>
+      
+        <h3>Roadmap <span class="mono-suffix">same sequencing as the Consolidated Roadmap</span></h3>
+        <div class="rm-scroll full-bleed">
+          <div class="rm">
+            <div class="rm-years">
+              <div></div>
+              <div class="yr" style="grid-column:2/4;">2026</div>
+              <div class="yr" style="grid-column:4/8;">2027</div>
+              <div class="yr" style="grid-column:8/12;">2028</div>
+              <div class="yr" style="grid-column:12/16;">2029</div>
+            </div>
+            <div class="rm-quarters">
+              <div class="rm-corner">Group / Deliverable</div>
+              <div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div>
+            </div>
+            <div class="rm-group" style="--rm-color:var(--regional);">
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Third Party Risk</span><span class="code">F4</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
+              <div class="rm-row">
+                <div class="rm-label"><strong>Strategic vision &amp; target model</strong><span class="rm-benefit">Gives the pillar a target state to resource and measure against.</span></div>
+                <div class="rm-bar" style="grid-column:2/5;"></div><div class="rm-milestone" style="grid-column:5;" tabindex="0" data-desc="Third Party Risk's strategic vision and target operating model formally approved." data-due="31 Mar 2027" data-cap="Resourced, measurable target state" data-owner="Third Party Risk Lead"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Reporting consolidation</strong><span class="rm-benefit">Removes duplicate reporting effort; one consistent vendor-risk narrative bank-wide.</span></div>
+                <div class="rm-bar draft" style="grid-column:5/11;"></div><div class="rm-milestone draft" style="grid-column:11;" tabindex="0" data-desc="Third Party reporting fully consolidated into the central Reporting &amp; Analytics process." data-due="30 Sep 2028" data-cap="One consistent vendor-risk narrative" data-owner="Third Party Risk Lead"></div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</section>
 
       <section id="pillar-controltesting" class="wide">
         <div class="section-label">Functions &middot; 11 &middot; F3.1</div>
@@ -1304,7 +1479,41 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
             </div>
           </div>
         </div>
-      </section>
+      
+        <h3>Roadmap <span class="mono-suffix">same sequencing as the Consolidated Roadmap</span></h3>
+        <div class="rm-scroll full-bleed">
+          <div class="rm">
+            <div class="rm-years">
+              <div></div>
+              <div class="yr" style="grid-column:2/4;">2026</div>
+              <div class="yr" style="grid-column:4/8;">2027</div>
+              <div class="yr" style="grid-column:8/12;">2028</div>
+              <div class="yr" style="grid-column:12/16;">2029</div>
+            </div>
+            <div class="rm-quarters">
+              <div class="rm-corner">Group / Deliverable</div>
+              <div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div><div class="q">Q1</div><div class="q">Q2</div><div class="q">Q3</div><div class="q">Q4</div>
+            </div>
+            <div class="rm-group" style="--rm-color:var(--rm-controltesting);">
+              <button type="button" class="rm-group-head" aria-expanded="true"><span class="dot"></span><span class="name">Control Testing</span><span class="code">F3.1</span><span class="rm-chevron">&rsaquo;</span></button>
+              <div class="rm-group-rows">
+              <div class="rm-row">
+                <div class="rm-label"><strong>Operational rigor remediation</strong><span class="rm-benefit">Directly resolves the audit/2LoD rejection findings; reduces personal and departmental accountability risk.</span></div>
+                <div class="rm-bar" style="grid-column:2/6;"></div><div class="rm-milestone" style="grid-column:6;" tabindex="0" data-desc="Test planning, book-of-work management, and financial oversight formally established for Control Testing." data-due="30 Jun 2027" data-cap="Defensible testing coverage &amp; planning" data-owner="Head of Control Testing"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Inventory access-control fix</strong><span class="rm-benefit">Unlocks Inventory Mgmt. as the authoritative repository — what Assessments' lineage fix depends on.</span></div>
+                <div class="rm-bar draft" style="grid-column:3/7;"></div><div class="rm-milestone draft" style="grid-column:7;" tabindex="0" data-desc="Access controls applied to the control inventory repository, enabling it as the bank's single source of truth." data-due="30 Sep 2027" data-cap="Authoritative control inventory" data-owner="Inventory Management Lead"></div>
+              </div>
+              <div class="rm-row">
+                <div class="rm-label"><strong>Continuous control monitoring</strong><span class="rm-benefit">Moves off the rigid annual testing cadence toward real-time assurance, powered by AI automation.</span></div>
+                <div class="rm-bar draft" style="grid-column:6/15;"></div><div class="rm-milestone draft" style="grid-column:15;" tabindex="0" data-desc="Continuous, automated control monitoring live, reducing reliance on the fixed annual testing cycle." data-due="31 Dec 2029" data-cap="Real-time control assurance" data-owner="Head of Control Testing"></div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</section>
 
       <!-- ============ OPERATIONS: ISSUES MANAGEMENT ============ -->
       <section id="ops-issues" class="wide">
@@ -1385,9 +1594,9 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
       <section id="roadmap" class="wide">
         <div class="section-label">Reference &middot; 16</div>
         <h2 class="section-title">Consolidated roadmap</h2>
-        <p class="dek">Every group's deliverables on one timeline, each carrying the business benefit it exists to deliver. Solid bars and diamonds are confirmed; dashed/hollow ones are draft targets to be firmed up as the strategy is finalized.</p>
+        <p class="dek">Every group's deliverables on one timeline, each carrying the business benefit it exists to deliver. Solid bars and diamonds are confirmed; dashed/hollow ones are draft targets to be firmed up as the strategy is finalized. Hover any milestone diamond for its description, due date, capability enabled, and owner &mdash; illustrative for now.</p>
 
-        <div class="rm-scroll">
+        <div class="rm-scroll full-bleed">
           <div class="rm">
             <div class="rm-years">
               <div></div>
@@ -1406,16 +1615,16 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
               <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>Audit subcommittee</strong><span class="rm-benefit">Executive-mandated audit oversight — closure tracking and a horizontal look-across for duplicate/regulatory-linked findings.</span></div>
-                <div class="rm-bar" style="grid-column:2/3;"></div><div class="rm-milestone" style="grid-column:3;"></div>
+                <div class="rm-bar" style="grid-column:2/3;"></div><div class="rm-milestone" style="grid-column:3;" tabindex="0" data-desc="Subcommittee chartered, membership confirmed, first session held." data-due="30 Sep 2026" data-cap="Horizontal audit look-across &amp; closure tracking" data-owner="Head of Governance"></div>
               </div>
               <div class="rm-row">
                 <div class="rm-label"><strong>Domain governance tiering</strong><span class="rm-benefit">Root-cause visibility and remediation tracking per domain, replacing high-level-only executive updates.</span></div>
                 <div class="rm-bar draft" style="grid-column:4/16;"></div>
-                <div class="rm-milestone draft" style="grid-column:5;"></div><div class="rm-milestone draft" style="grid-column:10;"></div><div class="rm-milestone draft" style="grid-column:14;"></div>
+                <div class="rm-milestone draft" style="grid-column:5;" tabindex="0" data-desc="Tiered domain governance forums piloted in the US, reporting into the Technology Operating Committee." data-due="31 Mar 2027" data-cap="US domain-level root-cause tracking" data-owner="Domain Governance Lead"></div><div class="rm-milestone draft" style="grid-column:10;" tabindex="0" data-desc="Domain governance tiering extended to EMEA." data-due="30 Jun 2028" data-cap="EU domain-level root-cause tracking" data-owner="Domain Governance Lead"></div><div class="rm-milestone draft" style="grid-column:14;" tabindex="0" data-desc="Domain governance tiering extended to APAC; full twelve-domain coverage reached." data-due="30 Sep 2029" data-cap="Full twelve-domain governance coverage" data-owner="Domain Governance Lead"></div>
               </div>
               <div class="rm-row">
                 <div class="rm-label"><strong>Procedures mgmt. scope &amp; resourcing</strong><span class="rm-benefit">Clarifies resourcing for a mandate spanning all of Technology and Operations.</span></div>
-                <div class="rm-bar draft" style="grid-column:4/7;"></div><div class="rm-milestone draft" style="grid-column:6;"></div>
+                <div class="rm-bar draft" style="grid-column:4/7;"></div><div class="rm-milestone draft" style="grid-column:6;" tabindex="0" data-desc="Procedure ownership formally resourced and scoped across all of Technology and Operations." data-due="30 Sep 2027" data-cap="Defensible procedure ownership at scale" data-owner="Policy &amp; Procedure Lead"></div>
               </div>
               </div>
             </div>
@@ -1425,15 +1634,15 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
               <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>Response Mgmt. scale-up</strong><span class="rm-benefit">One coordinated function for audit and regulatory engagement, instead of two separate workflows.</span></div>
-                <div class="rm-bar" style="grid-column:2/5;"></div><div class="rm-milestone" style="grid-column:4;"></div>
+                <div class="rm-bar" style="grid-column:2/5;"></div><div class="rm-milestone" style="grid-column:4;" tabindex="0" data-desc="Response Management covers audit and regulatory coordination end-to-end, not regulatory alone." data-due="31 Jan 2027" data-cap="Unified audit + regulatory coordination" data-owner="Response Management Lead"></div>
               </div>
               <div class="rm-row">
                 <div class="rm-label"><strong>Maturity assessment, 12-domain</strong><span class="rm-benefit">Full technology-risk benchmarking, with findings now routed into Issues Management for enforcement.</span></div>
-                <div class="rm-bar draft" style="grid-column:2/5;"></div><div class="rm-milestone draft" style="grid-column:4;"></div>
+                <div class="rm-bar draft" style="grid-column:2/5;"></div><div class="rm-milestone draft" style="grid-column:4;" tabindex="0" data-desc="NIST/COBIT maturity benchmarking extended from Cybersecurity-only to all twelve domains." data-due="31 Dec 2026" data-cap="Full technology-risk maturity benchmarking" data-owner="Maturity Assessments Lead"></div>
               </div>
               <div class="rm-row">
                 <div class="rm-label"><strong>Comprehensive risk profile</strong><span class="rm-benefit">Restores the department's core mandate — one trustworthy profile across all operational risk categories.</span></div>
-                <div class="rm-bar draft" style="grid-column:3/10;"></div>
+                <div class="rm-bar draft" style="grid-column:3/10;"></div><div class="rm-milestone draft" style="grid-column:10;" tabindex="0" data-desc="Operational risk profile spans every operational risk category for Technology and Operations, not technology risk alone." data-due="30 Jun 2028" data-cap="Complete operational risk profile" data-owner="Head of Operational Risk"></div>
               </div>
               </div>
             </div>
@@ -1443,11 +1652,11 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
               <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>Control assessment automation</strong><span class="rm-benefit">Cuts the manual burden driving turnover; improves assessment timeliness and data integrity.</span></div>
-                <div class="rm-bar" style="grid-column:2/7;"></div>
+                <div class="rm-bar" style="grid-column:2/7;"></div><div class="rm-milestone" style="grid-column:7;" tabindex="0" data-desc="Application, infrastructure, and cloud scorecard assessments fully automated end-to-end." data-due="30 Sep 2027" data-cap="Automated control assessment coverage" data-owner="Compliance &amp; Control Assessments Lead"></div>
               </div>
               <div class="rm-row">
                 <div class="rm-label"><strong>RCSA standardization &amp; lineage</strong><span class="rm-benefit">Consistent, defensible risk registers bank-wide — answers Second Line's quality challenge directly.</span></div>
-                <div class="rm-bar draft" style="grid-column:5/12;"></div>
+                <div class="rm-bar draft" style="grid-column:5/12;"></div><div class="rm-milestone draft" style="grid-column:12;" tabindex="0" data-desc="Standardized RCSA methodology and centralized control inventory live bank-wide." data-due="31 Dec 2028" data-cap="Consistent, defensible risk registers" data-owner="RCSA Lead"></div>
               </div>
               </div>
             </div>
@@ -1457,11 +1666,11 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
               <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>KPI consolidation, 4 domains</strong><span class="rm-benefit">Independent, trustworthy governance-channel data via segregation of duties.</span></div>
-                <div class="rm-bar" style="grid-column:3/8;"></div><div class="rm-milestone" style="grid-column:3;"></div>
+                <div class="rm-bar" style="grid-column:3/8;"></div><div class="rm-milestone" style="grid-column:3;" tabindex="0" data-desc="KPI consolidation formally pitched for IT Risk Management, Cybersecurity, Data Protection, and Logical Access Management." data-due="Oct 2026" data-cap="Segregation-of-duties KPI production" data-owner="Reporting &amp; Analytics Lead"></div>
               </div>
               <div class="rm-row">
                 <div class="rm-label"><strong>Domain-aligned deep-dive reporting</strong><span class="rm-benefit">Feeds the overall risk profile with real per-domain narrative, not just raw metrics.</span></div>
-                <div class="rm-bar draft" style="grid-column:4/16;"></div>
+                <div class="rm-bar draft" style="grid-column:4/16;"></div><div class="rm-milestone draft" style="grid-column:15;" tabindex="0" data-desc="Domain-aligned deep-dive reporting live for all twelve domains." data-due="31 Dec 2029" data-cap="Full twelve-domain reporting narrative" data-owner="Reporting &amp; Analytics Lead"></div>
               </div>
               </div>
             </div>
@@ -1471,11 +1680,11 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
               <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>Strategic vision &amp; target model</strong><span class="rm-benefit">Gives the pillar a target state to resource and measure against.</span></div>
-                <div class="rm-bar" style="grid-column:2/5;"></div>
+                <div class="rm-bar" style="grid-column:2/5;"></div><div class="rm-milestone" style="grid-column:5;" tabindex="0" data-desc="Third Party Risk's strategic vision and target operating model formally approved." data-due="31 Mar 2027" data-cap="Resourced, measurable target state" data-owner="Third Party Risk Lead"></div>
               </div>
               <div class="rm-row">
                 <div class="rm-label"><strong>Reporting consolidation</strong><span class="rm-benefit">Removes duplicate reporting effort; one consistent vendor-risk narrative bank-wide.</span></div>
-                <div class="rm-bar draft" style="grid-column:5/11;"></div>
+                <div class="rm-bar draft" style="grid-column:5/11;"></div><div class="rm-milestone draft" style="grid-column:11;" tabindex="0" data-desc="Third Party reporting fully consolidated into the central Reporting &amp; Analytics process." data-due="30 Sep 2028" data-cap="One consistent vendor-risk narrative" data-owner="Third Party Risk Lead"></div>
               </div>
               </div>
             </div>
@@ -1485,15 +1694,15 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
               <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>Operational rigor remediation</strong><span class="rm-benefit">Directly resolves the audit/2LoD rejection findings; reduces personal and departmental accountability risk.</span></div>
-                <div class="rm-bar" style="grid-column:2/6;"></div>
+                <div class="rm-bar" style="grid-column:2/6;"></div><div class="rm-milestone" style="grid-column:6;" tabindex="0" data-desc="Test planning, book-of-work management, and financial oversight formally established for Control Testing." data-due="30 Jun 2027" data-cap="Defensible testing coverage &amp; planning" data-owner="Head of Control Testing"></div>
               </div>
               <div class="rm-row">
                 <div class="rm-label"><strong>Inventory access-control fix</strong><span class="rm-benefit">Unlocks Inventory Mgmt. as the authoritative repository — what Assessments' lineage fix depends on.</span></div>
-                <div class="rm-bar draft" style="grid-column:3/7;"></div>
+                <div class="rm-bar draft" style="grid-column:3/7;"></div><div class="rm-milestone draft" style="grid-column:7;" tabindex="0" data-desc="Access controls applied to the control inventory repository, enabling it as the bank's single source of truth." data-due="30 Sep 2027" data-cap="Authoritative control inventory" data-owner="Inventory Management Lead"></div>
               </div>
               <div class="rm-row">
                 <div class="rm-label"><strong>Continuous control monitoring</strong><span class="rm-benefit">Moves off the rigid annual testing cadence toward real-time assurance, powered by AI automation.</span></div>
-                <div class="rm-bar draft" style="grid-column:6/15;"></div>
+                <div class="rm-bar draft" style="grid-column:6/15;"></div><div class="rm-milestone draft" style="grid-column:15;" tabindex="0" data-desc="Continuous, automated control monitoring live, reducing reliance on the fixed annual testing cycle." data-due="31 Dec 2029" data-cap="Real-time control assurance" data-owner="Head of Control Testing"></div>
               </div>
               </div>
             </div>
@@ -1503,11 +1712,11 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
               <div class="rm-group-rows">
               <div class="rm-row">
                 <div class="rm-label"><strong>Control Strength / automated profile</strong><span class="rm-benefit">Near-real-time automated risk scoring at any hierarchy level, surfacing control gaps systematically.</span></div>
-                <div class="rm-bar draft" style="grid-column:5/14;"></div>
+                <div class="rm-bar draft" style="grid-column:5/14;"></div><div class="rm-milestone draft" style="grid-column:14;" tabindex="0" data-desc="Automated, hierarchy-agnostic risk profile with Control Strength scoring live in Walrus." data-due="30 Sep 2029" data-cap="Near-real-time automated risk profile" data-owner="Program Walrus Lead"></div>
               </div>
               <div class="rm-row">
                 <div class="rm-label"><strong>Missing capabilities buildout</strong><span class="rm-benefit">Closes self-identified gaps &mdash; including an FFIEC requirement &mdash; before they become findings.</span></div>
-                <div class="rm-bar draft" style="grid-column:2/10;"></div>
+                <div class="rm-bar draft" style="grid-column:2/10;"></div><div class="rm-milestone draft" style="grid-column:10;" tabindex="0" data-desc="Proactive regulatory monitoring, root-cause aggregation, shadow IT management, and AI risk capabilities built and operating." data-due="30 Jun 2028" data-cap="Closed self-identified capability gaps" data-owner="Program Walrus Lead"></div>
               </div>
               </div>
             </div>
