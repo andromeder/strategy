@@ -12,14 +12,14 @@ build step, no external dependencies.
 
 ## Design system for future artifacts
 
-These HTML artifacts share a common design baseline via [design-system.css](design-system.css), carried over from the `work-automation` project's operating-model artifacts so this repo's documents read as the same visual language. Use it as the starting point for every new artifact here.
+These HTML artifacts share a common design baseline via [design-system.css](design-system.css). It started as a carryover from the `work-automation` project's operating-model artifacts, but has since been rebuilt from `strategy-2026-2029.html`'s evolved system — that file's full stylesheet is the current source of truth, kept in sync here. Use it as the starting point for every new artifact here.
 
 ### Baseline principles
 
-- Keep a calm paper-and-ink palette with a small set of semantic tokens for paper, ink, muted, line, and status colors.
-- Use serif headlines for narrative structure and monospace labels for metadata and section cues.
-- Favor restrained borders, generous whitespace, and consistent card-like containers.
-- Reuse shared patterns such as hero headers, stat rows, filter bars, and callouts instead of inventing new visual treatments for each artifact.
+- Single light theme — no dark-mode variant. Paper background, off-white raised surfaces, a royal-blue primary accent and a gold secondary accent, with semantic tokens for muted text, borders, and status colors (good/warn/bad) plus a small set of category tags and roadmap-group colors.
+- Serif headlines for narrative structure, monospace labels for metadata, section cues, and data-heavy values.
+- Restrained borders, generous whitespace, and consistent card-like containers.
+- Reuse shared patterns instead of inventing new visual treatments per artifact — beyond the original hero/stat-row/callout/table set, this now also includes: collapsible nav groups and in-page pivot tabs (for sectioned/subpaged documents), mission/subgroup cards with per-subgroup color coding, horizontal bar charts with an expandable drill-down row, a quarter-by-quarter Gantt-style roadmap with hover tooltips, and a click-to-highlight relational map (many-to-many entity relationships) with a filterable, expandable detail table.
 
 ### Workflow
 
