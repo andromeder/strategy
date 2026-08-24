@@ -52,8 +52,23 @@ p { margin: 0 0 .9em; max-width: 64ch; }
 @media (max-width: 900px) { .shell { grid-template-columns: 1fr; } .nav { position: static; height: auto; } }
 .nav {
   position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto;
-  background: var(--paper-raised); border-right: 1px solid var(--line); padding: 26px 18px 40px;
+  background: var(--paper-raised); border-right: 1px solid var(--line); padding: 26px 18px 22px;
+  display: flex; flex-direction: column;
 }
+.nav-export {
+  margin-top: auto; padding-top: 18px;
+}
+.nav-export-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;
+  background: var(--global); color: var(--white); border: none; border-radius: 6px;
+  font-family: ui-monospace, monospace; font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase;
+  padding: 11px 14px; cursor: pointer; transition: background .12s;
+}
+.nav-export-btn:hover { filter: brightness(1.1); }
+.nav-export-btn:disabled { opacity: .55; cursor: default; }
+.nav-export-status { margin-top: 8px; font-size: 11px; color: var(--muted); text-align: center; min-height: 14px; }
+.nav-export-status.err { color: var(--status-bad); }
+.nav-export-status.ok { color: var(--status-good); }
 .nav .brand { font-family: Georgia, serif; font-size: 16px; color: var(--ink); }
 .nav .brand-sub { display: block; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 2px 0 22px; }
 .nav-group { margin-bottom: 16px; }
@@ -392,6 +407,13 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
         <a href="#summary">Pain point summary</a>
         <a href="#open-items">Open items</a>
       </div>
+    </div>
+
+    <div class="nav-export">
+      <button type="button" class="nav-export-btn" id="exportPptBtn">
+        <span>&#8595;</span><span>Export to PPT</span>
+      </button>
+      <div class="nav-export-status" id="exportPptStatus"></div>
     </div>
   </nav>
 
@@ -2098,5 +2120,579 @@ footer { max-width: 900px; margin: 0 auto; padding: 28px 0 60px; border-top: 1px
 
   if (clearBtn) clearBtn.addEventListener('click', clearSelection);
   renderFrameworkTable();
+})();
+</script>
+
+<script>
+/* ============================================================
+   Export to PPT — a from-scratch, dependency-free .pptx writer.
+   Builds a minimal valid OOXML package (ZIP, stored/uncompressed)
+   styled to match this page's design system.
+   ============================================================ */
+(function () {
+  var btn = document.getElementById('exportPptBtn');
+  var statusEl = document.getElementById('exportPptStatus');
+  if (!btn) return;
+
+  function setStatus(msg, cls) {
+    if (!statusEl) return;
+    statusEl.textContent = msg || '';
+    statusEl.className = 'nav-export-status' + (cls ? ' ' + cls : '');
+  }
+
+  /* ---------- content gathering (DOM -> data) ---------- */
+  function q(sel, root) { return (root || document).querySelector(sel); }
+  function qa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function cleanText(el, fallback) {
+    if (!el) return fallback || '';
+    var clone = el.cloneNode(true);
+    qa('br', clone).forEach(function (br) { br.parentNode.replaceChild(document.createTextNode(' '), br); });
+    var t = clone.textContent.replace(/\s+/g, ' ').trim();
+    return t || (fallback || '');
+  }
+  function statPairs(row) {
+    if (!row) return [];
+    return qa('.stat', row).map(function (s) {
+      return { num: cleanText(q('.stat-num', s)), label: cleanText(q('.stat-label', s)) };
+    });
+  }
+
+  function gatherContent() {
+    var d = {};
+    d.orgStats = statPairs(q('#org-structure [data-subpage="structure"] .stat-row'));
+    d.peopleStats = statPairs(q('#org-structure [data-subpage="people"] .stat-row'));
+
+    var missionMap = [
+      ['Governance', '#pillar-governance'],
+      ['Op Risk, Issues & Response Mgmt', '#pillar-oprisk'],
+      ['Assessments', '#pillar-assessments'],
+      ['Reporting & Analytics', '#pillar-reporting'],
+      ['Third Party Risk', '#pillar-thirdparty'],
+      ['Control Testing', '#pillar-controltesting']
+    ];
+    d.missions = missionMap.map(function (pair) {
+      return { name: pair[0], text: cleanText(q(pair[1] + ' .mission-block p'), 'Mission not yet defined.') };
+    });
+
+    d.themeTitles = qa('#themes .card').slice(0, 3).map(function (card) { return cleanText(q('h4', card)); });
+
+    var taxRoot = q('#org-structure [data-subpage="risk-taxonomy"]');
+    var taxPanels = qa('.panel-card', taxRoot);
+    d.taxonomy = {
+      level: cleanText(taxPanels[0]),
+      domains: cleanText(taxPanels[1]),
+      transversal: cleanText(qa('p', taxRoot).slice(-1)[0])
+    };
+
+    var walrusRoot = q('#technology [data-subpage="walrus"]');
+    d.walrus = {
+      dataPara: cleanText(q('p', walrusRoot)),
+      stats: statPairs(q('.grid-3', walrusRoot))
+    };
+    if (!d.walrus.stats.length && walrusRoot) {
+      d.walrus.stats = qa('.grid-3 .panel-card', walrusRoot).map(function (c) {
+        return { num: cleanText(q('.stat-num', c)), label: cleanText(q('.stat-label', c)) };
+      });
+    }
+
+    d.refArch = cleanText(q('#technology [data-subpage="reference-architecture"] .flag'));
+    return d;
+  }
+
+  /* ---------- utils: esc, crc32, zip ---------- */
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+  }
+  var CRC_TABLE = (function () {
+    var t = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) {
+      var c = n;
+      for (var k = 0; k < 8; k++) { c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); }
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+  function crc32(bytes) {
+    var c = 0xFFFFFFFF;
+    for (var i = 0; i < bytes.length; i++) { c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8); }
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  function strToBytes(str) { return new TextEncoder().encode(str); }
+
+  function makeZip(files) {
+    var localParts = [], centralParts = [], offset = 0;
+    var now = new Date();
+    var dosTime = ((now.getHours() & 31) << 11) | ((now.getMinutes() & 63) << 5) | (Math.floor(now.getSeconds() / 2) & 31);
+    var dosDate = (((now.getFullYear() - 1980) & 127) << 9) | (((now.getMonth() + 1) & 15) << 5) | (now.getDate() & 31);
+
+    files.forEach(function (f) {
+      var nameBytes = strToBytes(f.name), data = f.data;
+      var crc = crc32(data), size = data.length;
+
+      var local = new Uint8Array(30 + nameBytes.length);
+      var dv = new DataView(local.buffer);
+      dv.setUint32(0, 0x04034b50, true); dv.setUint16(4, 20, true); dv.setUint16(6, 0, true); dv.setUint16(8, 0, true);
+      dv.setUint16(10, dosTime, true); dv.setUint16(12, dosDate, true); dv.setUint32(14, crc, true);
+      dv.setUint32(18, size, true); dv.setUint32(22, size, true);
+      dv.setUint16(26, nameBytes.length, true); dv.setUint16(28, 0, true);
+      local.set(nameBytes, 30);
+      localParts.push(local, data);
+
+      var central = new Uint8Array(46 + nameBytes.length);
+      var cdv = new DataView(central.buffer);
+      cdv.setUint32(0, 0x02014b50, true); cdv.setUint16(4, 20, true); cdv.setUint16(6, 20, true); cdv.setUint16(8, 0, true);
+      cdv.setUint16(10, 0, true); cdv.setUint16(12, dosTime, true); cdv.setUint16(14, dosDate, true); cdv.setUint32(16, crc, true);
+      cdv.setUint32(20, size, true); cdv.setUint32(24, size, true); cdv.setUint16(28, nameBytes.length, true);
+      cdv.setUint16(30, 0, true); cdv.setUint16(32, 0, true); cdv.setUint16(34, 0, true); cdv.setUint16(36, 0, true);
+      cdv.setUint32(38, 0, true); cdv.setUint32(42, offset, true);
+      central.set(nameBytes, 46);
+      centralParts.push(central);
+
+      offset += local.length + data.length;
+    });
+
+    var centralStart = offset;
+    var centralSize = centralParts.reduce(function (a, p) { return a + p.length; }, 0);
+    var eocd = new Uint8Array(22);
+    var edv = new DataView(eocd.buffer);
+    edv.setUint32(0, 0x06054b50, true); edv.setUint16(4, 0, true); edv.setUint16(6, 0, true);
+    edv.setUint16(8, files.length, true); edv.setUint16(10, files.length, true);
+    edv.setUint32(12, centralSize, true); edv.setUint32(16, centralStart, true); edv.setUint16(20, 0, true);
+
+    var totalLen = 0;
+    localParts.forEach(function (p) { totalLen += p.length; });
+    centralParts.forEach(function (p) { totalLen += p.length; });
+    totalLen += eocd.length;
+    var out = new Uint8Array(totalLen), pos = 0;
+    localParts.forEach(function (p) { out.set(p, pos); pos += p.length; });
+    centralParts.forEach(function (p) { out.set(p, pos); pos += p.length; });
+    out.set(eocd, pos);
+    return out;
+  }
+
+  /* ---------- OOXML shape/slide builders ---------- */
+  var EMU_W = 12192000, EMU_H = 6858000;
+  function EMU(inch) { return Math.round(inch * 914400); }
+  var PC = { ink: '16233B', muted: '5B6472', line: 'DCE1E8', paper: 'F5F6F8', white: 'FFFFFF',
+    blue: '1E4E8C', blueSoft: 'E4ECF6', gold: 'C99A2E', goldSoft: 'FBF1DA',
+    plum: '74537F', brass: '8A6A2F', steel: '3D5A80', wine: '7A3B3B', sage: '4F6B4A' };
+
+  var shapeId;
+  function nextId() { return shapeId++; }
+  function fillXml(hex, alpha) {
+    if (alpha != null) return '<a:solidFill><a:srgbClr val="' + hex + '"><a:alpha val="' + alpha + '"/></a:srgbClr></a:solidFill>';
+    return '<a:solidFill><a:srgbClr val="' + hex + '"/></a:solidFill>';
+  }
+  function rPr(o) {
+    o = o || {};
+    var attrs = 'lang="en-US" dirty="0"';
+    if (o.size) attrs += ' sz="' + o.size + '"';
+    if (o.bold) attrs += ' b="1"';
+    if (o.italic) attrs += ' i="1"';
+    if (o.spc) attrs += ' spc="' + o.spc + '"';
+    return '<a:rPr ' + attrs + '>' + fillXml(o.color || PC.ink) + '<a:latin typeface="' + (o.font || 'Calibri') + '"/></a:rPr>';
+  }
+  function paragraph(runsOrText, o) {
+    o = o || {};
+    var runs = Array.isArray(runsOrText) ? runsOrText : [{ text: runsOrText, size: o.size, color: o.color, bold: o.bold, italic: o.italic, font: o.font, spc: o.spc }];
+    var pPrAttrs = 'algn="' + (o.align || 'l') + '"';
+    var bullet = o.bullet ? '<a:buFont typeface="Arial"/><a:buChar char="&#8226;"/>' : '<a:buNone/>';
+    var marL = o.bullet ? ' marL="228600" indent="-228600"' : (o.marL != null ? ' marL="' + o.marL + '"' : '');
+    var lnSpc = o.lineSpacing != null ? '<a:lnSpc><a:spcPct val="' + o.lineSpacing + '"/></a:lnSpc>' : '';
+    var spcBef = o.spaceBefore != null ? '<a:spcBef><a:spcPts val="' + o.spaceBefore + '"/></a:spcBef>' : '';
+    var pPr = '<a:pPr ' + pPrAttrs + marL + '>' + lnSpc + spcBef + bullet + '</a:pPr>';
+    var runXml = runs.map(function (r) { return '<a:r>' + rPr(r) + '<a:t>' + esc(r.text) + '</a:t></a:r>'; }).join('');
+    return '<a:p>' + pPr + runXml + '</a:p>';
+  }
+  function textBox(o) {
+    var id = nextId();
+    var anchor = o.anchor || 't';
+    var wrap = o.wrap === false ? 'none' : 'square';
+    var paras = (o.paragraphs || []).join('');
+    return '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="TextBox ' + id + '"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr>'
+      + '<p:spPr><a:xfrm><a:off x="' + o.x + '" y="' + o.y + '"/><a:ext cx="' + o.w + '" cy="' + o.h + '"/></a:xfrm>'
+      + '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr>'
+      + '<p:txBody><a:bodyPr wrap="' + wrap + '" anchor="' + anchor + '" lIns="0" tIns="0" rIns="0" bIns="0"><a:noAutofit/></a:bodyPr><a:lstStyle/>'
+      + paras + '</p:txBody></p:sp>';
+  }
+  function rect(o) {
+    var id = nextId();
+    return '<p:sp><p:nvSpPr><p:cNvPr id="' + id + '" name="Rect ' + id + '"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr>'
+      + '<p:spPr><a:xfrm><a:off x="' + o.x + '" y="' + o.y + '"/><a:ext cx="' + o.w + '" cy="' + o.h + '"/></a:xfrm>'
+      + '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>' + fillXml(o.fill, o.alpha) + '<a:ln><a:noFill/></a:ln></p:spPr>'
+      + '<p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>';
+  }
+  function slideChrome(title, headline) {
+    var s = '';
+    s += textBox({ x: EMU(0.55), y: EMU(0.32), w: EMU(11.2), h: EMU(0.32), paragraphs: [paragraph([{ text: 'GLOBAL IT RISK · 2026–2029 STRATEGY', size: 1050, color: PC.blue, font: 'Consolas', spc: 80 }])] });
+    s += textBox({ x: EMU(0.55), y: EMU(0.66), w: EMU(11.2), h: EMU(0.85), paragraphs: [paragraph([{ text: title, size: 2800, bold: true, color: PC.ink, font: 'Georgia' }])] });
+    s += textBox({ x: EMU(0.55), y: EMU(1.5), w: EMU(11.2), h: EMU(0.6), paragraphs: [paragraph([{ text: headline, size: 1400, color: PC.muted, font: 'Calibri' }], { lineSpacing: 115 })] });
+    s += rect({ x: EMU(0.55), y: EMU(2.1), w: EMU(11.2), h: 9525, fill: PC.line });
+    s += textBox({ x: EMU(0.55), y: EMU(7.1), w: EMU(8), h: EMU(0.3), paragraphs: [paragraph([{ text: 'Global IT Risk · 2026–2029 Strategy', size: 900, color: PC.muted, font: 'Consolas' }])] });
+    return s;
+  }
+  function slideXml(bodyShapes) {
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n'
+      + '<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">'
+      + '<p:cSld><p:bg><p:bgPr>' + fillXml(PC.paper) + '<a:effectLst/></p:bgPr></p:bg><p:spTree>'
+      + '<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>'
+      + '<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>'
+      + bodyShapes
+      + '</p:spTree></p:cSld><p:clrMapOvr><a:overrideClrMapping bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/></p:clrMapOvr>'
+      + '</p:sld>';
+  }
+
+  /* ---------- package assembly ---------- */
+  var REL = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+  var PKGREL = 'http://schemas.openxmlformats.org/package/2006/relationships';
+
+  function contentTypesXml(n) {
+    var overrides = '';
+    for (var i = 1; i <= n; i++) overrides += '<Override PartName="/ppt/slides/slide' + i + '.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>';
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+      + '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>'
+      + '<Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>'
+      + '<Override PartName="/ppt/slideMasters/slideMaster1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml"/>'
+      + '<Override PartName="/ppt/slideLayouts/slideLayout1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml"/>'
+      + '<Override PartName="/ppt/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/>' + overrides
+      + '<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>'
+      + '<Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/></Types>';
+  }
+  function rootRelsXml() {
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n<Relationships xmlns="' + PKGREL + '">'
+      + '<Relationship Id="rId1" Type="' + REL + '/officeDocument" Target="ppt/presentation.xml"/>'
+      + '<Relationship Id="rId2" Type="' + PKGREL + '/metadata/core-properties" Target="docProps/core.xml"/>'
+      + '<Relationship Id="rId3" Type="' + REL + '/extended-properties" Target="docProps/app.xml"/></Relationships>';
+  }
+  function presentationXml(n) {
+    var ids = ''; for (var i = 1; i <= n; i++) ids += '<p:sldId id="' + (255 + i) + '" r:id="rId' + (i + 1) + '"/>';
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n<p:presentation xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="' + REL + '" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">'
+      + '<p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst><p:sldIdLst>' + ids + '</p:sldIdLst>'
+      + '<p:sldSz cx="' + EMU_W + '" cy="' + EMU_H + '" type="screen16x9"/><p:notesSz cx="6858000" cy="9144000"/></p:presentation>';
+  }
+  function presentationRelsXml(n) {
+    var rels = '<Relationship Id="rId1" Type="' + REL + '/slideMaster" Target="slideMasters/slideMaster1.xml"/>';
+    for (var i = 1; i <= n; i++) rels += '<Relationship Id="rId' + (i + 1) + '" Type="' + REL + '/slide" Target="slides/slide' + i + '.xml"/>';
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n<Relationships xmlns="' + PKGREL + '">' + rels + '</Relationships>';
+  }
+  function themeXml() {
+    var c = PC;
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="ITRiskTheme"><a:themeElements>'
+      + '<a:clrScheme name="ITRisk"><a:dk1><a:srgbClr val="' + c.ink + '"/></a:dk1><a:lt1><a:srgbClr val="' + c.white + '"/></a:lt1>'
+      + '<a:dk2><a:srgbClr val="' + c.blue + '"/></a:dk2><a:lt2><a:srgbClr val="' + c.paper + '"/></a:lt2>'
+      + '<a:accent1><a:srgbClr val="' + c.blue + '"/></a:accent1><a:accent2><a:srgbClr val="' + c.gold + '"/></a:accent2>'
+      + '<a:accent3><a:srgbClr val="' + c.plum + '"/></a:accent3><a:accent4><a:srgbClr val="' + c.steel + '"/></a:accent4>'
+      + '<a:accent5><a:srgbClr val="' + c.wine + '"/></a:accent5><a:accent6><a:srgbClr val="' + c.sage + '"/></a:accent6>'
+      + '<a:hlink><a:srgbClr val="' + c.blue + '"/></a:hlink><a:folHlink><a:srgbClr val="' + c.plum + '"/></a:folHlink></a:clrScheme>'
+      + '<a:fontScheme name="ITRisk"><a:majorFont><a:latin typeface="Georgia"/><a:ea typeface=""/><a:cs typeface=""/></a:majorFont>'
+      + '<a:minorFont><a:latin typeface="Calibri"/><a:ea typeface=""/><a:cs typeface=""/></a:minorFont></a:fontScheme>'
+      + '<a:fmtScheme name="ITRisk"><a:fillStyleLst><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:fillStyleLst>'
+      + '<a:lnStyleLst><a:ln w="6350"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln><a:ln w="12700"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln><a:ln w="19050"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:ln></a:lnStyleLst>'
+      + '<a:effectStyleLst><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle><a:effectStyle><a:effectLst/></a:effectStyle></a:effectStyleLst>'
+      + '<a:bgFillStyleLst><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:bgFillStyleLst>'
+      + '</a:fmtScheme></a:themeElements></a:theme>';
+  }
+  function slideMasterXml() {
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n<p:sldMaster xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="' + REL + '" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">'
+      + '<p:cSld><p:bg><p:bgPr><a:solidFill><a:srgbClr val="' + PC.paper + '"/></a:solidFill><a:effectLst/></p:bgPr></p:bg><p:spTree>'
+      + '<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>'
+      + '<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>'
+      + '<p:sp><p:nvSpPr><p:cNvPr id="2" name="Title Placeholder"/><p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr><p:nvPr><p:ph type="title"/></p:nvPr></p:nvSpPr>'
+      + '<p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/><a:p><a:r><a:rPr lang="en-US"/><a:t>Title</a:t></a:r></a:p></p:txBody></p:sp>'
+      + '</p:spTree></p:cSld>'
+      + '<p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/>'
+      + '<p:sldLayoutIdLst><p:sldLayoutId id="2147483649" r:id="rId2"/></p:sldLayoutIdLst></p:sldMaster>';
+  }
+  function slideMasterRelsXml() {
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n<Relationships xmlns="' + PKGREL + '">'
+      + '<Relationship Id="rId1" Type="' + REL + '/theme" Target="../theme/theme1.xml"/>'
+      + '<Relationship Id="rId2" Type="' + REL + '/slideLayout" Target="../slideLayouts/slideLayout1.xml"/></Relationships>';
+  }
+  function slideLayoutXml() {
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n<p:sldLayout xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="' + REL + '" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" type="blank" preserve="1">'
+      + '<p:cSld name="Blank"><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>'
+      + '<p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr></p:spTree></p:cSld>'
+      + '<p:clrMapOvr><a:overrideClrMapping bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/></p:clrMapOvr></p:sldLayout>';
+  }
+  function slideLayoutRelsXml() {
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n<Relationships xmlns="' + PKGREL + '"><Relationship Id="rId1" Type="' + REL + '/slideMaster" Target="../slideMasters/slideMaster1.xml"/></Relationships>';
+  }
+  function slideRelsXml() {
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n<Relationships xmlns="' + PKGREL + '"><Relationship Id="rId1" Type="' + REL + '/slideLayout" Target="../slideLayouts/slideLayout1.xml"/></Relationships>';
+  }
+  function coreXml(title) {
+    var now = new Date().toISOString();
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
+      + '<dc:title>' + esc(title) + '</dc:title><dc:creator>Global IT Risk</dc:creator><cp:lastModifiedBy>Global IT Risk</cp:lastModifiedBy>'
+      + '<dcterms:created xsi:type="dcterms:W3CDTF">' + now + '</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">' + now + '</dcterms:modified></cp:coreProperties>';
+  }
+  function appXml(n) {
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"><Application>Global IT Risk Strategy Exporter</Application><Slides>' + n + '</Slides></Properties>';
+  }
+  function buildPackage(slideXmls, title) {
+    var files = [];
+    files.push({ name: '[Content_Types].xml', data: strToBytes(contentTypesXml(slideXmls.length)) });
+    files.push({ name: '_rels/.rels', data: strToBytes(rootRelsXml()) });
+    files.push({ name: 'docProps/core.xml', data: strToBytes(coreXml(title)) });
+    files.push({ name: 'docProps/app.xml', data: strToBytes(appXml(slideXmls.length)) });
+    files.push({ name: 'ppt/presentation.xml', data: strToBytes(presentationXml(slideXmls.length)) });
+    files.push({ name: 'ppt/_rels/presentation.xml.rels', data: strToBytes(presentationRelsXml(slideXmls.length)) });
+    files.push({ name: 'ppt/theme/theme1.xml', data: strToBytes(themeXml()) });
+    files.push({ name: 'ppt/slideMasters/slideMaster1.xml', data: strToBytes(slideMasterXml()) });
+    files.push({ name: 'ppt/slideMasters/_rels/slideMaster1.xml.rels', data: strToBytes(slideMasterRelsXml()) });
+    files.push({ name: 'ppt/slideLayouts/slideLayout1.xml', data: strToBytes(slideLayoutXml()) });
+    files.push({ name: 'ppt/slideLayouts/_rels/slideLayout1.xml.rels', data: strToBytes(slideLayoutRelsXml()) });
+    slideXmls.forEach(function (xml, i) {
+      files.push({ name: 'ppt/slides/slide' + (i + 1) + '.xml', data: strToBytes(xml) });
+      files.push({ name: 'ppt/slides/_rels/slide' + (i + 1) + '.xml.rels', data: strToBytes(slideRelsXml()) });
+    });
+    return makeZip(files);
+  }
+
+  /* ---------- the 9 slides ---------- */
+  function statRow(stats, y, colW, numSize) {
+    var s = '';
+    stats.forEach(function (st, i) {
+      var x = EMU(0.55) + i * colW;
+      s += textBox({ x: x, y: y, w: colW - EMU(0.1), h: EMU(0.65), paragraphs: [paragraph([{ text: st.num, size: numSize || 3200, bold: true, color: PC.blue, font: 'Georgia' }])] });
+      s += textBox({ x: x, y: y + EMU(0.62), w: colW - EMU(0.1), h: EMU(0.4), paragraphs: [paragraph([{ text: st.label.toUpperCase(), size: 950, color: PC.muted, font: 'Consolas', spc: 30 }], { lineSpacing: 110 })] });
+    });
+    return s;
+  }
+
+  function buildTitleSlide() {
+    shapeId = 10;
+    var s = '';
+    s += rect({ x: 0, y: 0, w: EMU_W, h: EMU_H, fill: PC.paper });
+    s += rect({ x: 0, y: 0, w: EMU(0.16), h: EMU_H, fill: PC.blue });
+    s += textBox({ x: EMU(1), y: EMU(2.55), w: EMU(10.5), h: EMU(0.45), paragraphs: [paragraph([{ text: 'GLOBAL IT RISK', size: 1500, color: PC.blue, font: 'Consolas', spc: 140 }])] });
+    s += textBox({ x: EMU(0.96), y: EMU(3.0), w: EMU(10.8), h: EMU(1.5), paragraphs: [paragraph([{ text: '2026–2029 Strategy', size: 5000, bold: true, color: PC.ink, font: 'Georgia' }])] });
+    var dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    s += rect({ x: EMU(1), y: EMU(4.55), w: EMU(2.4), h: 9525, fill: PC.gold });
+    s += textBox({ x: EMU(1), y: EMU(4.72), w: EMU(9), h: EMU(0.4), paragraphs: [paragraph([{ text: 'Working Draft · Prepared ' + dateStr, size: 1200, color: PC.muted, font: 'Calibri' }])] });
+    return slideXml(s);
+  }
+
+  function buildOrgOverview(d) {
+    shapeId = 10;
+    var s = slideChrome('Organizational Overview', 'One Head, eight functions, and two hundred people run a single global program, executed locally wherever the bank operates.');
+    var orgStats = d.orgStats.length ? d.orgStats : [{ num: '1', label: 'Head' }, { num: '6', label: 'Global functions' }, { num: '2', label: 'Regional functions' }, { num: '30', label: 'Subteams' }, { num: '2', label: 'Regions' }];
+    var colW = EMU(2.15);
+    s += statRow(orgStats, EMU(2.55), colW, 3200);
+    var peopleNum = (d.peopleStats[0] && d.peopleStats[0].num) || '200';
+    s += textBox({ x: EMU(9.75), y: EMU(2.55), w: colW - EMU(0.1), h: EMU(0.65), paragraphs: [paragraph([{ text: peopleNum, size: 3200, bold: true, color: PC.gold, font: 'Georgia' }])] });
+    s += textBox({ x: EMU(9.75), y: EMU(3.17), w: colW - EMU(0.1), h: EMU(0.4), paragraphs: [paragraph([{ text: 'PEOPLE TOTAL', size: 950, color: PC.muted, font: 'Consolas', spc: 30 }])] });
+
+    var lines = [
+      'Global functions set the standard; regional functions (US, EMEA) execute it in-market, adapting for local requirements.',
+      'The department sits as one pillar within the bank’s broader Global Security organization.',
+      'Six global functions: Governance, Operational Risk, Shared Services, Third Party Risk, Regulatory/Audit/Issues Management, Compliance Assessments.'
+    ];
+    s += textBox({
+      x: EMU(0.55), y: EMU(4.3), w: EMU(11.2), h: EMU(2.4),
+      paragraphs: lines.map(function (t) { return paragraph([{ text: t, size: 1500, color: PC.ink, font: 'Calibri' }], { bullet: true, spaceBefore: 800, lineSpacing: 120 }); })
+    });
+    return slideXml(s);
+  }
+
+  function buildVisionMission(d) {
+    shapeId = 10;
+    var s = slideChrome('Vision & Mission', 'One department mission, translated into a specific, measurable commitment by every function.');
+    s += rect({ x: EMU(0.55), y: EMU(2.35), w: EMU(11.2), h: EMU(1.05), fill: PC.blueSoft });
+    s += rect({ x: EMU(0.55), y: EMU(2.35), w: EMU(0.06), h: EMU(1.05), fill: PC.blue });
+    s += textBox({ x: EMU(0.85), y: EMU(2.5), w: EMU(10.6), h: EMU(0.3), paragraphs: [paragraph([{ text: 'DEPARTMENT MISSION', size: 950, color: PC.blue, font: 'Consolas', spc: 60 }])] });
+    s += textBox({
+      x: EMU(0.85), y: EMU(2.82), w: EMU(10.6), h: EMU(0.55), anchor: 't',
+      paragraphs: [paragraph([{ text: 'To give the bank a complete, trustworthy view of its technology risk — and the governance, people, and controls to act on it, everywhere it operates.', size: 1500, italic: true, color: PC.ink, font: 'Georgia' }], { lineSpacing: 115 })]
+    });
+
+    var y = EMU(3.75);
+    var rowH = EMU(0.62);
+    d.missions.forEach(function (m, i) {
+      s += textBox({ x: EMU(0.55), y: y + i * rowH, w: EMU(3.0), h: rowH, paragraphs: [paragraph([{ text: m.name, size: 1150, bold: true, color: PC.blue, font: 'Calibri' }], { lineSpacing: 108 })] });
+      s += textBox({ x: EMU(3.7), y: y + i * rowH, w: EMU(8.05), h: rowH, paragraphs: [paragraph([{ text: m.text, size: 1150, color: PC.ink, font: 'Calibri' }], { lineSpacing: 108 })] });
+    });
+    return slideXml(s);
+  }
+
+  function buildCapabilitiesGaps(d) {
+    shapeId = 10;
+    var s = slideChrome('Capabilities & Current Gaps', 'Real capability runs today; three cross-cutting gaps — spanning every function — define the work ahead.');
+    var colW = EMU(5.4);
+    var leftX = EMU(0.55), rightX = EMU(6.35);
+    s += textBox({ x: leftX, y: EMU(2.35), w: colW, h: EMU(0.35), paragraphs: [paragraph([{ text: 'WHAT’S WORKING', size: 1050, color: PC.sage, font: 'Consolas', spc: 60 }])] });
+    s += textBox({ x: rightX, y: EMU(2.35), w: colW, h: EMU(0.35), paragraphs: [paragraph([{ text: 'WHAT’S NOT', size: 1050, color: PC.wine, font: 'Consolas', spc: 60 }])] });
+
+    var working = [
+      'Control Testing already runs as one centralized, consistent function — ~600 controls tested a year — proof the target operating model works.',
+      'Program Walrus is live across three components: control assessment automation, metrics & reporting, and control testing digitization.',
+      'Third Party Risk delivers bank-wide vendor assessment and continuous monitoring today.'
+    ];
+    s += textBox({
+      x: leftX, y: EMU(2.78), w: colW, h: EMU(4.1),
+      paragraphs: working.map(function (t) { return paragraph([{ text: t, size: 1300, color: PC.ink, font: 'Calibri' }], { bullet: true, spaceBefore: 900, lineSpacing: 118 }); })
+    });
+
+    var titles = d.themeTitles.length === 3 ? d.themeTitles : ['A — Federated fragmentation & non-standardization', 'B — Legal-entity-aligned reporting', 'C — Data foundation & reporting narrative capability'];
+    var gaps = [
+      'Federated teams overlap and lack standardized practice, undermining a single, trustworthy risk profile.',
+      'A regulatory requirement to report by legal entity is live in the US and emerging in Europe.',
+      'Underlying data and reporting narrative capability recur as gaps across four different functions.'
+    ];
+    var gy = EMU(2.78);
+    for (var i = 0; i < 3; i++) {
+      s += textBox({ x: rightX, y: gy, w: colW, h: EMU(0.35), paragraphs: [paragraph([{ text: titles[i], size: 1200, bold: true, color: PC.wine, font: 'Calibri' }], { lineSpacing: 112 })] });
+      s += textBox({ x: rightX, y: gy + EMU(0.4), w: colW, h: EMU(0.75), paragraphs: [paragraph([{ text: gaps[i], size: 1250, color: PC.ink, font: 'Calibri' }], { lineSpacing: 118 })] });
+      gy += EMU(1.35);
+    }
+    return slideXml(s);
+  }
+
+  function buildRoadmap() {
+    shapeId = 10;
+    var s = slideChrome('2026–2029 Roadmap', 'Every function’s roadmap converges on the same arc — stabilize first, mature next, reach full coverage by 2029.');
+    var rows = [
+      { name: 'Governance', color: PC.blue, start: 1, end: 14 },
+      { name: 'Op Risk, Issues & Response', color: PC.plum, start: 1, end: 8 },
+      { name: 'Assessments', color: PC.brass, start: 1, end: 10 },
+      { name: 'Reporting & Analytics', color: PC.steel, start: 2, end: 14 },
+      { name: 'Third Party Risk', color: PC.gold, start: 1, end: 9 },
+      { name: 'Control Testing', color: PC.wine, start: 1, end: 13 }
+    ];
+    var gridX = EMU(2.7), gridW = EMU(8.5), gridTop = EMU(2.55), yearW = gridW / 4;
+    var years = ['2026', '2027', '2028', '2029'];
+    years.forEach(function (yr, i) {
+      s += textBox({ x: gridX + i * yearW, y: gridTop - EMU(0.35), w: yearW, h: EMU(0.3), paragraphs: [paragraph([{ text: yr, size: 1100, color: PC.muted, font: 'Consolas' }], { align: 'ctr' })] });
+      if (i > 0) s += rect({ x: gridX + i * yearW, y: gridTop - EMU(0.05), w: 6350, h: EMU(4.15), fill: PC.line });
+    });
+    s += rect({ x: gridX, y: gridTop, w: gridW, h: 9525, fill: PC.line });
+
+    var rowH = EMU(0.63);
+    rows.forEach(function (r, i) {
+      var y = gridTop + EMU(0.18) + i * rowH;
+      s += textBox({ x: EMU(0.55), y: y, w: EMU(2.05), h: rowH - EMU(0.1), anchor: 'ctr', paragraphs: [paragraph([{ text: r.name, size: 1050, bold: true, color: PC.ink, font: 'Calibri' }], { lineSpacing: 108 })] });
+      var barX = gridX + (r.start - 1) / 14 * gridW;
+      var barW = (r.end - r.start + 1) / 14 * gridW;
+      s += rect({ x: barX, y: y + EMU(0.06), w: barW, h: EMU(0.32), fill: r.color, alpha: 88000 });
+    });
+    return slideXml(s);
+  }
+
+  function buildAppendixDivider() {
+    shapeId = 10;
+    var s = '';
+    s += rect({ x: 0, y: 0, w: EMU_W, h: EMU_H, fill: PC.ink });
+    s += textBox({ x: EMU(1), y: EMU(3.0), w: EMU(10), h: EMU(0.4), paragraphs: [paragraph([{ text: 'GLOBAL IT RISK · 2026–2029 STRATEGY', size: 1150, color: PC.gold, font: 'Consolas', spc: 100 }])] });
+    s += textBox({ x: EMU(1), y: EMU(3.4), w: EMU(10.3), h: EMU(1), paragraphs: [paragraph([{ text: 'Appendix', size: 4400, bold: true, color: PC.white, font: 'Georgia' }])] });
+    s += textBox({ x: EMU(1), y: EMU(4.55), w: EMU(9.5), h: EMU(0.7), paragraphs: [paragraph([{ text: 'Supporting detail: risk taxonomy, reference architecture, and the Program Walrus system architecture.', size: 1400, color: PC.paper, font: 'Calibri' }], { lineSpacing: 120 })] });
+    return slideXml(s);
+  }
+
+  function buildAppendixTaxonomy(d) {
+    shapeId = 10;
+    var s = slideChrome('Appendix A — Risk Taxonomy', 'Risk is classified in a four-level hierarchy, from the enterprise root to forty-five Level 3 sub-categories.');
+    var blocks = [
+      ['LEVEL 1 & 2', d.taxonomy.level || 'Operational Risk (Level 1) is the enterprise root; Technology is one of sixteen Level 2 domains.'],
+      ['WITHIN TECHNOLOGY', d.taxonomy.domains || 'Twelve domains sit within Technology, with forty-five Level 3 sub-categories in aggregate.'],
+      ['TRANSVERSAL CATEGORIES', d.taxonomy.transversal || 'Third-Party Risk, Cloud Computing, and Artificial Intelligence cut across every domain.']
+    ];
+    var y = EMU(2.5);
+    blocks.forEach(function (b) {
+      s += rect({ x: EMU(0.55), y: y, w: EMU(0.06), h: EMU(1.15), fill: PC.blue });
+      s += textBox({ x: EMU(0.85), y: y, w: EMU(10.9), h: EMU(0.3), paragraphs: [paragraph([{ text: b[0], size: 1000, color: PC.blue, font: 'Consolas', spc: 50 }])] });
+      s += textBox({ x: EMU(0.85), y: y + EMU(0.35), w: EMU(10.9), h: EMU(0.7), paragraphs: [paragraph([{ text: b[1], size: 1300, color: PC.ink, font: 'Calibri' }], { lineSpacing: 118 })] });
+      y += EMU(1.5);
+    });
+    return slideXml(s);
+  }
+
+  function buildAppendixRefArch(d) {
+    shapeId = 10;
+    var s = slideChrome('Appendix B — Reference Architecture', 'Reference architecture content is pending and will be added as it’s defined.');
+    s += rect({ x: EMU(0.55), y: EMU(2.6), w: EMU(11.2), h: EMU(1.1), fill: PC.goldSoft });
+    s += rect({ x: EMU(0.55), y: EMU(2.6), w: EMU(0.06), h: EMU(1.1), fill: PC.gold });
+    s += textBox({ x: EMU(0.85), y: EMU(2.75), w: EMU(10.6), h: EMU(0.3), paragraphs: [paragraph([{ text: 'PLACEHOLDER', size: 1000, color: PC.gold, font: 'Consolas', spc: 50 }])] });
+    s += textBox({ x: EMU(0.85), y: EMU(3.08), w: EMU(10.6), h: EMU(0.55), paragraphs: [paragraph([{ text: d.refArch || 'Content pending — to be populated with the technical reference architecture underpinning Program Walrus and the wider platform.', size: 1300, color: PC.ink, font: 'Calibri' }], { lineSpacing: 118 })] });
+    return slideXml(s);
+  }
+
+  function buildAppendixWalrus(d) {
+    shapeId = 10;
+    var s = slideChrome('Appendix C — Program Walrus System Architecture', 'Walrus centralizes control, metrics, and testing data into one platform, with three components already live.');
+    s += textBox({
+      x: EMU(0.55), y: EMU(2.4), w: EMU(11.2), h: EMU(1.1),
+      paragraphs: [paragraph([{ text: d.walrus.dataPara || 'Data is being centralized from across Global Security — key controls and operations data into Snowflake, alongside Azure Data Lake and other sources — feeding a calculation engine that drives the platform’s outputs.', size: 1350, color: PC.ink, font: 'Calibri' }], { lineSpacing: 122 })]
+    });
+    var wStats = d.walrus.stats.length ? d.walrus.stats : [{ num: '3', label: 'Live components' }, { num: '7', label: 'Platforms live' }, { num: 'Daily', label: 'Target publication' }];
+    s += statRow(wStats, EMU(3.75), EMU(3.6), 2800);
+    s += textBox({
+      x: EMU(0.55), y: EMU(5.1), w: EMU(11.2), h: EMU(1.4),
+      paragraphs: [paragraph([{ text: 'Next phase: Control Strength — an automated, weighted score of control design, effectiveness, appetite status, and open issues — generating a real-time risk profile at any level of the hierarchy.', size: 1300, italic: true, color: PC.muted, font: 'Calibri' }], { lineSpacing: 122 })]
+    });
+    return slideXml(s);
+  }
+
+  /* ---------- click handler ---------- */
+  function buildDeck() {
+    var d = gatherContent();
+    return [
+      buildTitleSlide(),
+      buildOrgOverview(d),
+      buildVisionMission(d),
+      buildCapabilitiesGaps(d),
+      buildRoadmap(),
+      buildAppendixDivider(),
+      buildAppendixTaxonomy(d),
+      buildAppendixRefArch(d),
+      buildAppendixWalrus(d)
+    ];
+  }
+
+  function blobFallbackSave(bytes, filename) {
+    var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
+  btn.addEventListener('click', function () {
+    btn.disabled = true;
+    setStatus('Generating…');
+    var filename = 'IT-Risk-Strategy-2026-2029.pptx';
+    try {
+      var slides = buildDeck();
+      var zipBytes = buildPackage(slides, 'Global IT Risk — 2026–2029 Strategy');
+
+      var claudeGlobal = (typeof window !== 'undefined') ? window.claude : undefined;
+      if (claudeGlobal && typeof claudeGlobal.use === 'function') {
+        claudeGlobal.use('downloads').then(function (downloads) {
+          if (!downloads) { blobFallbackSave(zipBytes, filename); setStatus('Downloaded (local mode).', 'ok'); btn.disabled = false; return; }
+          downloads.save({ filename: filename, data: zipBytes }).then(function () {
+            setStatus('Saved.', 'ok'); btn.disabled = false;
+          }, function (err) {
+            if (err && err.code === 'declined') { setStatus('Save cancelled.', ''); }
+            else if (err && err.code === 'extension_not_enabled') { blobFallbackSave(zipBytes, filename); setStatus('Downloaded directly.', 'ok'); }
+            else { setStatus('Could not save: ' + (err && err.message ? err.message : 'unknown error'), 'err'); }
+            btn.disabled = false;
+          });
+        }, function () {
+          blobFallbackSave(zipBytes, filename);
+          setStatus('Downloaded (local mode).', 'ok');
+          btn.disabled = false;
+        });
+      } else {
+        blobFallbackSave(zipBytes, filename);
+        setStatus('Downloaded.', 'ok');
+        btn.disabled = false;
+      }
+    } catch (e) {
+      setStatus('Export failed: ' + e.message, 'err');
+      btn.disabled = false;
+    }
+  });
 })();
 </script>
